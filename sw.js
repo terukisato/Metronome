@@ -2,8 +2,8 @@ const CACHE_NAME = 'metronome-v1';
 const ASSETS = [
   '/index.html',
   '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
+  '/icon-192.png',
+  '/icon-512.png',
   'https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap'
 ];
 
@@ -11,7 +11,7 @@ self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       // Cache local assets, ignore font failures (network-only fallback)
-      return cache.addAll(['/index.html', '/manifest.json', '/icons/icon-192.png', '/icons/icon-512.png'])
+      return cache.addAll(['/index.html', '/manifest.json', '/icon-192.png', '/icon-512.png'])
         .catch(() => {});
     })
   );
