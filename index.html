@@ -445,7 +445,10 @@
 // Register service worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    // Derive base path so this works on GitHub Pages subdirectories
+    const swPath = new URL('sw.js', window.location.href).href;
+    const scope = new URL('.', window.location.href).href;
+    navigator.serviceWorker.register(swPath, { scope }).catch(() => {});
   });
 }
 
