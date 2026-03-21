@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#c8a96e">
+<meta name="theme-color" content="#c0c0c0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -16,19 +16,19 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #0a0a0f;
-    --surface: #14141e;
-    --border: #2a2a3e;
-    --accent: #c8a96e;
-    --accent2: #e8c98e;
-    --beat: #c8a96e;
-    --text: #e8e4d8;
-    --text-muted: #7a7468;
-    --pendulum: #c8a96e;
-    --glow: rgba(200,169,110,0.3);
-    --tick-line: #c8a96e;
-    --btn-bg: #1e1e2e;
-    --btn-hover: #2a2a3e;
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --border: #2a2a2a;
+    --accent: #c0c0c0;
+    --accent2: #e8e8e8;
+    --beat: #c0c0c0;
+    --text: #e8e8e8;
+    --text-muted: #666666;
+    --pendulum: #c0c0c0;
+    --glow: rgba(192,192,192,0.25);
+    --tick-line: #c0c0c0;
+    --btn-bg: #1a1a1a;
+    --btn-hover: #242424;
     --theme-name: "CLASSICAL";
     --font-display: 'Playfair Display', serif;
     --font-body: 'DM Mono', monospace;
@@ -1138,6 +1138,29 @@
 
   <div class="drawer-section">
     <div class="section-header">
+      <span class="section-title">CLICK SOUND</span>
+      <span class="section-chevron">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="sound-cards" id="soundCards">
+        <div class="sound-card active" data-sound="click"><div class="card-info"><div class="card-name">CLICK</div><div class="card-desc">Classic metronome click</div></div><div class="card-check">&#10003;</div></div>
+        <div class="sound-card" data-sound="beep"><div class="card-info"><div class="card-name">BEEP</div><div class="card-desc">Electronic sine tone</div></div><div class="card-check">&#10003;</div></div>
+        <div class="sound-card" data-sound="wood"><div class="card-info"><div class="card-name">WOOD</div><div class="card-desc">Warm woodblock thud</div></div><div class="card-check">&#10003;</div></div>
+        <div class="sound-card" data-sound="hihat"><div class="card-info"><div class="card-name">HI-HAT</div><div class="card-desc">Crisp percussive tick</div></div><div class="card-check">&#10003;</div></div>
+        <div class="sound-card" data-sound="rimshot"><div class="card-info"><div class="card-name">RIMSHOT</div><div class="card-desc">Sharp snare rim tap</div></div><div class="card-check">&#10003;</div></div>
+        <div class="sound-card" data-sound="clave"><div class="card-info"><div class="card-name">CLAVE</div><div class="card-desc">Hollow wooden stick tap</div></div><div class="card-check">&#10003;</div></div>
+        <div class="sound-card" data-sound="bell"><div class="card-info"><div class="card-name">BELL</div><div class="card-desc">Soft chime ring</div></div><div class="card-check">&#10003;</div></div>
+        <div class="sound-card" data-sound="ping"><div class="card-info"><div class="card-name">PING</div><div class="card-desc">Pure digital ping</div></div><div class="card-check">&#10003;</div></div>
+        <div class="sound-card" data-sound="snap"><div class="card-info"><div class="card-name">SNAP</div><div class="card-desc">Finger snap pop</div></div><div class="card-check">&#10003;</div></div>
+        <div class="sound-card" data-sound="tick"><div class="card-info"><div class="card-name">TICK</div><div class="card-desc">Mechanical clock tick</div></div><div class="card-check">&#10003;</div></div>
+        <div class="sound-card" data-sound="tom"><div class="card-info"><div class="card-name">TOM</div><div class="card-desc">Deep drum tom hit</div></div><div class="card-check">&#10003;</div></div>
+        <div class="sound-card" data-sound="blip"><div class="card-info"><div class="card-name">BLIP</div><div class="card-desc">Retro 8-bit blip</div></div><div class="card-check">&#10003;</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="drawer-section">
+    <div class="section-header">
       <span class="section-title">DISPLAY</span>
       <span class="section-chevron">▼</span>
     </div>
@@ -1148,7 +1171,7 @@
           <div class="toggle-desc">Show pendulum visualiser</div>
         </div>
         <label class="toggle">
-          <input type="checkbox" id="pendulumToggle" checked>
+          <input type="checkbox" id="pendulumToggle">
           <div class="toggle-track"></div>
           <div class="toggle-thumb"></div>
         </label>
@@ -1175,8 +1198,8 @@
     <div class="section-body">
       <div class="theme-cards" id="themeCards">
         <div class="theme-card active" data-theme="" data-name="CLASSICAL">
-          <div class="card-swatch" style="background:#c8a96e;"></div>
-          <div class="card-info"><div class="card-name">CLASSICAL</div><div class="card-desc">Warm gold on midnight</div></div>
+          <div class="card-swatch" style="background:#c0c0c0;"></div>
+          <div class="card-info"><div class="card-name">CLASSICAL</div><div class="card-desc">Silver on pure black</div></div>
           <div class="card-check">&#10003;</div>
         </div>
         <div class="theme-card" data-theme="neon" data-name="NEON">
@@ -1252,90 +1275,7 @@
     </div>
   </div>
 
-  <div class="drawer-section">
-    <div class="section-header">
-      <span class="section-title">CLICK SOUND</span>
-      <span class="section-chevron">▼</span>
-    </div>
-    <div class="section-body">
-      <div class="sound-cards" id="soundCards">
-        <div class="sound-card active" data-sound="click"><div class="sound-icon">🔔</div><div class="card-info"><div class="card-name">CLICK</div><div class="card-desc">Classic metronome click</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="beep"><div class="sound-icon">📡</div><div class="card-info"><div class="card-name">BEEP</div><div class="card-desc">Electronic sine tone</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="wood"><div class="sound-icon">🥁</div><div class="card-info"><div class="card-name">WOOD</div><div class="card-desc">Warm woodblock thud</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="hihat"><div class="sound-icon">🎵</div><div class="card-info"><div class="card-name">HI-HAT</div><div class="card-desc">Crisp percussive tick</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="rimshot"><div class="sound-icon">🥁</div><div class="card-info"><div class="card-name">RIMSHOT</div><div class="card-desc">Sharp snare rim tap</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="clave"><div class="sound-icon">🪘</div><div class="card-info"><div class="card-name">CLAVE</div><div class="card-desc">Hollow wooden stick tap</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="bell"><div class="sound-icon">🔕</div><div class="card-info"><div class="card-name">BELL</div><div class="card-desc">Soft chime ring</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="ping"><div class="sound-icon">⚡</div><div class="card-info"><div class="card-name">PING</div><div class="card-desc">Pure digital ping</div></div><div class="card-check">&#10003;</div></div>
-      </div>
-    </div>
-  </div>
 
-  <div class="drawer-section">
-    <div class="section-header">
-      <span class="section-title">FONT STYLE</span>
-      <span class="section-chevron">▼</span>
-    </div>
-    <div class="section-body">
-      <div class="sound-cards" id="fontCards">
-        <div class="sound-card active" data-font="">
-          <div class="sound-icon" style="font-family:'Playfair Display',serif;font-weight:900;">Aa</div>
-          <div class="card-info"><div class="card-name">CLASSICAL</div><div class="card-desc">Playfair Display + DM Mono</div></div>
-          <div class="card-check">&#10003;</div>
-        </div>
-        <div class="sound-card" data-font="font-editorial">
-          <div class="sound-icon" style="font-family:'Cormorant Garamond',serif;font-weight:700;">Aa</div>
-          <div class="card-info"><div class="card-name">EDITORIAL</div><div class="card-desc">Cormorant + Libre Baskerville</div></div>
-          <div class="card-check">&#10003;</div>
-        </div>
-        <div class="sound-card" data-font="font-tech">
-          <div class="sound-icon" style="font-family:'Bebas Neue',sans-serif;">Aa</div>
-          <div class="card-info"><div class="card-name">TECH</div><div class="card-desc">Bebas Neue + Space Mono</div></div>
-          <div class="card-check">&#10003;</div>
-        </div>
-        <div class="sound-card" data-font="font-modern">
-          <div class="sound-icon" style="font-family:'Space Grotesk',sans-serif;font-weight:700;">Aa</div>
-          <div class="card-info"><div class="card-name">MODERN</div><div class="card-desc">Space Grotesk</div></div>
-          <div class="card-check">&#10003;</div>
-        </div>
-        <div class="sound-card" data-font="font-geometric">
-          <div class="sound-icon" style="font-family:'Josefin Sans',sans-serif;font-weight:700;">Aa</div>
-          <div class="card-info"><div class="card-name">GEOMETRIC</div><div class="card-desc">Josefin Sans</div></div>
-          <div class="card-check">&#10003;</div>
-        </div>
-        <div class="sound-card" data-font="font-japanese">
-          <div class="sound-icon" style="font-family:'Noto Serif JP',serif;font-weight:700;">あ</div>
-          <div class="card-info"><div class="card-name">JAPANESE</div><div class="card-desc">Noto Serif JP</div></div>
-          <div class="card-check">&#10003;</div>
-        </div>
-        <div class="sound-card" data-font="font-roman">
-          <div class="sound-icon" style="font-family:'Cinzel',serif;font-weight:700;">Aa</div>
-          <div class="card-info"><div class="card-name">ROMAN</div><div class="card-desc">Cinzel + EB Garamond</div></div>
-          <div class="card-check">&#10003;</div>
-        </div>
-        <div class="sound-card" data-font="font-rajdhani">
-          <div class="sound-icon" style="font-family:'Rajdhani',sans-serif;font-weight:700;">Aa</div>
-          <div class="card-info"><div class="card-name">RAJDHANI</div><div class="card-desc">Indian-inspired condensed</div></div>
-          <div class="card-check">&#10003;</div>
-        </div>
-        <div class="sound-card" data-font="font-syne">
-          <div class="sound-icon" style="font-family:'Syne',sans-serif;font-weight:800;">Aa</div>
-          <div class="card-info"><div class="card-name">SYNE</div><div class="card-desc">Bold experimental sans</div></div>
-          <div class="card-check">&#10003;</div>
-        </div>
-        <div class="sound-card" data-font="font-garamond">
-          <div class="sound-icon" style="font-family:'EB Garamond',serif;font-weight:800;">Aa</div>
-          <div class="card-info"><div class="card-name">GARAMOND</div><div class="card-desc">Classic humanist serif</div></div>
-          <div class="card-check">&#10003;</div>
-        </div>
-        <div class="sound-card" data-font="font-outfit">
-          <div class="sound-icon" style="font-family:'Outfit',sans-serif;font-weight:700;">Aa</div>
-          <div class="card-info"><div class="card-name">OUTFIT</div><div class="card-desc">Clean rounded sans-serif</div></div>
-          <div class="card-check">&#10003;</div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
 <div class="app">
@@ -1657,6 +1597,54 @@
       gain.gain.setValueAtTime((accent ? 0.6 : 0.38) * v, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
       osc.start(now); osc.stop(now + 0.06);
+
+    } else if (currentSound === 'snap') {
+      // Finger snap: short broadband noise burst, bandpass filtered mid-range
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.025, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 4);
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      const bp = ctx.createBiquadFilter();
+      bp.type = 'bandpass';
+      bp.frequency.value = accent ? 2800 : 2200;
+      bp.Q.value = 1.5;
+      src.connect(bp); bp.connect(gain);
+      gain.gain.setValueAtTime((accent ? 1.2 : 0.8) * v, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+      src.start(now); src.stop(now + 0.025);
+
+    } else if (currentSound === 'tick') {
+      // Mechanical tick: two short transients (tick + tock feel)
+      const osc = ctx.createOscillator();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(accent ? 3200 : 2400, now);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 800 : 600, now + 0.012);
+      osc.connect(gain);
+      gain.gain.setValueAtTime((accent ? 0.6 : 0.4) * v, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
+      osc.start(now); osc.stop(now + 0.015);
+
+    } else if (currentSound === 'tom') {
+      // Tom drum: sine sweep down, longer decay
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(accent ? 200 : 150, now);
+      osc.frequency.exponentialRampToValueAtTime(accent ? 55 : 45, now + 0.18);
+      osc.connect(gain);
+      gain.gain.setValueAtTime((accent ? 1.0 : 0.7) * v, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc.start(now); osc.stop(now + 0.22);
+
+    } else if (currentSound === 'blip') {
+      // Retro 8-bit blip: square wave, very short, high pitched
+      const osc = ctx.createOscillator();
+      osc.type = 'square';
+      osc.frequency.value = accent ? 880 : 660;
+      osc.connect(gain);
+      gain.gain.setValueAtTime((accent ? 0.35 : 0.22) * v, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      osc.start(now); osc.stop(now + 0.04);
     }
   }
 
@@ -1832,18 +1820,6 @@
     playTick(accent);
   });
 
-  // ── Font style ──
-  const fontClasses = ['font-editorial','font-tech','font-modern','font-geometric','font-japanese','font-roman','font-rajdhani','font-syne','font-garamond','font-outfit'];
-  document.getElementById('fontCards').addEventListener('click', e => {
-    const card = e.target.closest('.sound-card');
-    if (!card) return;
-    document.querySelectorAll('#fontCards .sound-card').forEach(c => c.classList.remove('active'));
-    card.classList.add('active');
-    document.body.classList.remove(...fontClasses);
-    const font = card.dataset.font;
-    if (font) document.body.classList.add(font);
-  });
-
   // Tap tempo
   let taps = [];
 
@@ -1912,7 +1888,6 @@
       secTheme: 'カラーテーマ',
       secPendStyle: '振り子スタイル',
       secSound: 'クリック音',
-      secFont: 'フォント',
       pendulumLabel: '振り子',
       pendulumDesc: '振り子を表示する',
       flashLabel: 'フラッシュ',
@@ -1949,7 +1924,7 @@
 
     // Section titles
     const headers = document.querySelectorAll('.section-title');
-    const secs = [t.secDisplay, t.secTheme, t.secPendStyle, t.secSound, t.secFont];
+    const secs = [t.secSound, t.secDisplay, t.secTheme, t.secPendStyle];
     headers.forEach((h, i) => { if (secs[i]) h.textContent = secs[i]; });
 
     // Toggle labels
@@ -1976,7 +1951,6 @@
       pendulumVisible: document.getElementById('pendulumToggle').checked,
       flashEnabled: document.getElementById('flashToggle').checked,
       theme: [...document.body.classList].find(c => c.startsWith('theme-')) || '',
-      font: [...document.body.classList].find(c => c.startsWith('font-')) || '',
       pendStyle: [...document.getElementById('pendulum').classList].find(c => c.startsWith('pend-')) || '',
     };
     try { localStorage.setItem('metronome-settings', JSON.stringify(settings)); } catch(e) {}
@@ -2037,15 +2011,6 @@
       });
     }
 
-    // Font
-    if (s.font) {
-      document.body.classList.remove(...fontClasses);
-      document.body.classList.add(s.font);
-      document.querySelectorAll('#fontCards .sound-card').forEach(c => {
-        c.classList.toggle('active', c.dataset.font === s.font);
-      });
-    }
-
     // Pendulum style
     if (s.pendStyle) {
       const pend = document.getElementById('pendulum');
@@ -2075,13 +2040,13 @@
   });
 
   document.getElementById('themeCards').addEventListener('click', () => setTimeout(saveSettings, 50));
-  document.getElementById('fontCards').addEventListener('click', () => setTimeout(saveSettings, 50));
   document.getElementById('soundCards').addEventListener('click', () => setTimeout(saveSettings, 50));
   document.getElementById('pendulumCards').addEventListener('click', () => setTimeout(saveSettings, 50));
 
   // Init
   buildBeats();
   updateBPM(120);
+  document.getElementById('pendulumWrap').classList.add('hidden');
   loadSettings();
 </script>
 <script>
