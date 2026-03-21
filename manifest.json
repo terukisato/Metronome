@@ -1,13 +1,12 @@
 {
-  "name": "Metronome",
+  "name": "Metronome – メトロノーム",
   "short_name": "Metronome",
-  "description": "A precise, beautiful metronome for musicians",
-  "start_url": ".",
-  "scope": ".",
+  "description": "A feature-rich metronome with themes, pendulum styles and Japanese language support",
+  "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0a0a0f",
-  "theme_color": "#00e5ff",
+  "theme_color": "#c8a96e",
   "icons": [
     {
       "src": "icon-192.png",
@@ -21,5 +20,7 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "categories": ["music", "utilities"],
+  "lang": "en"
 }
