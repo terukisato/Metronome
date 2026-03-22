@@ -1,17 +1,19 @@
 # メトロノーム / Metronome
 
-A feature-rich metronome PWA with colour themes, pendulum styles, click sounds, font options, and Japanese language support.
+A clean, feature-rich metronome PWA with colour themes, pendulum styles, click sounds, and Japanese language support. Installable on Android.
+
+---
 
 ## ✨ Features
 
-- 🎵 Multiple click sounds (Click, Beep, Wood, Hi-Hat, Rimshot, Clave, Bell, Ping)
-- 🎨 12 colour themes (Classical, Neon, Sakura, Slate, Ember, Forest, Kintsugi, Midnight, Rose, Arctic, Obsidian)
-- 🕰️ 8 pendulum styles (Classic, Diamond, Orb, Arrow, Flame, Hexagon, Minimal, Ghost)
-- 🔤 11 font styles
-- 🇯🇵 Japanese language mode (with Hokkaido dialect tempo names)
-- ⏱️ Tap tempo button
-- 🎼 13 time signatures
-- 📱 Installable on Android as a PWA
+- 🔔 **12 click sounds** — Click, Beep, Wood, Hi-Hat, Rimshot, Clave, Bell, Ping, Snap, Tick, Tom, Blip
+- 🎨 **11 colour themes** — Classical (black & silver), Neon, Sakura, Slate, Ember, Forest, Kintsugi, Midnight, Rose, Arctic
+- 🕰️ **8 pendulum styles** — Classic, Diamond, Orb, Arrow, Flame, Hexagon, Minimal, Ghost
+- 🎼 **13 time signatures** — Simple, Compound, Odd/Complex, Asymmetric
+- ⏱️ **Tap tempo** — tap the button or press Space to set BPM by feel
+- 🔊 **Volume control** — adjustable per session
+- 🇯🇵 **Japanese language mode** — full UI translation with Hokkaido dialect tempo names
+- 📱 **Installable PWA** — works offline, installs on Android like a native app
 
 ---
 
@@ -49,7 +51,7 @@ Your app will be live at:
 ```
 https://YOUR-USERNAME.github.io/REPO-NAME/
 ```
-(Takes ~1 minute to deploy)
+*(Takes ~1 minute to deploy)*
 
 ---
 
@@ -61,6 +63,16 @@ https://YOUR-USERNAME.github.io/REPO-NAME/
 4. Tap **Add**
 
 The metronome installs as a standalone app — no browser bar, works offline.
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| `Space` | Tap tempo |
+| `Enter` | Start / Stop |
+| `↑ / ↓` | BPM +1 / -1 |
 
 ---
 
