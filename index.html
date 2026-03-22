@@ -199,23 +199,6 @@
     --theme-name: "ARCTIC";
   }
 
-  .theme-obsidian {
-    --bg: #09090b;
-    --surface: #111113;
-    --border: #27272a;
-    --accent: #a1a1aa;
-    --accent2: #d4d4d8;
-    --beat: #a1a1aa;
-    --text: #fafafa;
-    --text-muted: #52525b;
-    --pendulum: #a1a1aa;
-    --glow: rgba(161,161,170,0.2);
-    --tick-line: #a1a1aa;
-    --btn-bg: #18181b;
-    --btn-hover: #27272a;
-    --theme-name: "OBSIDIAN";
-  }
-
   body {
     background: var(--bg);
     color: var(--text);
@@ -730,7 +713,10 @@
 
   /* ── Responsive / Mobile ── */
   @media (max-width: 520px) {
-    body { padding: 12px; }
+    body {
+      justify-content: flex-start;
+      padding-top: 16px;
+    }
 
     .app { gap: 20px; }
 
@@ -1247,11 +1233,6 @@
           <div class="card-info"><div class="card-name">ARCTIC</div><div class="card-desc">Ice blue on crisp white</div></div>
           <div class="card-check">&#10003;</div>
         </div>
-        <div class="theme-card" data-theme="obsidian" data-name="OBSIDIAN">
-          <div class="card-swatch" style="background:#a1a1aa;"></div>
-          <div class="card-info"><div class="card-name">OBSIDIAN</div><div class="card-desc">Cool zinc on pure black</div></div>
-          <div class="card-check">&#10003;</div>
-        </div>
       </div>
     </div>
   </div>
@@ -1747,7 +1728,7 @@
     card.classList.add('active');
     const theme = card.dataset.theme;
     const name = card.dataset.name;
-    document.body.classList.remove('theme-neon','theme-sakura','theme-slate','theme-ember','theme-forest','theme-kintsugi','theme-midnight','theme-rose','theme-arctic','theme-obsidian');
+    document.body.classList.remove('theme-neon','theme-sakura','theme-slate','theme-ember','theme-forest','theme-kintsugi','theme-midnight','theme-rose','theme-arctic');
     if (theme) document.body.classList.add('theme-' + theme);
     themeLabel.textContent = name;
   });
@@ -1937,122 +1918,17 @@
   document.getElementById('langBtn').addEventListener('click', () => {
     currentLang = currentLang === 'en' ? 'ja' : 'en';
     applyLang(currentLang);
-    saveSettings();
   });
-
-  // ── Persistence ──
-  function saveSettings() {
-    const settings = {
-      bpm,
-      beatsPerBar,
-      currentSound,
-      currentLang,
-      volume,
-      pendulumVisible: document.getElementById('pendulumToggle').checked,
-      flashEnabled: document.getElementById('flashToggle').checked,
-      theme: [...document.body.classList].find(c => c.startsWith('theme-')) || '',
-      pendStyle: [...document.getElementById('pendulum').classList].find(c => c.startsWith('pend-')) || '',
-    };
-    try { localStorage.setItem('metronome-settings', JSON.stringify(settings)); } catch(e) {}
-  }
-
-  function loadSettings() {
-    let s;
-    try { s = JSON.parse(localStorage.getItem('metronome-settings')); } catch(e) {}
-    if (!s) return;
-
-    // BPM
-    if (s.bpm) updateBPM(s.bpm);
-
-    // Beats per bar
-    if (s.beatsPerBar) {
-      beatsPerBar = s.beatsPerBar;
-      const sel = document.getElementById('timeSigSelect');
-      // Find matching option
-      [...sel.options].forEach(o => { if (+o.value === beatsPerBar) o.selected = true; });
-      buildBeats();
-    }
-
-    // Sound
-    if (s.currentSound) {
-      currentSound = s.currentSound;
-      document.querySelectorAll('#soundCards .sound-card').forEach(c => {
-        c.classList.toggle('active', c.dataset.sound === currentSound);
-      });
-    }
-
-    // Volume
-    if (s.volume !== undefined) {
-      volume = s.volume;
-      const vs = document.getElementById('volumeSlider');
-      vs.value = Math.round(s.volume * 100);
-      vs.style.setProperty('--pct', Math.round(s.volume * 100) + '%');
-      document.getElementById('volumeValue').textContent = Math.round(s.volume * 100) + '%';
-      updateVolIcon();
-    }
-
-    // Pendulum visible
-    if (s.pendulumVisible === false) {
-      document.getElementById('pendulumToggle').checked = false;
-      document.getElementById('pendulumWrap').classList.add('hidden');
-    }
-
-    // Flash
-    if (s.flashEnabled !== undefined) {
-      document.getElementById('flashToggle').checked = s.flashEnabled;
-    }
-
-    // Theme
-    if (s.theme) {
-      document.body.classList.remove('theme-neon','theme-sakura','theme-slate','theme-ember','theme-forest','theme-kintsugi','theme-midnight','theme-rose','theme-arctic','theme-obsidian');
-      document.body.classList.add(s.theme);
-      document.querySelectorAll('.theme-card').forEach(c => {
-        c.classList.toggle('active', ('theme-' + c.dataset.theme) === s.theme || (c.dataset.theme === '' && !s.theme));
-      });
-    }
-
-    // Pendulum style
-    if (s.pendStyle) {
-      const pend = document.getElementById('pendulum');
-      pend.classList.remove(...pendStyles);
-      pend.classList.add(s.pendStyle);
-      document.querySelectorAll('#pendulumCards .sound-card').forEach(c => {
-        c.classList.toggle('active', c.dataset.pend === s.pendStyle);
-      });
-    }
-
-    // Language
-    if (s.currentLang && s.currentLang !== 'en') {
-      currentLang = s.currentLang;
-      applyLang(currentLang);
-    }
-  }
-
-  // Hook save onto all interactive controls
-  [
-    'timeSigSelect', 'pendulumToggle', 'flashToggle', 'volumeSlider',
-    'bpmSlider', 'minus10', 'minus5', 'minus1', 'plus1', 'plus5', 'plus10'
-  ].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('change', saveSettings);
-    if (el) el.addEventListener('input', saveSettings);
-    if (el) el.addEventListener('click', saveSettings);
-  });
-
-  document.getElementById('themeCards').addEventListener('click', () => setTimeout(saveSettings, 50));
-  document.getElementById('soundCards').addEventListener('click', () => setTimeout(saveSettings, 50));
-  document.getElementById('pendulumCards').addEventListener('click', () => setTimeout(saveSettings, 50));
 
   // Init
   buildBeats();
   updateBPM(120);
   document.getElementById('pendulumWrap').classList.add('hidden');
-  loadSettings();
 </script>
 <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
     });
   }
 </script>
