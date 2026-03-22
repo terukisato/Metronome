@@ -2,14 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#c0c0c0">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Metronome">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Metronome</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@400;700;900&family=Space+Grotesk:wght@400;500;700&family=Cormorant+Garamond:wght@400;700;900&family=Space+Mono:wght@400;700&family=Libre+Baskerville:wght@400;700&family=Bebas+Neue&family=Josefin+Sans:wght@300;400;700&family=Noto+Serif+JP:wght@400;700;900&family=Cinzel:wght@400;700;900&family=Rajdhani:wght@400;500;700&family=Syne:wght@400;700;800&family=EB+Garamond:wght@400;700;800&family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
@@ -713,7 +706,7 @@
     border-color: var(--accent);
     font-weight: 500;
     padding: 0;
-    font-size: 14px;
+    font-size: 18px;
     width: 100%;
     height: 40px;
     min-height: 40px;
@@ -867,32 +860,26 @@
     .pendulum-wrap { height: 160px; max-height: 200px; }
     .pendulum { height: 130px; }
 
-    .bpm-number { font-size: 60px; }
-    .bpm-label { font-size: 10px; letter-spacing: 3px; }
-    .tempo-name { font-size: 11px; margin-top: 8px; }
-
     /* Nudge row — tighter on small screens */
     .row { gap: 4px; }
-    .btn { padding: 8px 6px; font-size: 11px; }
+    .btn { padding: 0 6px; font-size: 11px; }
 
     .btn.play {
-      width: 120px;
-      min-width: 120px;
-      max-width: 120px;
-      height: 44px;
-      min-height: 44px;
-      font-size: 12px;
-      padding: 10px 16px;
+      width: 100%;
+      height: 40px;
+      min-height: 40px;
+      font-size: 14px;
+      padding: 0;
     }
     .tap-btn {
-      width: 100px;
-      min-width: 100px;
-      max-width: 100px;
-      height: 44px;
-      min-height: 44px;
-      font-size: 11px;
+      width: 90px;
+      min-width: 90px;
+      max-width: 90px;
+      height: 40px;
+      min-height: 40px;
+      font-size: 13px;
       letter-spacing: 2px;
-      padding: 10px 14px;
+      padding: 0 14px;
     }
 
     /* Settings dropdown — full width on mobile */
@@ -919,10 +906,7 @@
   }
 
   @media (max-width: 360px) {
-    .bpm-number { font-size: 50px; }
-    .btn { padding: 7px 9px; font-size: 10px; }
-    .btn.play { width: 110px; min-width: 110px; }
-    .tap-btn { width: 90px; min-width: 90px; }
+    .btn { padding: 0 6px; font-size: 10px; }
   }
   body::before {
     content: '';
@@ -2073,13 +2057,6 @@
   buildBeats();
   updateBPM(120);
   document.getElementById('pendulumWrap').classList.add('hidden');
-</script>
-<script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js").catch(() => {});
-    });
-  }
 </script>
 </body>
 </html>
