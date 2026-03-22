@@ -2,7 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#c0c0c0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Metronome">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>Metronome</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@400;700;900&family=Space+Grotesk:wght@400;500;700&family=Cormorant+Garamond:wght@400;700;900&family=Space+Mono:wght@400;700&family=Libre+Baskerville:wght@400;700&family=Bebas+Neue&family=Josefin+Sans:wght@300;400;700&family=Noto+Serif+JP:wght@400;700;900&family=Cinzel:wght@400;700;900&family=Rajdhani:wght@400;500;700&family=Syne:wght@400;700;800&family=EB+Garamond:wght@400;700;800&family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
@@ -366,11 +373,11 @@
   /* Pendulum — straight rod, rooted at base */
   .pendulum {
     width: 4px;
-    height: 180px;
+    height: 65px;
     background: linear-gradient(to right, var(--border), var(--accent2), var(--accent), var(--accent2), var(--border));
     transform-origin: bottom center;
     position: absolute;
-    bottom: 20px;
+    bottom: 10px;
     top: auto;
     border-radius: 2px;
     box-shadow: 0 0 6px var(--glow);
@@ -706,7 +713,7 @@
     border-color: var(--accent);
     font-weight: 500;
     padding: 0;
-    font-size: 18px;
+    font-size: 14px;
     width: 100%;
     height: 40px;
     min-height: 40px;
@@ -860,26 +867,32 @@
     .pendulum-wrap { height: 160px; max-height: 200px; }
     .pendulum { height: 130px; }
 
+    .bpm-number { font-size: 60px; }
+    .bpm-label { font-size: 10px; letter-spacing: 3px; }
+    .tempo-name { font-size: 11px; margin-top: 8px; }
+
     /* Nudge row — tighter on small screens */
     .row { gap: 4px; }
-    .btn { padding: 0 6px; font-size: 11px; }
+    .btn { padding: 8px 6px; font-size: 11px; }
 
     .btn.play {
-      width: 100%;
-      height: 40px;
-      min-height: 40px;
-      font-size: 14px;
-      padding: 0;
+      width: 120px;
+      min-width: 120px;
+      max-width: 120px;
+      height: 44px;
+      min-height: 44px;
+      font-size: 12px;
+      padding: 10px 16px;
     }
     .tap-btn {
-      width: 90px;
-      min-width: 90px;
-      max-width: 90px;
-      height: 40px;
-      min-height: 40px;
-      font-size: 13px;
+      width: 100px;
+      min-width: 100px;
+      max-width: 100px;
+      height: 44px;
+      min-height: 44px;
+      font-size: 11px;
       letter-spacing: 2px;
-      padding: 0 14px;
+      padding: 10px 14px;
     }
 
     /* Settings dropdown — full width on mobile */
@@ -906,7 +919,10 @@
   }
 
   @media (max-width: 360px) {
-    .btn { padding: 0 6px; font-size: 10px; }
+    .bpm-number { font-size: 50px; }
+    .btn { padding: 7px 9px; font-size: 10px; }
+    .btn.play { width: 110px; min-width: 110px; }
+    .tap-btn { width: 90px; min-width: 90px; }
   }
   body::before {
     content: '';
@@ -1207,26 +1223,15 @@
   /* Pendulum hide/show */
   .pendulum-wrap {
     width: 100%;
-    height: 220px;
+    height: 80px;
     position: relative;
     display: flex;
     justify-content: center;
     align-items: flex-end;
     overflow: hidden;
     transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.35s;
-    max-height: 260px;
+    max-height: 100px;
     opacity: 1;
-  }
-  /* Base line */
-  .pendulum-wrap::after {
-    content: '';
-    position: absolute;
-    bottom: 20px;
-    left: 10%;
-    width: 80%;
-    height: 2px;
-    background: linear-gradient(to right, transparent, var(--border), transparent);
-    border-radius: 1px;
   }
   .pendulum-wrap.hidden {
     max-height: 0;
@@ -1266,41 +1271,7 @@
         <div class="sound-card" data-sound="clave"><div class="card-info"><div class="card-name">CLAVE</div><div class="card-desc">Hollow wooden stick tap</div></div><div class="card-check">&#10003;</div></div>
         <div class="sound-card" data-sound="bell"><div class="card-info"><div class="card-name">BELL</div><div class="card-desc">Soft chime ring</div></div><div class="card-check">&#10003;</div></div>
         <div class="sound-card" data-sound="ping"><div class="card-info"><div class="card-name">PING</div><div class="card-desc">Pure digital ping</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="snap"><div class="card-info"><div class="card-name">SNAP</div><div class="card-desc">Finger snap pop</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="tick"><div class="card-info"><div class="card-name">TICK</div><div class="card-desc">Mechanical clock tick</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="tom"><div class="card-info"><div class="card-name">TOM</div><div class="card-desc">Deep drum tom hit</div></div><div class="card-check">&#10003;</div></div>
         <div class="sound-card" data-sound="blip"><div class="card-info"><div class="card-name">BLIP</div><div class="card-desc">Retro 8-bit blip</div></div><div class="card-check">&#10003;</div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="drawer-section">
-    <div class="section-header">
-      <span class="section-title">DISPLAY</span>
-      <span class="section-chevron">▼</span>
-    </div>
-    <div class="section-body">
-      <div class="toggle-row">
-        <div class="toggle-info">
-          <div class="toggle-label">PENDULUM</div>
-          <div class="toggle-desc">Show pendulum visualiser</div>
-        </div>
-        <label class="toggle">
-          <input type="checkbox" id="pendulumToggle">
-          <div class="toggle-track"></div>
-          <div class="toggle-thumb"></div>
-        </label>
-      </div>
-      <div class="toggle-row" style="margin-top:8px;">
-        <div class="toggle-info">
-          <div class="toggle-label">FLASH</div>
-          <div class="toggle-desc">Flashing background on beat</div>
-        </div>
-        <label class="toggle">
-          <input type="checkbox" id="flashToggle">
-          <div class="toggle-track"></div>
-          <div class="toggle-thumb"></div>
-        </label>
       </div>
     </div>
   </div>
@@ -1362,6 +1333,37 @@
           <div class="card-info"><div class="card-name">ARCTIC</div><div class="card-desc">Ice blue on crisp white</div></div>
           <div class="card-check">&#10003;</div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="drawer-section">
+    <div class="section-header">
+      <span class="section-title">DISPLAY</span>
+      <span class="section-chevron">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">PENDULUM</div>
+          <div class="toggle-desc">Show pendulum visualiser</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="pendulumToggle">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <div class="toggle-row" style="margin-top:8px;">
+        <div class="toggle-info">
+          <div class="toggle-label">FLASH</div>
+          <div class="toggle-desc">Flashing background on beat</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="flashToggle">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
       </div>
     </div>
   </div>
@@ -1713,44 +1715,6 @@
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
       osc.start(now); osc.stop(now + 0.06);
 
-    } else if (currentSound === 'snap') {
-      // Finger snap: short broadband noise burst, bandpass filtered mid-range
-      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.025, ctx.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 4);
-      const src = ctx.createBufferSource();
-      src.buffer = buf;
-      const bp = ctx.createBiquadFilter();
-      bp.type = 'bandpass';
-      bp.frequency.value = accent ? 2800 : 2200;
-      bp.Q.value = 1.5;
-      src.connect(bp); bp.connect(gain);
-      gain.gain.setValueAtTime((accent ? 1.2 : 0.8) * v, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
-      src.start(now); src.stop(now + 0.025);
-
-    } else if (currentSound === 'tick') {
-      // Mechanical tick: two short transients (tick + tock feel)
-      const osc = ctx.createOscillator();
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(accent ? 3200 : 2400, now);
-      osc.frequency.exponentialRampToValueAtTime(accent ? 800 : 600, now + 0.012);
-      osc.connect(gain);
-      gain.gain.setValueAtTime((accent ? 0.6 : 0.4) * v, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
-      osc.start(now); osc.stop(now + 0.015);
-
-    } else if (currentSound === 'tom') {
-      // Tom drum: sine sweep down, longer decay
-      const osc = ctx.createOscillator();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(accent ? 200 : 150, now);
-      osc.frequency.exponentialRampToValueAtTime(accent ? 55 : 45, now + 0.18);
-      osc.connect(gain);
-      gain.gain.setValueAtTime((accent ? 1.0 : 0.7) * v, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-      osc.start(now); osc.stop(now + 0.22);
-
     } else if (currentSound === 'blip') {
       // Retro 8-bit blip: square wave, very short, high pitched
       const osc = ctx.createOscillator();
@@ -2038,7 +2002,7 @@
 
     // Section titles
     const headers = document.querySelectorAll('.section-title');
-    const secs = [t.secSound, t.secDisplay, t.secTheme, t.secPendStyle];
+    const secs = [t.secSound, t.secTheme, t.secDisplay, t.secPendStyle];
     headers.forEach((h, i) => { if (secs[i]) h.textContent = secs[i]; });
 
     // Toggle labels
@@ -2057,6 +2021,13 @@
   buildBeats();
   updateBPM(120);
   document.getElementById('pendulumWrap').classList.add('hidden');
+</script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    });
+  }
 </script>
 </body>
 </html>
