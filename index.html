@@ -713,7 +713,7 @@
     border-color: var(--accent);
     font-weight: 500;
     padding: 0;
-    font-size: 14px;
+    font-size: 18px;
     width: 100%;
     height: 40px;
     min-height: 40px;
@@ -724,6 +724,7 @@
     justify-content: center;
   }
   .btn.play:hover { filter: brightness(1.1); transform: none; }
+  .btn.play.stop-icon { font-size: 22px; }
   .btn.play:active { transform: none; filter: brightness(0.95); }
 
   /* Time sig dropdown */
@@ -864,35 +865,29 @@
 
     .stage { padding: 20px 14px 18px; gap: 16px; border-radius: 18px; }
 
-    .pendulum-wrap { height: 160px; max-height: 200px; }
-    .pendulum { height: 130px; }
-
-    .bpm-number { font-size: 60px; }
-    .bpm-label { font-size: 10px; letter-spacing: 3px; }
-    .tempo-name { font-size: 11px; margin-top: 8px; }
+    .pendulum-wrap { height: 80px; max-height: 100px; }
+    .pendulum { height: 65px; }
 
     /* Nudge row — tighter on small screens */
     .row { gap: 4px; }
-    .btn { padding: 8px 6px; font-size: 11px; }
+    .btn { padding: 0 6px; font-size: 11px; }
 
     .btn.play {
-      width: 120px;
-      min-width: 120px;
-      max-width: 120px;
-      height: 44px;
-      min-height: 44px;
-      font-size: 12px;
-      padding: 10px 16px;
+      width: 100%;
+      height: 40px;
+      min-height: 40px;
+      font-size: 18px;
+      padding: 0;
     }
     .tap-btn {
-      width: 100px;
-      min-width: 100px;
-      max-width: 100px;
-      height: 44px;
-      min-height: 44px;
-      font-size: 11px;
+      width: 90px;
+      min-width: 90px;
+      max-width: 90px;
+      height: 40px;
+      min-height: 40px;
+      font-size: 13px;
       letter-spacing: 2px;
-      padding: 10px 14px;
+      padding: 0 14px;
     }
 
     /* Settings dropdown — full width on mobile */
@@ -919,10 +914,7 @@
   }
 
   @media (max-width: 360px) {
-    .bpm-number { font-size: 50px; }
-    .btn { padding: 7px 9px; font-size: 10px; }
-    .btn.play { width: 110px; min-width: 110px; }
-    .tap-btn { width: 90px; min-width: 90px; }
+    .btn { padding: 0 4px; font-size: 10px; }
   }
   body::before {
     content: '';
@@ -1768,8 +1760,8 @@
   playBtn.addEventListener('click', () => {
     playing = !playing;
     const t = translations[currentLang];
-    if (playing) { playBtn.textContent = t.playStop; start(); }
-    else { playBtn.textContent = t.playStart; stop(); }
+    if (playing) { playBtn.textContent = t.playStop; playBtn.classList.add('stop-icon'); start(); }
+    else { playBtn.textContent = t.playStart; playBtn.classList.remove('stop-icon'); stop(); }
   });
 
   bpmSlider.addEventListener('input', () => updateBPM(+bpmSlider.value));
@@ -1982,8 +1974,8 @@
     document.getElementById('mainTitle').textContent = t.mainTitle;
     document.getElementById('jaTitle').textContent = t.jaTitle;
         document.querySelector('.bpm-label').textContent = t.bpmLabel;
-    if (!playing) playBtn.textContent = t.playStart;
-    else playBtn.textContent = t.playStop;
+    if (!playing) { playBtn.textContent = t.playStart; playBtn.classList.remove('stop-icon'); }
+    else { playBtn.textContent = t.playStop; playBtn.classList.add('stop-icon'); }
     document.getElementById('tapBtn').textContent = t.tap;
     document.getElementById('timeSigLabel').textContent = t.timeSigLabel;
     document.querySelector('.dropdown-title').textContent = t.settingsTitle;
