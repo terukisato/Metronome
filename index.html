@@ -916,6 +916,78 @@
   @media (max-width: 360px) {
     .btn { padding: 0 4px; font-size: 10px; }
   }
+
+  /* ── Landscape / horizontal phone view ── */
+  @media (orientation: landscape) and (max-height: 500px) {
+    body {
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding: 8px 52px 8px 12px;
+      overflow-y: auto;
+    }
+
+    .app {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    /* Header sits at top, horizontal */
+    .header {
+      width: 100%;
+      height: auto;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+      gap: 12px;
+    }
+    .title { font-size: 18px; letter-spacing: 1px; height: auto; }
+    .japanese-title { font-size: 9px; letter-spacing: 2px; height: auto; }
+    .lang-btn { font-size: 8px; padding: 0 8px; height: 22px; }
+
+    /* Stage fills remaining space as a row */
+    .stage {
+      flex: 1;
+      padding: 10px 12px;
+      gap: 10px;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Pendulum hidden in landscape to save space */
+    .pendulum-wrap { display: none; }
+
+    /* Screen takes left portion */
+    .screen {
+      flex: 1;
+      min-width: 140px;
+    }
+    .screen-inner { padding: 10px 12px; gap: 6px; }
+    .bpm-number { font-size: 52px; height: 52px; }
+    .bpm-label { font-size: 9px; height: 12px; }
+    .tempo-name { font-size: 10px; height: 14px; margin-top: 4px; }
+
+    /* Controls on right side */
+    .play-tap-row { flex-direction: column; gap: 6px; width: auto; min-width: 80px; }
+    .btn.play { width: 80px; height: 36px; min-height: 36px; font-size: 18px; flex: none; }
+    .btn.play.stop-icon { font-size: 20px; }
+    .tap-btn { width: 80px; min-width: 80px; max-width: 80px; height: 36px; min-height: 36px; font-size: 11px; padding: 0; }
+
+    /* Slider, nudge, volume, time sig wrap below stage */
+    .slider-wrap { width: 100%; }
+    .row { gap: 3px; }
+    .btn { padding: 0 4px; font-size: 10px; height: 30px; min-height: 30px; }
+    .small-label { font-size: 9px; }
+    .time-sig-select { font-size: 11px; padding: 6px 28px 6px 10px; }
+
+    /* Settings dropdown repositioned */
+    .dropdown { top: 8px; right: 8px; max-height: calc(100vh - 16px); width: 260px; }
+    .menu-btn { top: 8px; right: 8px; }
+  }
   body::before {
     content: '';
     position: fixed;
