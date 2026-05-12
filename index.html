@@ -500,13 +500,26 @@
   /* Beat dots */
   .beats {
     display: flex;
-    gap: 12px;
+    flex-wrap: nowrap;
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
   }
   .beat-dot {
     width: 14px; height: 14px;
     border-radius: 50%;
     border: 2px solid var(--border);
+    flex-shrink: 1;
+    min-width: 6px;
     transition: background 0.08s, border-color 0.5s, box-shadow 0.08s;
+  }
+  .beats.compact {
+    gap: 5px;
+  }
+  .beats.compact .beat-dot {
+    width: 10px; height: 10px;
+    min-width: 10px;
   }
   .beat-dot.active {
     background: var(--beat);
@@ -1342,7 +1355,8 @@
     </div>
     <div class="section-body">
       <div class="sound-cards" id="soundCards">
-        <div class="sound-card active" data-sound="click"><div class="card-info"><div class="card-name">CLICK</div><div class="card-desc">Classic metronome click</div></div><div class="card-check">&#10003;</div></div>
+        <div class="sound-card active" data-sound="blip"><div class="card-info"><div class="card-name">BLIP</div><div class="card-desc">Retro 8-bit blip</div></div><div class="card-check">&#10003;</div></div>
+        <div class="sound-card" data-sound="click"><div class="card-info"><div class="card-name">CLICK</div><div class="card-desc">Classic metronome click</div></div><div class="card-check">&#10003;</div></div>
         <div class="sound-card" data-sound="beep"><div class="card-info"><div class="card-name">BEEP</div><div class="card-desc">Electronic sine tone</div></div><div class="card-check">&#10003;</div></div>
         <div class="sound-card" data-sound="wood"><div class="card-info"><div class="card-name">WOOD</div><div class="card-desc">Warm woodblock thud</div></div><div class="card-check">&#10003;</div></div>
         <div class="sound-card" data-sound="hihat"><div class="card-info"><div class="card-name">HI-HAT</div><div class="card-desc">Crisp percussive tick</div></div><div class="card-check">&#10003;</div></div>
@@ -1350,7 +1364,6 @@
         <div class="sound-card" data-sound="clave"><div class="card-info"><div class="card-name">CLAVE</div><div class="card-desc">Hollow wooden stick tap</div></div><div class="card-check">&#10003;</div></div>
         <div class="sound-card" data-sound="bell"><div class="card-info"><div class="card-name">BELL</div><div class="card-desc">Soft chime ring</div></div><div class="card-check">&#10003;</div></div>
         <div class="sound-card" data-sound="ping"><div class="card-info"><div class="card-name">PING</div><div class="card-desc">Pure digital ping</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="blip"><div class="card-info"><div class="card-name">BLIP</div><div class="card-desc">Retro 8-bit blip</div></div><div class="card-check">&#10003;</div></div>
       </div>
     </div>
   </div>
@@ -1609,6 +1622,7 @@
 
   function buildBeats() {
     beatsEl.innerHTML = '';
+    beatsEl.classList.toggle('compact', beatsPerBar > 8);
     for (let i = 0; i < beatsPerBar; i++) {
       const d = document.createElement('div');
       d.className = 'beat-dot' + (i === 0 ? ' accent-dot' : '');
@@ -1637,7 +1651,7 @@
     return audioCtx;
   }
 
-  let currentSound = 'click';
+  let currentSound = 'blip';
   let volume = 0.8;
 
   function playTick(accent) {
@@ -2064,7 +2078,6 @@
   // Init
   buildBeats();
   updateBPM(120);
-  // Sends vibration commands to a paired Galaxy Watch 8 (Wear OS)
   // via the Web Bluetooth API on every metronome beat.
   //
   // How it works:
