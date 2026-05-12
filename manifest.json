@@ -4,7 +4,7 @@
   "description": "A feature-rich metronome with themes, pendulum styles and Japanese language support",
   "start_url": "./index.html",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#0a0a0a",
   "theme_color": "#c0c0c0",
   "icons": [

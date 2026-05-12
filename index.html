@@ -903,6 +903,7 @@
 
     /* Menu button closer to edge */
     .menu-btn { top: 14px; right: 14px; }
+    .tune-btn { top: 66px; right: 14px; }
 
     .theme-card, .sound-card { padding: 10px 12px; gap: 10px; }
     .card-name { font-size: 11px; }
@@ -1019,6 +1020,17 @@
   .small-label { font-size: 10px; letter-spacing: 3px; color: var(--text-muted); }
 
   /* ── Menu Button ── */
+  .tune-btn {
+    position: fixed;
+    top: 72px; right: 20px;
+    z-index: 200;
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+  }
   .menu-btn {
     position: fixed;
     top: 20px; right: 20px;
@@ -1313,6 +1325,9 @@
   <span></span><span></span><span></span>
 </button>
 
+<!-- Invisible 440hz tuning button -->
+<button class="tune-btn" id="tuneBtn" aria-label="440hz"></button>
+
 <!-- Click-outside backdrop -->
 <div class="dropdown-backdrop" id="dropdownBackdrop"></div>
 
@@ -1409,17 +1424,6 @@
     <div class="section-body">
       <div class="toggle-row">
         <div class="toggle-info">
-          <div class="toggle-label">PENDULUM</div>
-          <div class="toggle-desc">Show pendulum visualiser</div>
-        </div>
-        <label class="toggle">
-          <input type="checkbox" id="pendulumToggle">
-          <div class="toggle-track"></div>
-          <div class="toggle-thumb"></div>
-        </label>
-      </div>
-      <div class="toggle-row" style="margin-top:8px;">
-        <div class="toggle-info">
           <div class="toggle-label">FLASH</div>
           <div class="toggle-desc">Flashing background on beat</div>
         </div>
@@ -1429,27 +1433,20 @@
           <div class="toggle-thumb"></div>
         </label>
       </div>
-    </div>
-  </div>
-
-  <div class="drawer-section">
-    <div class="section-header">
-      <span class="section-title">PENDULUM STYLE</span>
-      <span class="section-chevron">▼</span>
-    </div>
-    <div class="section-body">
-      <div class="sound-cards" id="pendulumCards">
-        <div class="sound-card active" data-pend=""><div class="sound-icon">▬</div><div class="card-info"><div class="card-name">CLASSIC</div><div class="card-desc">Sliding weight marker</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-pend="pend-diamond"><div class="sound-icon">◆</div><div class="card-info"><div class="card-name">DIAMOND</div><div class="card-desc">Rotated square weight</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-pend="pend-orb"><div class="sound-icon">⬤</div><div class="card-info"><div class="card-name">ORB</div><div class="card-desc">Glowing sphere weight</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-pend="pend-arrow"><div class="sound-icon">▲</div><div class="card-info"><div class="card-name">ARROW</div><div class="card-desc">Pointing arrowhead</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-pend="pend-flame"><div class="sound-icon">🔥</div><div class="card-info"><div class="card-name">FLAME</div><div class="card-desc">Flickering fire weight</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-pend="pend-hex"><div class="sound-icon">⬡</div><div class="card-info"><div class="card-name">HEXAGON</div><div class="card-desc">Geometric hex weight</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-pend="pend-minimal"><div class="sound-icon">·</div><div class="card-info"><div class="card-name">MINIMAL</div><div class="card-desc">Thin line, tiny dot</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-pend="pend-ghost"><div class="sound-icon">◯</div><div class="card-info"><div class="card-name">GHOST</div><div class="card-desc">Hollow glowing ring</div></div><div class="card-check">&#10003;</div></div>
+      <div class="toggle-row" style="margin-top:8px;" id="watchToggleRow">
+        <div class="toggle-info">
+          <div class="toggle-label">⌚ WATCH VIBRATION</div>
+          <div class="toggle-desc" id="watchToggleDesc">Vibrate Galaxy Watch on beat</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="watchVibrateToggle">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
       </div>
     </div>
   </div>
+
 
 
 </div>
@@ -1463,14 +1460,6 @@
 
   <!-- Stage -->
   <div class="stage">
-
-    <!-- Pendulum -->
-    <div class="pendulum-wrap" id="pendulumWrap">
-      <div class="pendulum" id="pendulum">
-        <div class="bob"></div>
-        <div class="pivot"></div>
-      </div>
-    </div>
 
     <!-- Screen display -->
     <div class="screen">
@@ -1556,7 +1545,6 @@
   let intervalId = null;
   let audioCtx = null;
 
-  const pendulum = document.getElementById('pendulum');
   const bpmNum = document.getElementById('bpmNum');
   const tempoName = document.getElementById('tempoName');
   const bpmSlider = document.getElementById('bpmSlider');
@@ -1564,6 +1552,8 @@
   const flash = document.getElementById('flash');
   const beatsEl = document.getElementById('beats');
   const themeLabel = document.getElementById('themeLabel');
+
+  let currentLang = 'en';
 
   const tempos = [
     [20,  'Larghissimo'],
@@ -1615,16 +1605,6 @@
     const pct = ((bpm - 20) / 220 * 100).toFixed(1) + '%';
     bpmSlider.style.setProperty('--pct', pct);
     if (playing) restart();
-    updateSwingDuration();
-  }
-
-  function updateSwingDuration() {
-    const beatMs = 60000 / bpm;
-    // pendulum full swing = 2 beats
-    const swingS = (beatMs * 2 / 1000).toFixed(3) + 's';
-    pendulum.style.setProperty('--swing-duration', swingS);
-    // Also update via CSS var on body for inheritance
-    document.body.style.setProperty('--swing-duration', swingS);
   }
 
   function buildBeats() {
@@ -1800,6 +1780,8 @@
       flash.classList.add('pop');
       setTimeout(() => flash.classList.remove('pop'), 80);
     }
+    // Watch vibration
+    WatchVibration.onBeat(accent);
     currentBeat = (currentBeat + 1) % beatsPerBar;
   }
 
@@ -1808,19 +1790,11 @@
     const ms = 60000 / bpm;
     doTick();
     intervalId = setInterval(doTick, ms);
-    // Sync pendulum
-    pendulum.classList.remove('swinging');
-    void pendulum.offsetWidth;
-    if (document.getElementById('pendulumToggle').checked) {
-      pendulum.classList.add('swinging');
-    }
-    updateSwingDuration();
   }
 
   function stop() {
     clearInterval(intervalId);
     intervalId = null;
-    pendulum.classList.remove('swinging');
     highlightBeat(-1);
   }
 
@@ -1895,32 +1869,9 @@
     themeLabel.textContent = name;
   });
 
-  // ── Pendulum toggle ──
-  const pendulumToggle = document.getElementById('pendulumToggle');
-  const pendulumWrap = document.getElementById('pendulumWrap');
-  pendulumToggle.addEventListener('change', () => {
-    pendulumWrap.classList.toggle('hidden', !pendulumToggle.checked);
-    if (!pendulumToggle.checked) {
-      pendulum.classList.remove('swinging');
-    } else if (playing) {
-      pendulum.classList.add('swinging');
-      updateSwingDuration();
-    }
-  });
-
-  // ── Pendulum style ──
-  const pendStyles = ['pend-diamond','pend-orb','pend-arrow','pend-flame','pend-hex','pend-minimal','pend-ghost'];
-  document.getElementById('pendulumCards').addEventListener('click', e => {
-    const card = e.target.closest('.sound-card');
-    if (!card) return;
-    document.querySelectorAll('#pendulumCards .sound-card').forEach(c => c.classList.remove('active'));
-    card.classList.add('active');
-    pendulum.classList.remove(...pendStyles);
-    const style = card.dataset.pend;
-    if (style) pendulum.classList.add(style);
-  });
-
-  // ── Flash toggle ──
+  // Init
+  buildBeats();
+  updateBPM(120);
   document.getElementById('flashToggle').addEventListener('change', e => {
     if (!e.target.checked) flash.classList.remove('pop');
   });
@@ -2039,8 +1990,6 @@
     }
   };
 
-  let currentLang = 'en';
-
   function applyLang(lang) {
     const t = translations[lang];
     document.getElementById('mainTitle').textContent = t.mainTitle;
@@ -2066,12 +2015,10 @@
 
     // Section titles
     const headers = document.querySelectorAll('.section-title');
-    const secs = [t.secSound, t.secTheme, t.secDisplay, t.secPendStyle];
+    const secs = [t.secSound, t.secTheme, t.secDisplay];
     headers.forEach((h, i) => { if (secs[i]) h.textContent = secs[i]; });
 
     // Toggle labels
-    document.querySelector('#pendulumToggle').closest('.toggle-row').querySelector('.toggle-label').textContent = t.pendulumLabel;
-    document.querySelector('#pendulumToggle').closest('.toggle-row').querySelector('.toggle-desc').textContent = t.pendulumDesc;
     document.querySelector('#flashToggle').closest('.toggle-row').querySelector('.toggle-label').textContent = t.flashLabel;
     document.querySelector('#flashToggle').closest('.toggle-row').querySelector('.toggle-desc').textContent = t.flashDesc;
   }
@@ -2081,10 +2028,180 @@
     applyLang(currentLang);
   });
 
+  // ── Invisible 440hz tuning button (hold to play) ──
+  (function() {
+    const tuneBtn = document.getElementById('tuneBtn');
+    let osc = null, gain = null;
+
+    function start440() {
+      const ctx = getAudioCtx();
+      osc = ctx.createOscillator();
+      gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = 440;
+      gain.gain.setValueAtTime(0.25, ctx.currentTime);
+      osc.connect(gain);
+      gain.connect(ctx._out || ctx.destination);
+      osc.start();
+    }
+
+    function stop440() {
+      if (!osc) return;
+      const ctx = getAudioCtx();
+      gain.gain.setTargetAtTime(0.001, ctx.currentTime, 0.05);
+      osc.stop(ctx.currentTime + 0.15);
+      osc = null; gain = null;
+    }
+
+    tuneBtn.addEventListener('mousedown', start440);
+    tuneBtn.addEventListener('touchstart', e => { e.preventDefault(); start440(); }, { passive: false });
+    tuneBtn.addEventListener('mouseup', stop440);
+    tuneBtn.addEventListener('mouseleave', stop440);
+    tuneBtn.addEventListener('touchend', stop440);
+    tuneBtn.addEventListener('touchcancel', stop440);
+  })();
+
   // Init
   buildBeats();
   updateBPM(120);
-  document.getElementById('pendulumWrap').classList.add('hidden');
+  // Sends vibration commands to a paired Galaxy Watch 8 (Wear OS)
+  // via the Web Bluetooth API on every metronome beat.
+  //
+  // How it works:
+  //  1. User taps "WATCH VIBRATION" toggle → we scan for the watch
+  //     using Web Bluetooth (looks for a Generic Attribute service).
+  //  2. On each beat, doTick() calls WatchVibration.onBeat(accent).
+  //  3. We write a short command byte to the watch's GATT
+  //     "Immediate Alert" characteristic (UUID 0x2A06), which the
+  //     Wear OS companion app (VibrateListenerService) intercepts
+  //     and converts into a VibrationEffect on the watch motor.
+  //
+  // NOTE: Web Bluetooth requires HTTPS or localhost, and a browser
+  // that supports it (Chrome / Edge on Android / desktop).
+  // The Galaxy Watch 8 must have the companion watch app installed
+  // (the GalaxyVibrate wear APK from this project).
+  // ─────────────────────────────────────────────────────────────
+  const WatchVibration = (() => {
+    // GATT service / characteristic UUIDs used by the watch app.
+    // "Immediate Alert" service (0x1802) + "Alert Level" char (0x2A06)
+    // is a standard BLE profile supported out-of-the-box on Wear OS.
+    const SERVICE_UUID   = 0x1802;   // Immediate Alert
+    const CHAR_UUID      = 0x2A06;   // Alert Level
+    // Alert level values (standard BLE spec):
+    const ALERT_MILD     = new Uint8Array([1]); // regular beat
+    const ALERT_HIGH     = new Uint8Array([2]); // accent (beat 1)
+    const ALERT_NONE     = new Uint8Array([0]); // silence
+
+    let device     = null;   // BluetoothDevice
+    let server     = null;   // BluetoothRemoteGATTServer
+    let alertChar  = null;   // BluetoothRemoteGATTCharacteristic
+    let enabled    = false;
+    let connecting = false;
+
+    const toggle      = document.getElementById('watchVibrateToggle');
+    const descEl      = document.getElementById('watchToggleDesc');
+
+    function setDesc(msg) { descEl.textContent = msg; }
+
+    // ── Connect to the watch via Web Bluetooth ──────────────────
+    async function connect() {
+      if (!navigator.bluetooth) {
+        setDesc('Web Bluetooth not supported in this browser');
+        toggle.checked = false;
+        enabled = false;
+        return;
+      }
+      connecting = true;
+      setDesc('Scanning… (select your watch)');
+      try {
+        device = await navigator.bluetooth.requestDevice({
+          filters: [
+            { services: [SERVICE_UUID] },           // watches exposing Immediate Alert
+            { namePrefix: 'Galaxy Watch' },         // friendly name filter
+          ],
+          optionalServices: [SERVICE_UUID],
+        });
+
+        device.addEventListener('gattserverdisconnected', onDisconnected);
+
+        setDesc('Connecting to ' + device.name + '…');
+        server    = await device.gatt.connect();
+        const svc = await server.getPrimaryService(SERVICE_UUID);
+        alertChar = await svc.getCharacteristic(CHAR_UUID);
+
+        enabled = true;
+        setDesc('⌚ ' + device.name + ' connected');
+      } catch (err) {
+        console.warn('[WatchVibration] connect error:', err);
+        if (err.name === 'NotFoundError') {
+          setDesc('No watch selected — toggle off & retry');
+        } else {
+          setDesc('Connection failed: ' + err.message);
+        }
+        toggle.checked = false;
+        enabled = false;
+      } finally {
+        connecting = false;
+      }
+    }
+
+    // ── Disconnect cleanly ──────────────────────────────────────
+    function disconnect() {
+      enabled = false;
+      alertChar = null;
+      if (server && server.connected) {
+        server.disconnect();
+      }
+      server = null;
+      device = null;
+      setDesc('Vibrate Galaxy Watch on beat');
+    }
+
+    // ── Auto-reconnect if the watch drops ──────────────────────
+    function onDisconnected() {
+      console.warn('[WatchVibration] watch disconnected');
+      alertChar = null;
+      server    = null;
+      if (enabled) {
+        setDesc('Watch disconnected — reconnecting…');
+        // Try to reconnect after a short delay
+        setTimeout(async () => {
+          if (!enabled || !device) return;
+          try {
+            server    = await device.gatt.connect();
+            const svc = await server.getPrimaryService(SERVICE_UUID);
+            alertChar = await svc.getCharacteristic(CHAR_UUID);
+            setDesc('⌚ ' + device.name + ' reconnected');
+          } catch (e) {
+            setDesc('Reconnect failed — please toggle off and retry');
+            enabled = false;
+            toggle.checked = false;
+          }
+        }, 1500);
+      }
+    }
+
+    // ── Called on every metronome beat ─────────────────────────
+    function onBeat(isAccent) {
+      if (!enabled || !alertChar) return;
+      const level = isAccent ? ALERT_HIGH : ALERT_MILD;
+      // writeValueWithoutResponse is faster (no ACK needed for haptics)
+      alertChar.writeValueWithoutResponse(level).catch(err => {
+        console.warn('[WatchVibration] write error:', err);
+      });
+    }
+
+    // ── Toggle handler ─────────────────────────────────────────
+    toggle.addEventListener('change', () => {
+      if (toggle.checked) {
+        if (!connecting) connect();
+      } else {
+        disconnect();
+      }
+    });
+
+    return { onBeat };
+  })();
 </script>
 <script>
   if ("serviceWorker" in navigator) {
