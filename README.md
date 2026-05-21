@@ -1,6 +1,6 @@
 # メトロノーム / Metronome
 
-A clean, feature-rich metronome web app with multiple click sounds, colour themes, pendulum visualiser, and full Japanese language support. Works as a standalone HTML file or as an installable PWA on Android.
+A browser-based metronome with adjustable BPM, multiple click sounds, colour themes, pendulum visualiser, and Japanese language support. Installable as a PWA on Android.
 
 ---
 
@@ -14,35 +14,22 @@ A clean, feature-rich metronome web app with multiple click sounds, colour theme
 - Tap tempo — tap the TAP button or press Space to set BPM by feel
 
 **Click sounds (9)**
-Click, Beep, Wood, Hi-Hat, Rimshot, Clave, Bell, Ping, Blip — all synthesised in-browser via the Web Audio API
+Blip, Click, Beep, Wood, Hi-Hat, Rimshot, Clave, Bell, Ping — all synthesised in-browser via the Web Audio API
 
 **Time signatures (13)**
 Simple: 2/4, 3/4, 4/4, 5/4
 Compound: 6/8, 9/8, 12/8
-Odd: 5/4, 7/8, 11/8, 13/8
+Odd: 7/8, 11/8, 13/8
 Asymmetric: 5/8, 8/8, 10/8
 
 **Beat indicator**
-Visual dots light up on each beat, with the accent beat highlighted. Dots scale down and wrap for large beat counts (11, 13).
+Visual dots light up on each beat, with the accent beat highlighted. Dots shrink and stay on one line for large beat counts (11, 13).
 
 **Colour themes (10)**
 Classical, Neon, Sakura, Slate, Ember, Forest, Kintsugi, Midnight, Rose, Arctic
 
 **Pendulum visualiser**
 Optional animated pendulum with 8 styles: Classic, Diamond, Orb, Arrow, Flame, Hexagon, Minimal, Ghost. Swing speed syncs to BPM automatically.
-
-**Display options**
-- Pendulum toggle (on/off)
-- Flash toggle — background flashes on each beat
-
-**Volume control**
-Collapsible volume slider with icon indicator (mute → full)
-
-**Japanese language support**
-Full UI translation including tempo names in Hokkaido dialect. Toggle with the JP/EN button.
-
-**440Hz reference tone**
-Hidden button below the settings button — hold to play a 440Hz sine tone for instrument tuning.
 
 **Keyboard shortcuts**
 
@@ -59,16 +46,36 @@ Hidden button below the settings button — hold to play a 440Hz sine tone for i
 
 ---
 
+## Settings
+
+**Click Sound** — choose from 9 synthesised sounds; Blip is the default
+
+**Colour Theme** — 10 themes switchable at any time
+
+**Pendulum Style** — 8 visual styles for the pendulum arm
+
+**Other**
+- **Flash** — background flashes on each beat
+- **Vibrate** — phone vibrates on each beat (Android only)
+- **Watch Vibration** — vibrates a paired smart watch on each beat via Web Bluetooth
+
+---
+
+## Language support
+
+Full UI translation between English and Japanese (日本語). Toggle with the JP/EN button. Tempo names use Hokkaido dialect in Japanese mode.
+
+---
+
 ## Running the app
 
 **Standalone:** open `index.html` in any modern browser — no server needed.
 
 **As a PWA (Android install):**
-
 1. Deploy to GitHub Pages (see below)
 2. Open the URL in Chrome for Android
 3. Tap ⋮ menu → "Add to Home Screen"
-4. The app installs as a standalone app with no browser bar, works offline
+4. The app installs as a standalone app, works offline
 
 ---
 
@@ -114,8 +121,10 @@ metronome/
 
 ## Technical notes
 
-- All audio is synthesised client-side using the Web Audio API — no external sound files
-- A dynamics compressor is applied to the master output to prevent clipping at high volumes
-- The pendulum animation speed is calculated from BPM and synced on every play/stop cycle
-- The app uses CSS custom properties for theming, updated at runtime
-- Fonts loaded from Google Fonts (Rajdhani, DM Mono, and others)
+- All audio synthesised client-side via the Web Audio API — no external sound files
+- A dynamics compressor is applied to the master output to prevent clipping
+- Pendulum animation speed syncs to BPM on every play/stop cycle
+- Phone vibration uses the Web Vibration API (Android Chrome only)
+- Watch vibration uses Web Bluetooth GATT to send commands to a paired watch
+- CSS custom properties handle all theming, updated at runtime
+- Fonts loaded from Google Fonts (Rajdhani, DM Mono, Noto Serif JP)

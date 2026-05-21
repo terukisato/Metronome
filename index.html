@@ -1429,7 +1429,7 @@
 
   <div class="drawer-section">
     <div class="section-header">
-      <span class="section-title">DISPLAY</span>
+      <span class="section-title">OTHER</span>
       <span class="section-chevron">▼</span>
     </div>
     <div class="section-body">
@@ -1444,10 +1444,21 @@
           <div class="toggle-thumb"></div>
         </label>
       </div>
+      <div class="toggle-row" style="margin-top:8px;">
+        <div class="toggle-info">
+          <div class="toggle-label" id="vibrateLabel">VIBRATE</div>
+          <div class="toggle-desc" id="vibrateDesc">Vibrate phone on beat</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="vibrateToggle">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
       <div class="toggle-row" style="margin-top:8px;" id="watchToggleRow">
         <div class="toggle-info">
-          <div class="toggle-label">⌚ WATCH VIBRATION</div>
-          <div class="toggle-desc" id="watchToggleDesc">Vibrate Galaxy Watch on beat</div>
+          <div class="toggle-label" id="watchVibrateLabel">WATCH VIBRATION</div>
+          <div class="toggle-desc" id="watchToggleDesc">Vibrate smart watch on beat</div>
         </div>
         <label class="toggle">
           <input type="checkbox" id="watchVibrateToggle">
@@ -1792,6 +1803,10 @@
       flash.classList.add('pop');
       setTimeout(() => flash.classList.remove('pop'), 80);
     }
+    // Phone vibration
+    if (document.getElementById('vibrateToggle').checked && navigator.vibrate) {
+      navigator.vibrate(accent ? 40 : 20);
+    }
     // Watch vibration
     WatchVibration.onBeat(accent);
     currentBeat = (currentBeat + 1) % beatsPerBar;
@@ -1970,7 +1985,7 @@
       tap: 'TAP',
       timeSigLabel: 'TIME SIGNATURE',
       settingsTitle: 'Settings',
-      secDisplay: 'DISPLAY',
+      secDisplay: 'OTHER',
       secTheme: 'COLOUR THEME',
       secPendStyle: 'PENDULUM STYLE',
       secSound: 'CLICK SOUND',
@@ -1979,6 +1994,10 @@
       pendulumDesc: 'Show pendulum visualiser',
       flashLabel: 'FLASH',
       flashDesc: 'Flashing background on beat',
+      vibrateLabel: 'VIBRATE',
+      vibrateDesc: 'Vibrate phone on beat',
+      watchVibrateLabel: 'WATCH VIBRATION',
+      watchVibrateDesc: 'Vibrate smart watch on beat',
       langBtn: 'EN / 日本語',
     },
     ja: {
@@ -1990,7 +2009,7 @@
       tap: 'タップ',
       timeSigLabel: '拍子',
       settingsTitle: '設定',
-      secDisplay: '表示',
+      secDisplay: 'その他',
       secTheme: 'カラーテーマ',
       secPendStyle: '振り子スタイル',
       secSound: 'クリック音',
@@ -1998,6 +2017,10 @@
       pendulumDesc: '振り子を表示する',
       flashLabel: 'フラッシュ',
       flashDesc: '拍ごとに背景を点滅',
+      vibrateLabel: 'バイブ',
+      vibrateDesc: '拍ごとにスマホを振動',
+      watchVibrateLabel: 'ウォッチ振動',
+      watchVibrateDesc: '拍ごとにスマートウォッチを振動',
       langBtn: '日本語 / EN',
     }
   };
@@ -2033,6 +2056,10 @@
     // Toggle labels
     document.querySelector('#flashToggle').closest('.toggle-row').querySelector('.toggle-label').textContent = t.flashLabel;
     document.querySelector('#flashToggle').closest('.toggle-row').querySelector('.toggle-desc').textContent = t.flashDesc;
+    document.getElementById('vibrateLabel').textContent = t.vibrateLabel;
+    document.getElementById('vibrateDesc').textContent = t.vibrateDesc;
+    document.getElementById('watchVibrateLabel').textContent = t.watchVibrateLabel;
+    document.getElementById('watchToggleDesc').textContent = t.watchVibrateDesc;
   }
 
   document.getElementById('langBtn').addEventListener('click', () => {
