@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Metronome Server",
+      "type": "shell",
+      "command": "python",
+      "args": ["-m", "http.server", "8420"],
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^Serving HTTP on .* port (\\d+)"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^Serving HTTP on",
+          "endsPattern": "^Serving HTTP on"
+        }
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      }
+    }
+  ]
+}

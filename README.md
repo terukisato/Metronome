@@ -50,8 +50,6 @@ Classical · Neon · Sakura · Slate · Ember · Forest · Kintsugi · Midnight 
 
 **Colour Theme** — select from 10 themes
 
-**Pendulum Style** — Classic, Diamond, Orb, Arrow, Flame, Hexagon, Minimal, Ghost
-
 **Other**
 - Flash — background flashes on each beat
 - Vibrate — phone vibrates on each beat (Android)

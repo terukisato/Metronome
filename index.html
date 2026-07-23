@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Metronome</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@400;700;900&family=Space+Grotesk:wght@400;500;700&family=Cormorant+Garamond:wght@400;700;900&family=Space+Mono:wght@400;700&family=Libre+Baskerville:wght@400;700&family=Bebas+Neue&family=Josefin+Sans:wght@300;400;700&family=Noto+Serif+JP:wght@400;700;900&family=Cinzel:wght@400;700;900&family=Rajdhani:wght@400;500;700&family=Syne:wght@400;700;800&family=EB+Garamond:wght@400;700;800&family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -24,27 +24,12 @@
     --beat: #c0c0c0;
     --text: #e8e8e8;
     --text-muted: #666666;
-    --pendulum: #c0c0c0;
     --glow: rgba(192,192,192,0.25);
-    --tick-line: #c0c0c0;
     --btn-bg: #1a1a1a;
     --btn-hover: #242424;
-    --theme-name: "CLASSICAL";
     --font-display: 'Rajdhani', sans-serif;
     --font-body: 'DM Mono', monospace;
   }
-
-  /* ── Font themes ── */
-  .font-editorial  { --font-display: 'Cormorant Garamond', serif;  --font-body: 'Libre Baskerville', serif; }
-  .font-tech       { --font-display: 'Bebas Neue', sans-serif;     --font-body: 'Space Mono', monospace; }
-  .font-modern     { --font-display: 'Space Grotesk', sans-serif;  --font-body: 'Space Grotesk', sans-serif; }
-  .font-geometric  { --font-display: 'Josefin Sans', sans-serif;   --font-body: 'Josefin Sans', sans-serif; }
-  .font-japanese   { --font-display: 'Noto Serif JP', serif;       --font-body: 'Noto Serif JP', serif; }
-  .font-roman      { --font-display: 'Cinzel', serif;              --font-body: 'EB Garamond', serif; }
-  .font-rajdhani   { --font-display: 'Rajdhani', sans-serif;       --font-body: 'Rajdhani', sans-serif; }
-  .font-syne       { --font-display: 'Syne', sans-serif;           --font-body: 'Syne', sans-serif; }
-  .font-garamond   { --font-display: 'EB Garamond', serif;         --font-body: 'EB Garamond', serif; }
-  .font-outfit     { --font-display: 'Outfit', sans-serif;         --font-body: 'Outfit', sans-serif; }
 
   .theme-neon {
     --bg: #050510;
@@ -55,12 +40,9 @@
     --beat: #00ffcc;
     --text: #e0f8f0;
     --text-muted: #406060;
-    --pendulum: #00ffcc;
     --glow: rgba(0,255,204,0.35);
-    --tick-line: #00ffcc;
     --btn-bg: #0d1a25;
     --btn-hover: #1a2a35;
-    --theme-name: "NEON";
   }
 
   .theme-sakura {
@@ -72,12 +54,9 @@
     --beat: #d4607a;
     --text: #3a2030;
     --text-muted: #b09090;
-    --pendulum: #d4607a;
     --glow: rgba(212,96,122,0.2);
-    --tick-line: #d4607a;
     --btn-bg: #fce8e4;
     --btn-hover: #f8d8d4;
-    --theme-name: "SAKURA";
   }
 
   .theme-slate {
@@ -89,12 +68,9 @@
     --beat: #7cb9e8;
     --text: #dce8f8;
     --text-muted: #5a7090;
-    --pendulum: #7cb9e8;
     --glow: rgba(124,185,232,0.3);
-    --tick-line: #7cb9e8;
     --btn-bg: #2e3a52;
     --btn-hover: #3a4860;
-    --theme-name: "SLATE";
   }
 
   .theme-ember {
@@ -106,12 +82,9 @@
     --beat: #ff6b2b;
     --text: #ffe8d0;
     --text-muted: #7a4a30;
-    --pendulum: #ff6b2b;
     --glow: rgba(255,107,43,0.35);
-    --tick-line: #ff6b2b;
     --btn-bg: #2a1808;
     --btn-hover: #3a2010;
-    --theme-name: "EMBER";
   }
 
   .theme-forest {
@@ -123,12 +96,9 @@
     --beat: #5ec860;
     --text: #d8f0d8;
     --text-muted: #4a7050;
-    --pendulum: #5ec860;
     --glow: rgba(94,200,96,0.3);
-    --tick-line: #5ec860;
     --btn-bg: #101e10;
     --btn-hover: #1a2a1a;
-    --theme-name: "FOREST";
   }
 
   .theme-kintsugi {
@@ -140,12 +110,9 @@
     --beat: #c9a84c;
     --text: #ede0c8;
     --text-muted: #7a6848;
-    --pendulum: #c9a84c;
     --glow: rgba(201,168,76,0.35);
-    --tick-line: #c9a84c;
     --btn-bg: #2a2018;
     --btn-hover: #3a2e20;
-    --theme-name: "KINTSUGI";
   }
 
   .theme-midnight {
@@ -157,12 +124,9 @@
     --beat: #818cf8;
     --text: #e0e4ff;
     --text-muted: #4a5080;
-    --pendulum: #818cf8;
     --glow: rgba(129,140,248,0.35);
-    --tick-line: #818cf8;
     --btn-bg: #12142a;
     --btn-hover: #1e2240;
-    --theme-name: "MIDNIGHT";
   }
 
   .theme-rose {
@@ -174,12 +138,9 @@
     --beat: #fb7185;
     --text: #ffe4e6;
     --text-muted: #7a3045;
-    --pendulum: #fb7185;
     --glow: rgba(251,113,133,0.35);
-    --tick-line: #fb7185;
     --btn-bg: #2a1020;
     --btn-hover: #3a1a2c;
-    --theme-name: "ROSE";
   }
 
   .theme-arctic {
@@ -191,12 +152,9 @@
     --beat: #0ea5e9;
     --text: #0c2340;
     --text-muted: #6a90b0;
-    --pendulum: #0ea5e9;
     --glow: rgba(14,165,233,0.25);
-    --tick-line: #0ea5e9;
     --btn-bg: #e0eef8;
     --btn-hover: #cce0f0;
-    --theme-name: "ARCTIC";
   }
 
   body {
@@ -296,14 +254,6 @@
     transition: background 0.2s, border-color 0.2s, color 0.2s;
     white-space: nowrap;
   }
-  .theme-label {
-    font-size: 11px;
-    letter-spacing: 4px;
-    color: var(--accent);
-    margin-top: 4px;
-    transition: color 0.5s;
-  }
-
   .lang-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--btn-hover); }
   .themes {
     display: flex;
@@ -331,7 +281,6 @@
     filter: brightness(1.4);
   }
 
-  /* Pendulum Stage */
   .stage {
     width: 100%;
     background: var(--surface);
@@ -352,151 +301,6 @@
       0 4px 24px rgba(0,0,0,0.5),
       0 1px 0 rgba(255,255,255,0.06);
   }
-  .stage::before {
-    display: none;
-  }
-
-  /* Tick marks */
-  .tick-ruler {
-    width: 100%;
-    height: 32px;
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-  }
-  .tick-ruler svg {
-    width: 100%;
-    height: 100%;
-  }
-
-  /* Pendulum — straight rod, rooted at base */
-  .pendulum {
-    width: 4px;
-    height: 65px;
-    background: linear-gradient(to right, var(--border), var(--accent2), var(--accent), var(--accent2), var(--border));
-    transform-origin: bottom center;
-    position: absolute;
-    bottom: 10px;
-    top: auto;
-    border-radius: 2px;
-    box-shadow: 0 0 6px var(--glow);
-    transition: background 0.5s, box-shadow 0.5s;
-  }
-  .pendulum.swinging {
-    animation: swing var(--swing-duration, 1s) ease-in-out infinite;
-  }
-
-  /* ── Weight marker (sliding block on rod) ── */
-  .bob {
-    position: absolute;
-    top: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 22px;
-    height: 10px;
-    border-radius: 3px;
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    box-shadow: 0 0 10px var(--glow), 0 2px 6px rgba(0,0,0,0.5);
-    transition: background 0.5s, box-shadow 0.5s, width 0.3s, height 0.3s, border-radius 0.3s;
-  }
-
-  /* ── Diamond bob ── */
-  .pend-diamond .bob {
-    width: 22px; height: 22px;
-    border-radius: 3px;
-    transform: translateX(-50%) rotate(45deg);
-    top: 36px;
-  }
-
-  /* ── Orb bob ── */
-  .pend-orb .bob {
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, var(--accent2), var(--accent) 60%, rgba(0,0,0,0.3));
-    box-shadow: 0 0 16px 4px var(--glow), 0 0 40px 8px var(--glow), inset 0 3px 6px rgba(255,255,255,0.2);
-    top: 28px;
-    height: 32px;
-  }
-
-  /* ── Flame bob ── */
-  .pend-flame .bob {
-    width: 20px; height: 28px;
-    border-radius: 50% 50% 30% 30% / 60% 60% 40% 40%;
-    background: radial-gradient(ellipse at 50% 80%, var(--accent2) 0%, var(--accent) 50%, rgba(0,0,0,0.2) 100%);
-    box-shadow: 0 0 14px 4px var(--glow), 0 0 28px 8px var(--glow);
-    top: 28px;
-    animation: flicker 0.6s ease-in-out infinite alternate;
-  }
-  @keyframes flicker {
-    0%   { transform: translateX(-50%) scaleX(1)   skewX(0deg);  opacity: 1; }
-    50%  { transform: translateX(-50%) scaleX(0.88) skewX(4deg); opacity: 0.9; }
-    100% { transform: translateX(-50%) scaleX(1.06) skewX(-3deg); opacity: 1; }
-  }
-
-  /* ── Arrow bob ── */
-  .pend-arrow .bob {
-    width: 26px; height: 26px;
-    background: linear-gradient(160deg, var(--accent2), var(--accent));
-    clip-path: polygon(50% 0%, 100% 100%, 50% 75%, 0% 100%);
-    border-radius: 0;
-    box-shadow: none;
-    filter: drop-shadow(0 0 8px var(--accent)) drop-shadow(0 0 14px var(--glow));
-    top: 30px;
-  }
-
-  /* ── Hexagon bob ── */
-  .pend-hex .bob {
-    width: 28px; height: 28px;
-    background: var(--accent);
-    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    border-radius: 0;
-    box-shadow: none;
-    filter: drop-shadow(0 0 8px var(--accent)) drop-shadow(0 0 16px var(--glow));
-    top: 30px;
-  }
-
-  /* ── Minimal bob ── */
-  .pend-minimal {
-    width: 2px;
-    background: linear-gradient(to top, transparent, var(--accent));
-  }
-  .pend-minimal .bob {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    top: 50px;
-    box-shadow: 0 0 10px var(--glow);
-  }
-
-  /* ── Ghost bob ── */
-  .pend-ghost .bob {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: transparent;
-    border: 2px solid var(--accent);
-    box-shadow: 0 0 20px var(--glow), inset 0 0 12px var(--glow);
-    top: 30px;
-  }
-
-  /* Base pivot (foot of metronome) */
-  .pivot {
-    width: 20px; height: 8px;
-    border-radius: 4px;
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    box-shadow: 0 0 12px var(--glow);
-    position: absolute;
-    bottom: -4px; left: 50%;
-    transform: translateX(-50%);
-    transition: background 0.5s, box-shadow 0.5s;
-    z-index: 2;
-  }
-
-  @keyframes swing {
-    0%   { transform: rotate(-20deg); }
-    50%  { transform: rotate(20deg); }
-    100% { transform: rotate(-20deg); }
-  }
-
   /* Beat dots */
   .beats {
     display: flex;
@@ -737,8 +541,8 @@
     justify-content: center;
   }
   .btn.play:hover { filter: brightness(1.1); transform: none; }
-  .btn.play.stop-icon { font-size: 22px; }
   .btn.play:active { transform: none; filter: brightness(0.95); }
+  .btn svg { display: block; }
 
   /* Time sig dropdown */
   .time-sig-wrap {
@@ -878,9 +682,6 @@
 
     .stage { padding: 20px 14px 18px; gap: 16px; border-radius: 18px; }
 
-    .pendulum-wrap { height: 80px; max-height: 100px; }
-    .pendulum { height: 65px; }
-
     /* Nudge row — tighter on small screens */
     .row { gap: 4px; }
     .btn { padding: 0 6px; font-size: 11px; }
@@ -972,9 +773,6 @@
       justify-content: center;
     }
 
-    /* Pendulum hidden in landscape to save space */
-    .pendulum-wrap { display: none; }
-
     /* Screen takes left portion */
     .screen {
       flex: 1;
@@ -988,7 +786,6 @@
     /* Controls on right side */
     .play-tap-row { flex-direction: column; gap: 6px; width: auto; min-width: 80px; }
     .btn.play { width: 80px; height: 36px; min-height: 36px; font-size: 18px; flex: none; }
-    .btn.play.stop-icon { font-size: 20px; }
     .tap-btn { width: 80px; min-width: 80px; max-width: 80px; height: 36px; min-height: 36px; font-size: 11px; padding: 0; }
 
     /* Slider, nudge, volume, time sig wrap below stage */
@@ -1124,6 +921,14 @@
     border-bottom: 1px solid var(--border);
     margin-bottom: -8px;
   }
+  .dropdown-version {
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
 
   /* Click-outside backdrop (invisible) */
   .dropdown-backdrop {
@@ -1152,8 +957,7 @@
     transition: background 0.2s, border-color 0.2s, transform 0.15s;
   }
   .theme-card:hover { background: var(--btn-hover); border-color: var(--accent); transform: translateX(3px); }
-  .theme-card.active { border-color: var(--accent); background: var(--btn-hover); }
-  .theme-card.active .card-check { opacity: 1; }
+  .theme-card.active { border-color: var(--accent); background: var(--btn-hover); box-shadow: inset 3px 0 0 var(--accent); }
   .card-swatch {
     width: 28px; height: 28px;
     border-radius: 50%;
@@ -1182,10 +986,6 @@
     margin-top: 2px;
     letter-spacing: 0.5px;
   }
-  .card-check {
-    display: none;
-  }
-
   /* ── Accordion sections ── */
   .drawer-section { display: flex; flex-direction: column; }
   .drawer-section .small-label { margin-bottom: 2px; }
@@ -1248,8 +1048,7 @@
     transition: background 0.2s, border-color 0.2s, transform 0.15s;
   }
   .sound-card:hover { background: var(--btn-hover); border-color: var(--accent); transform: translateX(3px); }
-  .sound-card.active { border-color: var(--accent); background: var(--btn-hover); }
-  .sound-card.active .card-check { opacity: 1; }
+  .sound-card.active { border-color: var(--accent); background: var(--btn-hover); box-shadow: inset 3px 0 0 var(--accent); }
   .sound-icon {
     font-size: 18px;
     width: 28px;
@@ -1306,25 +1105,6 @@
     box-shadow: 0 1px 4px rgba(0,0,0,0.4);
   }
   .toggle input:checked ~ .toggle-thumb { transform: translateX(20px); }
-
-  /* Pendulum hide/show */
-  .pendulum-wrap {
-    width: 100%;
-    height: 80px;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    overflow: hidden;
-    transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.35s;
-    max-height: 100px;
-    opacity: 1;
-  }
-  .pendulum-wrap.hidden {
-    max-height: 0;
-    opacity: 0;
-    pointer-events: none;
-  }
 </style>
 </head>
 <body>
@@ -1353,15 +1133,15 @@
     </div>
     <div class="section-body">
       <div class="sound-cards" id="soundCards">
-        <div class="sound-card active" data-sound="blip"><div class="card-info"><div class="card-name">BLIP</div><div class="card-desc">Retro 8-bit blip</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="click"><div class="card-info"><div class="card-name">CLICK</div><div class="card-desc">Classic metronome click</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="beep"><div class="card-info"><div class="card-name">BEEP</div><div class="card-desc">Electronic sine tone</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="wood"><div class="card-info"><div class="card-name">WOOD</div><div class="card-desc">Warm woodblock thud</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="hihat"><div class="card-info"><div class="card-name">HI-HAT</div><div class="card-desc">Crisp percussive tick</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="rimshot"><div class="card-info"><div class="card-name">RIMSHOT</div><div class="card-desc">Sharp snare rim tap</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="clave"><div class="card-info"><div class="card-name">CLAVE</div><div class="card-desc">Hollow wooden stick tap</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="bell"><div class="card-info"><div class="card-name">BELL</div><div class="card-desc">Soft chime ring</div></div><div class="card-check">&#10003;</div></div>
-        <div class="sound-card" data-sound="ping"><div class="card-info"><div class="card-name">PING</div><div class="card-desc">Pure digital ping</div></div><div class="card-check">&#10003;</div></div>
+        <div class="sound-card active" data-sound="blip"><div class="card-info"><div class="card-name">BLIP</div><div class="card-desc">Retro 8-bit blip</div></div></div>
+        <div class="sound-card" data-sound="click"><div class="card-info"><div class="card-name">CLICK</div><div class="card-desc">Classic metronome click</div></div></div>
+        <div class="sound-card" data-sound="beep"><div class="card-info"><div class="card-name">BEEP</div><div class="card-desc">Electronic sine tone</div></div></div>
+        <div class="sound-card" data-sound="wood"><div class="card-info"><div class="card-name">WOOD</div><div class="card-desc">Warm woodblock thud</div></div></div>
+        <div class="sound-card" data-sound="hihat"><div class="card-info"><div class="card-name">HI-HAT</div><div class="card-desc">Crisp percussive tick</div></div></div>
+        <div class="sound-card" data-sound="rimshot"><div class="card-info"><div class="card-name">RIMSHOT</div><div class="card-desc">Sharp snare rim tap</div></div></div>
+        <div class="sound-card" data-sound="clave"><div class="card-info"><div class="card-name">CLAVE</div><div class="card-desc">Hollow wooden stick tap</div></div></div>
+        <div class="sound-card" data-sound="bell"><div class="card-info"><div class="card-name">BELL</div><div class="card-desc">Soft chime ring</div></div></div>
+        <div class="sound-card" data-sound="ping"><div class="card-info"><div class="card-name">PING</div><div class="card-desc">Pure digital ping</div></div></div>
       </div>
     </div>
   </div>
@@ -1373,55 +1153,45 @@
     </div>
     <div class="section-body">
       <div class="theme-cards" id="themeCards">
-        <div class="theme-card active" data-theme="" data-name="CLASSICAL">
+        <div class="theme-card active" data-theme="">
           <div class="card-swatch" style="background:#c0c0c0;"></div>
           <div class="card-info"><div class="card-name">CLASSICAL</div><div class="card-desc">Silver on pure black</div></div>
-          <div class="card-check">&#10003;</div>
         </div>
-        <div class="theme-card" data-theme="neon" data-name="NEON">
+        <div class="theme-card" data-theme="neon">
           <div class="card-swatch" style="background:#00ffcc;"></div>
           <div class="card-info"><div class="card-name">NEON</div><div class="card-desc">Electric cyan on deep black</div></div>
-          <div class="card-check">&#10003;</div>
         </div>
-        <div class="theme-card" data-theme="sakura" data-name="SAKURA">
+        <div class="theme-card" data-theme="sakura">
           <div class="card-swatch" style="background:#d4607a;"></div>
           <div class="card-info"><div class="card-name">SAKURA</div><div class="card-desc">Rose pink on soft cream</div></div>
-          <div class="card-check">&#10003;</div>
         </div>
-        <div class="theme-card" data-theme="slate" data-name="SLATE">
+        <div class="theme-card" data-theme="slate">
           <div class="card-swatch" style="background:#7cb9e8;"></div>
           <div class="card-info"><div class="card-name">SLATE</div><div class="card-desc">Steel blue on dark navy</div></div>
-          <div class="card-check">&#10003;</div>
         </div>
-        <div class="theme-card" data-theme="ember" data-name="EMBER">
+        <div class="theme-card" data-theme="ember">
           <div class="card-swatch" style="background:#ff6b2b;"></div>
           <div class="card-info"><div class="card-name">EMBER</div><div class="card-desc">Burning orange on charcoal</div></div>
-          <div class="card-check">&#10003;</div>
         </div>
-        <div class="theme-card" data-theme="forest" data-name="FOREST">
+        <div class="theme-card" data-theme="forest">
           <div class="card-swatch" style="background:#5ec860;"></div>
           <div class="card-info"><div class="card-name">FOREST</div><div class="card-desc">Vivid green on dark earth</div></div>
-          <div class="card-check">&#10003;</div>
         </div>
-        <div class="theme-card" data-theme="kintsugi" data-name="KINTSUGI">
+        <div class="theme-card" data-theme="kintsugi">
           <div class="card-swatch" style="background:#c9a84c;"></div>
           <div class="card-info"><div class="card-name">KINTSUGI</div><div class="card-desc">Gold veins on broken clay</div></div>
-          <div class="card-check">&#10003;</div>
         </div>
-        <div class="theme-card" data-theme="midnight" data-name="MIDNIGHT">
+        <div class="theme-card" data-theme="midnight">
           <div class="card-swatch" style="background:#818cf8;"></div>
           <div class="card-info"><div class="card-name">MIDNIGHT</div><div class="card-desc">Indigo violet on near-black</div></div>
-          <div class="card-check">&#10003;</div>
         </div>
-        <div class="theme-card" data-theme="rose" data-name="ROSE">
+        <div class="theme-card" data-theme="rose">
           <div class="card-swatch" style="background:#fb7185;"></div>
           <div class="card-info"><div class="card-name">ROSE</div><div class="card-desc">Blush pink on deep crimson</div></div>
-          <div class="card-check">&#10003;</div>
         </div>
-        <div class="theme-card" data-theme="arctic" data-name="ARCTIC">
+        <div class="theme-card" data-theme="arctic">
           <div class="card-swatch" style="background:#0ea5e9;"></div>
           <div class="card-info"><div class="card-name">ARCTIC</div><div class="card-desc">Ice blue on crisp white</div></div>
-          <div class="card-check">&#10003;</div>
         </div>
       </div>
     </div>
@@ -1455,7 +1225,7 @@
           <div class="toggle-thumb"></div>
         </label>
       </div>
-      <div class="toggle-row" style="margin-top:8px;" id="watchToggleRow">
+      <div class="toggle-row" style="margin-top:8px;">
         <div class="toggle-info">
           <div class="toggle-label" id="watchVibrateLabel">WATCH VIBRATION</div>
           <div class="toggle-desc" id="watchToggleDesc">Vibrate smart watch on beat</div>
@@ -1469,7 +1239,7 @@
     </div>
   </div>
 
-
+  <div class="dropdown-version" id="dropdownVersion">v0.1.0</div>
 
 </div>
 
@@ -1499,7 +1269,7 @@
 
     <!-- Play + Tap row -->
     <div class="play-tap-row">
-      <button class="btn play" id="playBtn">▶</button>
+      <button class="btn play" id="playBtn"></button>
       <button class="btn tap-btn" id="tapBtn">TAP</button>
     </div>
 
@@ -1516,7 +1286,7 @@
       <button class="btn" id="plus1">+1</button>
       <button class="btn" id="plus5">+5</button>
       <button class="btn" id="plus10">+10</button>
-      <button class="btn vol-btn" id="volumeBtn" title="Volume">🔊</button>
+      <button class="btn vol-btn" id="volumeBtn" title="Volume"></button>
     </div>
 
     <!-- Volume panel (hidden by default) -->
@@ -1560,6 +1330,16 @@
 </div>
 
 <script>
+  // ── Icons (inline SVG, currentColor so they follow theme/button colour) ──
+  const ICONS = {
+    play: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M6 4l14 8-14 8V4z"/></svg>',
+    stop: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>',
+    volMute: '<svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16" y1="9" x2="21" y2="15"/><line x1="21" y1="9" x2="16" y2="15"/></g></svg>',
+    volLow: '<svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><path d="M16 9.5a4 4 0 0 1 0 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    volMid: '<svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><path d="M15.5 8a6 6 0 0 1 0 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    volHigh: '<svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><path d="M15.5 8a6 6 0 0 1 0 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18.5 5a10 10 0 0 1 0 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  };
+
   let bpm = 120;
   let beatsPerBar = 4;
   let playing = false;
@@ -1573,7 +1353,10 @@
   const playBtn = document.getElementById('playBtn');
   const flash = document.getElementById('flash');
   const beatsEl = document.getElementById('beats');
-  const themeLabel = document.getElementById('themeLabel');
+
+  function setPlayIcon(isPlaying) {
+    playBtn.innerHTML = isPlaying ? ICONS.stop : ICONS.play;
+  }
 
   let currentLang = 'en';
 
@@ -1832,9 +1615,8 @@
 
   playBtn.addEventListener('click', () => {
     playing = !playing;
-    const t = translations[currentLang];
-    if (playing) { playBtn.textContent = t.playStop; playBtn.classList.add('stop-icon'); start(); }
-    else { playBtn.textContent = t.playStart; playBtn.classList.remove('stop-icon'); stop(); }
+    setPlayIcon(playing);
+    if (playing) start(); else stop();
   });
 
   bpmSlider.addEventListener('input', () => updateBPM(+bpmSlider.value));
@@ -1890,15 +1672,14 @@
     document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
     card.classList.add('active');
     const theme = card.dataset.theme;
-    const name = card.dataset.name;
     document.body.classList.remove('theme-neon','theme-sakura','theme-slate','theme-ember','theme-forest','theme-kintsugi','theme-midnight','theme-rose','theme-arctic');
     if (theme) document.body.classList.add('theme-' + theme);
-    themeLabel.textContent = name;
   });
 
   // Init
   buildBeats();
   updateBPM(120);
+  setPlayIcon(false);
   document.getElementById('flashToggle').addEventListener('change', e => {
     if (!e.target.checked) flash.classList.remove('pop');
   });
@@ -1913,9 +1694,10 @@
 
   function updateVolIcon() {
     const val = +volumeSlider.value;
-    volumeBtn.textContent = val === 0 ? '🔇' : val < 40 ? '🔈' : val < 75 ? '🔉' : '🔊';
+    volumeBtn.innerHTML = val === 0 ? ICONS.volMute : val < 40 ? ICONS.volLow : val < 75 ? ICONS.volMid : ICONS.volHigh;
     volumeValue.textContent = val + '%';
   }
+  updateVolIcon();
 
   volumeBtn.addEventListener('click', () => {
     const open = volumePanel.classList.toggle('open');
@@ -1980,18 +1762,12 @@
       mainTitle: 'Metronome',
       jaTitle: 'メトロノーム',
       bpmLabel: 'BPM',
-      playStart: '▶',
-      playStop: '■',
       tap: 'TAP',
       timeSigLabel: 'TIME SIGNATURE',
       settingsTitle: 'Settings',
       secDisplay: 'OTHER',
       secTheme: 'COLOUR THEME',
-      secPendStyle: 'PENDULUM STYLE',
       secSound: 'CLICK SOUND',
-      secFont: 'FONT STYLE',
-      pendulumLabel: 'PENDULUM',
-      pendulumDesc: 'Show pendulum visualiser',
       flashLabel: 'FLASH',
       flashDesc: 'Flashing background on beat',
       vibrateLabel: 'VIBRATE',
@@ -2004,17 +1780,12 @@
       mainTitle: 'メトロノーム',
       jaTitle: 'Metronome',
       bpmLabel: 'BPM',
-      playStart: '▶',
-      playStop: '■',
       tap: 'タップ',
       timeSigLabel: '拍子',
       settingsTitle: '設定',
       secDisplay: 'その他',
       secTheme: 'カラーテーマ',
-      secPendStyle: '振り子スタイル',
       secSound: 'クリック音',
-      pendulumLabel: '振り子',
-      pendulumDesc: '振り子を表示する',
       flashLabel: 'フラッシュ',
       flashDesc: '拍ごとに背景を点滅',
       vibrateLabel: 'バイブ',
@@ -2030,8 +1801,6 @@
     document.getElementById('mainTitle').textContent = t.mainTitle;
     document.getElementById('jaTitle').textContent = t.jaTitle;
         document.querySelector('.bpm-label').textContent = t.bpmLabel;
-    if (!playing) { playBtn.textContent = t.playStart; playBtn.classList.remove('stop-icon'); }
-    else { playBtn.textContent = t.playStop; playBtn.classList.add('stop-icon'); }
     document.getElementById('tapBtn').textContent = t.tap;
     document.getElementById('timeSigLabel').textContent = t.timeSigLabel;
     document.querySelector('.dropdown-title').textContent = t.settingsTitle;
@@ -2100,9 +1869,6 @@
     tuneBtn.addEventListener('touchcancel', stop440);
   })();
 
-  // Init
-  buildBeats();
-  updateBPM(120);
   // via the Web Bluetooth API on every metronome beat.
   //
   // How it works:

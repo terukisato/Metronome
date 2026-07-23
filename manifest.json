@@ -1,7 +1,8 @@
 {
   "name": "Metronome – メトロノーム",
   "short_name": "Metronome",
-  "description": "A feature-rich metronome with themes, pendulum styles and Japanese language support",
+  "version": "0.1.0",
+  "description": "A feature-rich metronome with themes and Japanese language support",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "any",
