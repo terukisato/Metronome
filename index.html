@@ -997,10 +997,12 @@
     .card-desc { font-size: 10px; }
   }
 
-  /* ── Landscape phone: pedal splits into two columns ── */
-  @media (orientation: landscape) and (max-height: 500px) {
-    body { justify-content: flex-start; padding: 8px 60px 8px 12px; }
-    .app { width: 100%; max-width: 760px; gap: 8px; padding-top: 0; }
+  /* ── Horizontal pedal: the default wherever there's room (desktop, tablet,
+     a phone on its side) — two columns, with the screen, fader, presets and
+     TAP on the left, and the knobs, name and footswitches on the right. An
+     upright phone is too narrow, so it keeps the vertical pedal. ── */
+  @media (min-width: 720px), (orientation: landscape) and (max-height: 500px) {
+    .app { width: 100%; max-width: 760px; }
     .stage {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1008,17 +1010,17 @@
         "screen  ts"
         "fader   stomp"
         "presets stomp";
-      column-gap: 22px;
-      row-gap: 10px;
-      padding: 16px 22px 18px;
+      column-gap: 28px;
+      row-gap: 16px;
+      padding: 22px 24px 24px;
     }
     .screen { grid-area: screen; }
     .fader { grid-area: fader; }
     .ts { grid-area: ts; }
     .switch-row { grid-area: presets; }
     /* The name shares the footswitch column: name at the top, stomps at the bottom */
-    .stomps { grid-area: stomp; align-self: end; align-items: center; margin-top: 0; gap: 64px; }
-    .brand { grid-area: stomp; align-self: start; margin-top: 6px; }
+    .stomps { grid-area: stomp; align-self: end; align-items: center; margin-top: 0; gap: 80px; }
+    .brand { grid-area: stomp; align-self: start; margin-top: 10px; }
     /* Artwork moves to the right-hand column (knobs and footswitches), full
        height, fading in from its top and left edges */
     .stage-art {
@@ -1031,6 +1033,16 @@
       mask-image: linear-gradient(to bottom, transparent 0%, #000 24%), linear-gradient(to right, transparent 0%, #000 12%);
       mask-composite: intersect;
     }
+  }
+
+  /* ── Landscape phone: the horizontal pedal, tightened to fit a short screen,
+     with the settings button in the right-hand gutter ── */
+  @media (orientation: landscape) and (max-height: 500px) {
+    body { justify-content: flex-start; padding: 8px 60px 8px 12px; }
+    .app { gap: 8px; padding-top: 0; }
+    .stage { column-gap: 22px; row-gap: 10px; padding: 16px 22px 18px; }
+    .stomps { gap: 64px; }
+    .brand { margin-top: 6px; }
     .bpm-number { font-size: 44px; }
     .screen-inner { padding: 10px 12px 8px; gap: 4px; }
 

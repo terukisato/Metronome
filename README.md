@@ -3,6 +3,9 @@
 A browser-based metronome built with HTML, CSS, and JavaScript. No frameworks, no external dependencies. Works offline and installs as a PWA on Android.
 
 The interface is a minimal floor pedal named **SOUZU** (printed above the footswitches in thin, widely spaced capitals, in the style of the Ibanez Pentatone wordmark) and inspired by the Neural DSP Quad Cortex: a matte powder-coated enclosure, a clean display (tempo, beat dots, time signature and a status row), a slim fader, and black brushed-metal controls. BEATS and NOTE are knobs with a printed tick scale and a pointer line; ACCENT, the presets and TAP are push switches whose thin ring lights blue with a soft glow when they're on; A440 and START are black metallic stomp switches. The bottom half of the enclosure is printed in white with a minimal Japanese-print scene: a clump of bamboo with brush-stroke leaves, soft leaf shadows and a few ink splashes, with a large grainy moon rising off the right-hand edge. Two alternative artworks are included (`bamboo-line.svg`, an outline-drawn bamboo forest, and `bamboo.svg`, a suisaiga watercolour forest); swap the file name in the `.stage-art` rule to use one.
+
+The pedal is horizontal by default: the screen, fader, presets and TAP on the left, and the knobs, the SOUZU name and the footswitches on the right. On a phone held upright, where there isn't room for two columns, it switches to a vertical pedal; turn the phone sideways to get the horizontal one.
+
 ---
 
 ## Controls
