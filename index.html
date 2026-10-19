@@ -10,8 +10,18 @@
 <meta name="apple-mobile-web-app-title" content="Metronome">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/x-icon" href="/icon-192.png">
 <title>Metronome</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>
+  // Apply saved theme before first paint to avoid a flash of the wrong theme.
+  (function() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('metronome-settings-v1') || '{}');
+      if (saved.theme === 'light') document.documentElement.dataset.theme = 'light';
+    } catch {}
+  })();
+</script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -27,134 +37,29 @@
     --glow: rgba(192,192,192,0.25);
     --btn-bg: #1a1a1a;
     --btn-hover: #242424;
-    --font-display: 'Rajdhani', sans-serif;
-    --font-body: 'DM Mono', monospace;
+    --font-display: 'Jost', sans-serif;
+    --font-body: 'Jost', sans-serif;
+    /* Enclosure finish shared by the pedal and the settings panel: flat
+       colour with a faint, even grain */
+    --enclosure-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    /* Satin brushed black metal for switch caps, knobs and toggle thumbs */
+    --black-metal:
+      radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(0,0,0,0.18) 100%),
+      conic-gradient(from 20deg, #282a2e, #222428, #2b2d31, #212327, #282a2e, #232529, #2a2c30, #222428, #282a2e);
   }
 
-  .theme-neon {
-    --bg: #050510;
-    --surface: #0d0d20;
-    --border: #1a1a40;
-    --accent: #00ffcc;
-    --accent2: #ff00aa;
-    --beat: #00ffcc;
-    --text: #e0f8f0;
-    --text-muted: #406060;
-    --glow: rgba(0,255,204,0.35);
-    --btn-bg: #0d1a25;
-    --btn-hover: #1a2a35;
-  }
-
-  .theme-sakura {
-    --bg: #fef6f0;
-    --surface: #fff8f5;
-    --border: #f0d8d0;
-    --accent: #d4607a;
-    --accent2: #f09080;
-    --beat: #d4607a;
-    --text: #3a2030;
-    --text-muted: #b09090;
-    --glow: rgba(212,96,122,0.2);
-    --btn-bg: #fce8e4;
-    --btn-hover: #f8d8d4;
-  }
-
-  .theme-slate {
-    --bg: #1c2333;
-    --surface: #242d42;
-    --border: #3a4560;
-    --accent: #7cb9e8;
-    --accent2: #a8d8ff;
-    --beat: #7cb9e8;
-    --text: #dce8f8;
-    --text-muted: #5a7090;
-    --glow: rgba(124,185,232,0.3);
-    --btn-bg: #2e3a52;
-    --btn-hover: #3a4860;
-  }
-
-  .theme-ember {
-    --bg: #120800;
-    --surface: #1e1000;
-    --border: #3a2010;
-    --accent: #ff6b2b;
-    --accent2: #ffaa44;
-    --beat: #ff6b2b;
-    --text: #ffe8d0;
-    --text-muted: #7a4a30;
-    --glow: rgba(255,107,43,0.35);
-    --btn-bg: #2a1808;
-    --btn-hover: #3a2010;
-  }
-
-  .theme-forest {
-    --bg: #080e08;
-    --surface: #101810;
-    --border: #1e3020;
-    --accent: #5ec860;
-    --accent2: #a0e890;
-    --beat: #5ec860;
-    --text: #d8f0d8;
-    --text-muted: #4a7050;
-    --glow: rgba(94,200,96,0.3);
-    --btn-bg: #101e10;
-    --btn-hover: #1a2a1a;
-  }
-
-  .theme-kintsugi {
-    --bg: #1a1410;
-    --surface: #231d17;
-    --border: #3d3020;
-    --accent: #c9a84c;
-    --accent2: #f0d080;
-    --beat: #c9a84c;
-    --text: #ede0c8;
-    --text-muted: #7a6848;
-    --glow: rgba(201,168,76,0.35);
-    --btn-bg: #2a2018;
-    --btn-hover: #3a2e20;
-  }
-
-  .theme-midnight {
-    --bg: #07080f;
-    --surface: #0e1020;
-    --border: #1e2240;
-    --accent: #818cf8;
-    --accent2: #c4b5fd;
-    --beat: #818cf8;
-    --text: #e0e4ff;
-    --text-muted: #4a5080;
-    --glow: rgba(129,140,248,0.35);
-    --btn-bg: #12142a;
-    --btn-hover: #1e2240;
-  }
-
-  .theme-rose {
-    --bg: #1a0810;
-    --surface: #26101a;
-    --border: #4a1e30;
-    --accent: #fb7185;
-    --accent2: #fda4af;
-    --beat: #fb7185;
-    --text: #ffe4e6;
-    --text-muted: #7a3045;
-    --glow: rgba(251,113,133,0.35);
-    --btn-bg: #2a1020;
-    --btn-hover: #3a1a2c;
-  }
-
-  .theme-arctic {
-    --bg: #f0f6ff;
+  :root[data-theme="light"] {
+    --bg: #f2f2f0;
     --surface: #ffffff;
-    --border: #c8ddf0;
-    --accent: #0ea5e9;
-    --accent2: #38bdf8;
-    --beat: #0ea5e9;
-    --text: #0c2340;
-    --text-muted: #6a90b0;
-    --glow: rgba(14,165,233,0.25);
-    --btn-bg: #e0eef8;
-    --btn-hover: #cce0f0;
+    --border: #dcdcd8;
+    --accent: #555555;
+    --accent2: #222222;
+    --beat: #555555;
+    --text: #1a1a1a;
+    --text-muted: #8a8a86;
+    --glow: rgba(0,0,0,0.15);
+    --btn-bg: #ececea;
+    --btn-hover: #e0e0dc;
   }
 
   body {
@@ -185,401 +90,341 @@
     align-items: stretch;
     gap: 32px;
     box-sizing: border-box;
+    padding-top: 48px; /* clears the fixed settings button */
   }
 
-  /* Header — fixed height rows, nothing shifts between languages */
-  .header {
-    text-align: center;
+
+
+  /* ── Pedal enclosure: matte powder-coated metal, modern floor-modeller look ── */
+  .stage {
+    position: relative;
     width: 100%;
-    max-width: 100%;
+    border-radius: 10px;
+    padding: 20px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    color: #c9ccd0;
+    /* Flat colour with a faint, even grain: no brushed lines or sheen */
+    background-color: #292b2f;
+    background-image: var(--enclosure-grain);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      inset 0 0 0 1px #141619,
+      inset 0 -2px 4px rgba(0,0,0,0.4),
+      0 16px 36px rgba(0,0,0,0.6);
+  }
+  /* Bamboo forest printed in white suisaiga (watercolour) across the bottom
+     half of the enclosure, behind the controls. isolation on .stage keeps the
+     z-index:-1 artwork above the enclosure's own background. */
+  .stage { isolation: isolate; }
+  .stage-art {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 54%;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: 0 0 10px 10px;
+    background: url("bamboo-moon.svg") center bottom / cover no-repeat; /* other versions: bamboo-line.svg (outline), bamboo.svg (watercolour) */
+    /* Fade out toward the middle of the pedal */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 24%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 24%);
+  }
+  /* Printed labels on the panel */
+  .engrave { color: #a9aeb5; letter-spacing: 2px; font-size: 9px; }
+
+
+  /* ── Screen: large touchscreen, thin black bezel, crisp UI ── */
+  .screen {
+    padding: 4px;
+    background: #0a0b0c;
+    box-shadow: 0 0 0 1px #121417, inset 0 0 0 1px rgba(255,255,255,0.05), 0 2px 6px rgba(0,0,0,0.5);
+  }
+  .screen-inner {
+    position: relative;
     overflow: hidden;
+    padding: 10px 16px 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 6px;
-    flex-shrink: 0;
-    padding: 0;
+    gap: 4px;
+    background: linear-gradient(180deg, #14171b 0%, #0c0e10 100%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
   }
-  .japanese-title {
-    font-size: 11px;
-    letter-spacing: 3px;
-    color: var(--text-muted);
-    margin: 0;
-    padding: 0;
-    line-height: 1;
-    height: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    white-space: nowrap;
-    transition: color 0.5s;
-    align-self: center;
-    max-width: 280px;
-  }
-  .title {
-    font-family: var(--font-display);
-    font-size: 34px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--text);
-    line-height: 1;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    align-self: center;
-    max-width: 280px;
-  }
-  .lang-btn {
-    margin: 0;
+  /* Beat dots are buttons: tap one to accent that beat. Each button is a
+     ~28px tap target (shrinking when there are many beats); the visible dot
+     is its ::before. Accented beats get a blue ring, and fill blue when they
+     play. While the ACCENT switch is off, the rings are dimmed. */
+  .beats { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 28px; }
+  .beat-dot {
+    flex: 0 1 28px;
+    min-width: 14px;
     height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    align-self: center;
-    background: var(--btn-bg);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    font-family: var(--font-body);
-    font-size: 10px;
-    letter-spacing: 2px;
-    padding: 0 14px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s, color 0.2s;
-    white-space: nowrap;
-  }
-  .lang-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--btn-hover); }
-  .themes {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
     justify-content: center;
   }
-  .theme-btn {
-    width: 32px;
-    height: 32px;
+  .beat-dot::before {
+    content: '';
+    width: 12px; height: 12px;
     border-radius: 50%;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: transform 0.2s, border-color 0.2s;
-    position: relative;
+    background: #262a30;
+    transition: background 0.06s, box-shadow 0.06s;
   }
-  .theme-btn:hover { transform: scale(1.15); }
-  .theme-btn.active { border-color: var(--text); transform: scale(1.15); }
-  .theme-btn::after {
+  .beats.compact .beat-dot::before { width: 10px; height: 10px; }
+  .beat-dot:hover::before { background: #343941; }
+  .beat-dot.accent-dot::before { width: 14px; height: 14px; box-shadow: inset 0 0 0 2px #4da3ff; }
+  .beats.compact .beat-dot.accent-dot::before { width: 12px; height: 12px; }
+  .beats.accent-off .beat-dot.accent-dot::before { box-shadow: inset 0 0 0 2px #34465a; }
+  .beat-dot.active::before { background: #eef2f6; }
+  .beat-dot.accent-dot.active::before { background: #4da3ff; box-shadow: none; }
+  .beats.accent-off .beat-dot.accent-dot.active::before { background: #eef2f6; }
+  .beat-dot:focus-visible { outline: 2px solid #4da3ff; outline-offset: -2px; }
+  .bpm-display { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .bpm-number {
+    font-family: var(--font-display);
+    font-size: 56px;
+    font-weight: 500;
+    line-height: 1;
+    color: #f4f6f8;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .bpm-label { font-size: 10px; letter-spacing: 5px; color: #7d8590; }
+  .ts-display {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    line-height: 1;
+    margin-top: 5px;
+    padding: 3px 12px;
+    border-radius: 6px;
+    color: #4da3ff;
+    background: rgba(77,163,255,0.1);
+  }
+  /* Status row along the bottom of the screen: preset + sound | bar + timer */
+  .screen-status {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2px;
+    padding-top: 4px;
+    font: 500 11px/18px var(--font-body);
+    letter-spacing: 1px;
+    color: #c9ced4;
+    font-variant-numeric: tabular-nums;
+  }
+  .status-group { display: flex; gap: 14px; }
+  .status-label, .status-dim { color: #7d8590; }
+
+  /* ── Fader: EQ-pedal style (after the Ibanez Pentatone) ──
+     A deep, square-cut black channel with an even ladder of short ticks
+     above it, and a short dark cap with a grey index line in its centre.
+     The 11px insets are half the cap's length, so the scale lines up with
+     the index line. */
+  .fader { display: flex; flex-direction: column; gap: 3px; }
+  .fader-scale { position: relative; height: 12px; letter-spacing: 0; }
+  .fader-scale span { position: absolute; top: 0; left: calc(11px + (100% - 22px) * var(--p)); transform: translateX(-50%); }
+  /* Each tick is its own element so the browser snaps it to a whole pixel */
+  .fader-ticks { position: relative; height: 6px; margin: 0 11px; }
+  .fader-ticks span { position: absolute; bottom: 0; left: calc(100% * var(--p)); width: 1px; height: 6px; background: rgba(169,174,181,0.45); }
+  .stage input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 30px; margin: 0; background: transparent; cursor: grab; }
+  .stage input[type=range]::-webkit-slider-runnable-track {
+    height: 14px;
+    border-radius: 1px;
+    background: #030304;
+    box-shadow: inset 0 3px 4px #000, inset 0 -1px 0 rgba(255,255,255,0.05), 0 1px 0 rgba(255,255,255,0.08);
+  }
+  .stage input[type=range]::-moz-range-track { height: 14px; border-radius: 1px; background: #030304; }
+  .stage input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px; height: 28px;
+    margin-top: -7px;
+    border-radius: 2px;
+    border: 1px solid #000;
+    background:
+      linear-gradient(#9da2a8, #9da2a8) center / 2px 14px no-repeat,
+      linear-gradient(180deg, #3a3c40 0%, #1d1e21 28%, #141517 72%, #2a2c30 100%);
+    box-shadow: 0 3px 4px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+  .stage input[type=range]::-moz-range-thumb {
+    width: 20px; height: 26px;
+    border-radius: 2px;
+    border: 1px solid #000;
+    background:
+      linear-gradient(#9da2a8, #9da2a8) center / 2px 14px no-repeat,
+      linear-gradient(180deg, #3a3c40 0%, #1d1e21 28%, #141517 72%, #2a2c30 100%);
+  }
+  .stage input[type=range]:active { cursor: grabbing; }
+
+  /* ── Black-metal switches with thin, flat status rings ──
+     --ring sets the colour a switch's ring turns when it's on (no glow). */
+  .fsw-unit { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+  .fsw {
+    --size: 46px;
+    --ring: #4da3ff; /* blue light for every switch */
+    position: relative;
+    width: var(--size);
+    height: var(--size);
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+  }
+  .fsw-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: #17191c;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.9), 0 1px 0 rgba(255,255,255,0.07);
+  }
+  .fsw-ring::before {
     content: '';
     position: absolute;
     inset: 3px;
     border-radius: 50%;
-    background: inherit;
-    filter: brightness(1.4);
+    border: 2px solid #33373c;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
-
-  .stage {
-    width: 100%;
-    background: var(--surface);
-    border: 3px solid var(--border);
-    border-radius: 24px;
-    padding: 32px 24px 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-    position: relative;
-    transition: background 0.5s, border-color 0.5s;
-    box-shadow:
-      inset 0 2px 0 rgba(255,255,255,0.14),
-      inset 2px 0 0 rgba(255,255,255,0.06),
-      inset -2px 0 0 rgba(255,255,255,0.06),
-      inset 0 -1px 0 rgba(255,255,255,0.02),
-      0 4px 24px rgba(0,0,0,0.5),
-      0 1px 0 rgba(255,255,255,0.06);
-  }
-  /* Beat dots */
-  .beats {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 8px;
-    justify-content: center;
-    width: 100%;
-    padding: 3px 0;
-  }
-  .beat-dot {
-    width: 14px; height: 14px;
+  .fsw-cap {
+    position: absolute;
+    inset: 9px;
     border-radius: 50%;
-    border: 2px solid var(--border);
-    flex-shrink: 1;
-    min-width: 6px;
-    transition: background 0.08s, border-color 0.5s, box-shadow 0.08s;
-  }
-  .beats.compact {
-    gap: 5px;
-  }
-  .beats.compact .beat-dot {
-    width: 10px; height: 10px;
-    min-width: 10px;
-  }
-  .beat-dot.active {
-    background: var(--beat);
-    border-color: var(--beat);
-  }
-  .beat-dot.accent-dot {
-    border-color: var(--accent);
-  }
-  .beat-dot.accent-dot.active {
-    background: var(--accent2);
-    border-color: var(--accent2);
-    transform: scale(1.3);
-  }
-
-  /* ── Screen display ── */
-  .screen {
-    width: 100%;
-    background: #080808;
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    padding: 4px;
-    box-sizing: border-box;
-    position: relative;
-    overflow: visible;
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.08),
-      inset 1px 0 0 rgba(255,255,255,0.04),
-      inset -1px 0 0 rgba(255,255,255,0.04),
-      0 1px 3px rgba(0,0,0,0.6);
-  }
-  /* Subtle scanline overlay */
-  .screen::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      to bottom,
-      transparent 0px,
-      transparent 3px,
-      rgba(0,0,0,0.08) 3px,
-      rgba(0,0,0,0.08) 4px
-    );
-    pointer-events: none;
-    border-radius: 10px;
-  }
-  /* Inner screen bezel */
-  .screen-inner {
-    background: #0c0c0c;
-    border-radius: 8px;
-    border: 1px solid #1a1a1a;
-    padding: 28px 24px 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    position: relative;
-  }
-  /* Corner screws */
-  .screen::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 12px;
-    background:
-      radial-gradient(circle 3px at 10px 10px, #222 70%, transparent 70%),
-      radial-gradient(circle 3px at calc(100% - 10px) 10px, #222 70%, transparent 70%),
-      radial-gradient(circle 3px at 10px calc(100% - 10px), #222 70%, transparent 70%),
-      radial-gradient(circle 3px at calc(100% - 10px) calc(100% - 10px), #222 70%, transparent 70%);
-    pointer-events: none;
-  }
-
-  /* Override BPM colours inside screen */
-  .screen .bpm-number { color: var(--accent); }
-  .screen .bpm-label  { color: #555; }
-  .screen .tempo-name { color: var(--accent); opacity: 0.7; }
-  .screen .beat-dot   { border-color: #333; }
-  .screen .beat-dot.active { background: var(--accent); border-color: var(--accent); }
-  .screen .beat-dot.accent-dot { border-color: #444; }
-  .screen .beat-dot.accent-dot.active { background: var(--accent2); border-color: var(--accent2); }
-  .bpm-display {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-  }
-  .bpm-label {
-    font-size: 11px;
-    letter-spacing: 5px;
-    color: var(--text-muted);
-    height: 16px;
-    line-height: 16px;
-    display: block;
-    overflow: hidden;
-    white-space: nowrap;
-    transition: color 0.5s;
-  }
-  .bpm-number {
-    font-family: var(--font-display);
-    font-size: 80px;
-    font-weight: 900;
-    line-height: 1;
-    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--accent);
-    text-shadow: none;
-    transition: color 0.5s;
-    cursor: default;
-    user-select: none;
-    overflow: hidden;
-    white-space: nowrap;
+    color: #9da2a8;
+    font: 500 15px var(--font-display);
+    background: var(--black-metal);
+    box-shadow: 0 3px 5px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.07);
+    transition: transform 0.05s;
   }
-  .tempo-name {
-    font-size: 13px;
-    letter-spacing: 2px;
-    color: var(--accent);
-    margin-top: 8px;
-    height: 20px;
-    line-height: 20px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    transition: color 0.5s;
+  .fsw-cap svg { width: 40%; height: 40%; }
+  .fsw:active .fsw-cap { transform: scale(0.95); }
+  .preset-btn .fsw-cap { color: #5f646b; }
+  .fsw:focus-visible { outline: 2px solid #e4e7ea; outline-offset: 4px; }
+  /* Fixed line height and no wrapping, so switching to Japanese (whose
+     fallback font has a taller line box) doesn't shift the layout */
+  .fsw-label { font-size: 10px; font-weight: 500; letter-spacing: 2px; line-height: 14px; white-space: nowrap; }
+
+  /* Ring states: flat colour only */
+  .fsw.saved .fsw-ring::before { border-color: color-mix(in srgb, var(--ring) 35%, #33373c); }
+  /* A lit ring gets a small, soft glow */
+  .fsw { --ring-glow: 0 0 10px 1px rgba(77,163,255,0.7), inset 0 0 5px rgba(77,163,255,0.45); }
+  .fsw.active .fsw-ring::before,
+  .fsw[aria-checked="true"] .fsw-ring::before { border-color: var(--ring); box-shadow: var(--ring-glow); }
+  .fsw-ring.tap::before { animation: ring-flash 0.2s ease-out; }
+  .fsw.holding .fsw-ring::before { animation: ring-fill var(--hold-ms) linear forwards; }
+  @keyframes ring-flash {
+    from { border-color: var(--ring); box-shadow: var(--ring-glow); }
+    to   { border-color: #33373c; box-shadow: none; }
   }
-  .small-label {
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: var(--text-muted);
-    height: 16px;
-    line-height: 16px;
-    display: block;
-    overflow: hidden;
-    white-space: nowrap;
+  @keyframes ring-fill {
+    from { border-color: #33373c; box-shadow: none; }
+    to   { border-color: var(--ring); box-shadow: var(--ring-glow); }
   }
 
-  /* Slider */
-  .slider-wrap {
-    width: 100%;
-    padding: 0 4px;
+  /* ── Encoders (BEATS / NOTE): printed scale lines + pointer on the cap ── */
+  /* Bottom-aligned so the ACCENT label sits on the same line as BEATS / NOTE */
+  .ts { display: flex; align-items: flex-end; justify-content: space-between; gap: 6px; }
+  .knob-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .knob-wrap-beats, .knob-wrap-note { flex: 0 0 30%; }
+  /* The ACCENT column is as wide as its switch; a longer label (e.g. Japanese)
+     overflows evenly instead of widening the column and moving the knobs */
+  .ts .fsw-unit { flex: 0 0 46px; min-width: 0; }
+  .knob { position: relative; width: 100%; aspect-ratio: 1 / 1; cursor: grab; touch-action: none; border-radius: 50%; }
+  .knob:active { cursor: grabbing; }
+  .knob svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .knob-tick { stroke: #6b7078; stroke-width: 2; stroke-linecap: round; }
+  .knob-label { fill: #a9aeb5; font: 500 12px var(--font-body); }
+  .encoder-cap {
+    position: absolute;
+    inset: 22%;
+    border-radius: 50%;
+    background: var(--black-metal);
+    box-shadow: 0 0 0 4px #17191c, 0 0 0 5px rgba(255,255,255,0.06), 0 4px 6px 4px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
+    transition: transform 0.12s ease-out;
   }
-  input[type=range] {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 4px;
+  /* Pointer line */
+  .encoder-cap::after {
+    content: '';
+    position: absolute;
+    top: 6%; left: 50%;
+    width: 3px; height: 32%;
     border-radius: 2px;
-    background: linear-gradient(to right, var(--accent) var(--pct,50%), var(--border) var(--pct,50%));
-    outline: none;
-    cursor: pointer;
-    transition: background 0.5s;
+    background: #9da2a8;
+    transform: translateX(-50%);
   }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, var(--accent2), var(--accent));
-    box-shadow: 0 0 14px var(--glow);
-    cursor: grab;
-    transition: background 0.5s, box-shadow 0.5s;
-  }
-  input[type=range]::-webkit-slider-thumb:active { cursor: grabbing; }
-  input[type=range]::-moz-range-thumb {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: var(--accent);
-    border: none;
-    cursor: grab;
-  }
+  .knob input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; pointer-events: none; }
+  .knob:has(input:focus-visible) { outline: 2px solid #e4e7ea; outline-offset: 2px; }
 
-  /* Controls */
-  .controls {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    width: 100%;
+  /* ── Presets row with TAP at the end ── */
+  .switch-row {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
     justify-content: center;
-  }
-  .btn {
-    background: var(--btn-bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 2px;
-    padding: 0 12px;
-    height: 38px;
-    min-height: 38px;
-    border-radius: 10px;
-    cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    box-sizing: border-box;
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    transition: background 0.2s, border-color 0.2s, transform 0.1s;
+    column-gap: 16px;
+    row-gap: 8px;
   }
-  .btn:hover { background: var(--btn-hover); border-color: var(--accent); }
-  .btn:active { transform: scale(0.97); }
-  .btn.play {
-    background: var(--accent);
-    color: var(--bg);
-    border-color: var(--accent);
-    font-weight: 500;
-    padding: 0;
-    font-size: 18px;
-    width: 100%;
-    height: 40px;
-    min-height: 40px;
-    white-space: nowrap;
-    box-sizing: border-box;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .btn.play:hover { filter: brightness(1.1); transform: none; }
-  .btn.play:active { transform: none; filter: brightness(0.95); }
-  .btn svg { display: block; }
+  .switch-row .label-presets { grid-column: 1 / 4; text-align: center; }
+  .switch-row .label-tap { grid-column: 4; text-align: center; }
+  /* Extra space sets TAP apart from the three presets */
+  .switch-row #tapBtn, .switch-row .label-tap { margin-left: var(--tap-gap, 22px); }
 
-  /* Time sig dropdown */
-  .time-sig-wrap {
-    position: relative;
-    width: 100%;
+  /* ── START: black metallic stomp switch — hex nut and flat-faced plunger ── */
+  /* Footswitch row: A440 tuning tone on the left, START on the right.
+     The top margin gives the footswitches their own section on the panel. */
+  .stomps { display: flex; justify-content: center; gap: 96px; margin-top: var(--stomp-gap, 14px); }
+
+  /* Pedal name, printed like the Ibanez Pentatone wordmark: thin, wide,
+     widely spaced capitals. Centred between the presets and the stomps. */
+  .brand {
+    margin-top: 14px;
+    text-align: center;
+    font: 300 22px/1 var(--font-body);
+    letter-spacing: 0.42em;
+    padding-left: 0.42em; /* balances the trailing letter-spacing */
+    color: #a9aeb5;
+    user-select: none;
   }
-  .time-sig-wrap::after {
-    content: '▾';
+  .stomp-area { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .stomp { position: relative; width: 66px; height: 66px; padding: 0; border: none; background: transparent; cursor: pointer; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5)); }
+  .stomp-nut {
     position: absolute;
-    right: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--accent);
-    font-size: 14px;
-    pointer-events: none;
+    inset: 3px;
+    clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0% 50%);
+    /* Light catching the top-left facets, shadow on the bottom-right */
+    background: linear-gradient(150deg, #55595e 0%, #2a2c30 34%, #44474c 50%, #1c1d20 76%, #121315 100%);
   }
-  .time-sig-select {
-    width: 100%;
-    appearance: none;
-    -webkit-appearance: none;
-    background: var(--btn-bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 13px;
-    letter-spacing: 1px;
-    padding: 10px 40px 10px 16px;
-    border-radius: 10px;
-    cursor: pointer;
-    outline: none;
-    transition: border-color 0.2s, background 0.2s;
+  .stomp-dome {
+    position: absolute;
+    inset: 15px;
+    border-radius: 50%;
+    /* Flat face with a soft top-left sheen and a brighter chamfer at the edge */
+    background:
+      radial-gradient(circle at 36% 30%, rgba(255,255,255,0.2) 0, rgba(255,255,255,0) 48%),
+      radial-gradient(circle, #26282c 0 64%, #4a4d52 69%, #2a2c30 80%, #141517 100%);
+    box-shadow:
+      0 0 0 2px #0e0f11,
+      0 3px 5px rgba(0,0,0,0.5),
+      inset 0 2px 3px rgba(255,255,255,0.14),
+      inset 0 -3px 5px rgba(0,0,0,0.35);
+    transition: transform 0.05s;
   }
-  .time-sig-select:hover, .time-sig-select:focus { border-color: var(--accent); background: var(--btn-hover); }
-  .time-sig-select option, .time-sig-select optgroup {
-    background: var(--surface);
-    color: var(--text);
-  }
+  .stomp:active .stomp-dome { transform: scale(0.96); }
+  .stomp:focus-visible { outline: 2px solid #e4e7ea; outline-offset: 4px; border-radius: 12px; }
 
   /* Flash overlay */
   .flash {
@@ -593,313 +438,71 @@
   }
   .flash.pop { opacity: 0.06; }
 
-  .play-tap-row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-  }
-  .play-tap-row .play { flex: 1; }
-  .tap-btn {
-    background: var(--btn-bg);
-    border: 2px solid var(--accent);
-    color: var(--accent);
-    font-size: 13px;
-    letter-spacing: 3px;
-    padding: 0 22px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-family: var(--font-body);
-    transition: background 0.15s, box-shadow 0.15s, filter 0.15s;
-    user-select: none;
-    -webkit-user-select: none;
-    width: 90px;
-    min-width: 90px;
-    max-width: 90px;
-    height: 40px;
-    min-height: 40px;
-    white-space: nowrap;
-    overflow: hidden;
-    box-sizing: border-box;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .tap-btn:hover { background: var(--btn-hover); box-shadow: 0 0 14px var(--glow); }
-  .tap-btn:active { transform: none; filter: brightness(0.9); background: var(--accent); color: var(--bg); box-shadow: 0 0 20px var(--glow); }
-  .tap-btn.flash-tap { background: var(--accent); color: var(--bg); }
-  .vol-btn { font-size: 15px; padding: 10px 12px; }
-  .vol-btn.active { border-color: var(--accent); color: var(--accent); }
-
-  .volume-panel {
-    width: 100%;
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.25s;
-    box-sizing: border-box;
-    padding: 0 4px;
-  }
-  .volume-panel.open {
-    max-height: 80px;
-    opacity: 1;
-    padding: 16px 4px;
-  }
-  .volume-panel input[type=range] {
-    width: 100%;
-    margin-top: 4px;
-    display: block;
-  }
-  .volume-slider-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .volume-slider-row input[type=range] {
-    flex: 1;
-    margin-top: 0;
-  }
-  .volume-value {
-    font-size: 11px;
-    letter-spacing: 1px;
-    color: var(--accent);
-    min-width: 36px;
-    text-align: right;
-    flex-shrink: 0;
-    transition: color 0.3s;
-  }
-
-  /* ── Responsive / Mobile ── */
-  @media (max-width: 380px) {
-    body { justify-content: flex-start; padding-top: 16px; }
-    .app { width: 100%; }
-
-    .app { gap: 20px; }
-
-    .title { font-size: 32px; }
-    .japanese-title { font-size: 11px; letter-spacing: 4px; }
-
-    .stage { padding: 20px 14px 18px; gap: 16px; border-radius: 18px; }
-
-    /* Nudge row — tighter on small screens */
-    .row { gap: 4px; }
-    .btn { padding: 0 6px; font-size: 11px; }
-
-    .btn.play {
-      width: 100%;
-      height: 40px;
-      min-height: 40px;
-      font-size: 18px;
-      padding: 0;
-    }
-    .tap-btn {
-      width: 90px;
-      min-width: 90px;
-      max-width: 90px;
-      height: 40px;
-      min-height: 40px;
-      font-size: 13px;
-      letter-spacing: 2px;
-      padding: 0 14px;
-    }
-
-    /* Settings dropdown — full width on mobile */
-    .dropdown {
-      top: 68px;
-      right: 8px;
-      left: 8px;
-      width: auto;
-      border-radius: 14px;
-      padding: 16px;
-      gap: 16px;
-    }
-
-    /* Menu button closer to edge */
-    .menu-btn { top: 14px; right: 14px; }
-    .tune-btn { top: 66px; right: 14px; }
-
-    .theme-card, .sound-card { padding: 10px 12px; gap: 10px; }
-    .card-name { font-size: 11px; }
-    .card-desc { font-size: 9px; }
-
-    .volume-panel.open { max-height: 60px; padding: 8px 4px; }
-
-    .time-sig-select { font-size: 12px; padding: 8px 32px 8px 12px; }
-  }
-
-  @media (max-width: 360px) {
-    .btn { padding: 0 4px; font-size: 10px; }
-  }
-
-  /* ── Landscape / horizontal phone view ── */
-  @media (orientation: landscape) and (max-height: 500px) {
-    body {
-      justify-content: flex-start;
-      align-items: flex-start;
-      padding: 8px 52px 8px 12px;
-      overflow-y: auto;
-    }
-
-    .app {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 8px;
-      width: 100%;
-      max-width: 100%;
-    }
-
-    /* Header sits at top, horizontal */
-    .header {
-      width: 100%;
-      height: auto;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      padding: 0;
-      gap: 12px;
-    }
-    .title { font-size: 18px; letter-spacing: 1px; height: auto; }
-    .japanese-title { font-size: 9px; letter-spacing: 2px; height: auto; }
-    .lang-btn { font-size: 8px; padding: 0 8px; height: 22px; }
-
-    /* Stage fills remaining space as a row */
-    .stage {
-      flex: 1;
-      padding: 10px 12px;
-      gap: 10px;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Screen takes left portion */
-    .screen {
-      flex: 1;
-      min-width: 140px;
-    }
-    .screen-inner { padding: 10px 12px; gap: 6px; }
-    .bpm-number { font-size: 52px; height: 52px; }
-    .bpm-label { font-size: 9px; height: 12px; }
-    .tempo-name { font-size: 10px; height: 14px; margin-top: 4px; }
-
-    /* Controls on right side */
-    .play-tap-row { flex-direction: column; gap: 6px; width: auto; min-width: 80px; }
-    .btn.play { width: 80px; height: 36px; min-height: 36px; font-size: 18px; flex: none; }
-    .tap-btn { width: 80px; min-width: 80px; max-width: 80px; height: 36px; min-height: 36px; font-size: 11px; padding: 0; }
-
-    /* Slider, nudge, volume, time sig wrap below stage */
-    .slider-wrap { width: 100%; }
-    .row { gap: 3px; }
-    .btn { padding: 0 4px; font-size: 10px; height: 30px; min-height: 30px; }
-    .small-label { font-size: 9px; }
-    .time-sig-select { font-size: 11px; padding: 6px 28px 6px 10px; }
-
-    /* Settings dropdown repositioned */
-    .dropdown { top: 8px; right: 8px; max-height: calc(100vh - 16px); width: 260px; }
-    .menu-btn { top: 8px; right: 8px; }
-  }
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: 
-      linear-gradient(var(--border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border) 1px, transparent 1px);
-    background-size: 40px 40px;
-    opacity: 0.2;
-    pointer-events: none;
-    z-index: 0;
-  }
   .app { position: relative; z-index: 1; }
 
-  .row {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: nowrap;
-    width: 100%;
-  }
-  .row .btn {
-    flex: 1;
-    min-width: 0;
-    padding: 10px 4px;
-    text-align: center;
-  }
-  .small-label { font-size: 10px; letter-spacing: 3px; color: var(--text-muted); }
-
-  /* ── Menu Button ── */
-  .tune-btn {
-    position: fixed;
-    top: 72px; right: 20px;
-    z-index: 200;
-    width: 44px; height: 44px;
-    border-radius: 12px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    opacity: 0;
-  }
+  /* ── Settings button: just the burger icon, no background ── */
   .menu-btn {
     position: fixed;
     top: 20px; right: 20px;
     z-index: 200;
     width: 44px; height: 44px;
-    border-radius: 12px;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: none;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 5px;
-    transition: background 0.3s, border-color 0.3s, transform 0.2s;
   }
-  .menu-btn:hover { background: var(--btn-hover); border-color: var(--accent); }
   .menu-btn span {
     display: block;
-    width: 18px; height: 2px;
+    width: 22px; height: 2px;
     background: var(--text);
     border-radius: 2px;
-    transition: transform 0.3s, opacity 0.3s, background 0.3s;
+    opacity: 0.7;
+    transition: transform 0.3s, opacity 0.2s;
     transform-origin: center;
   }
+  .menu-btn:hover span, .menu-btn.open span { opacity: 1; }
   .menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
   .menu-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
   .menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-  /* ── Dropdown Panel ── */
+  /* ── Settings panel: a small matte enclosure in the pedal's finish, with
+     engraved dividers, grey printed labels and the same blue status rings
+     as the pedal's switches. It keeps this look in light mode too. ── */
   .dropdown {
+    --groove: 0 1px 0 rgba(255,255,255,0.04);
     position: fixed;
     top: 72px; right: 20px;
     width: 300px;
     max-height: calc(100vh - 92px);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 18px;
     z-index: 190;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 20px;
+    padding: 22px 20px 18px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 18px;
+    border-radius: 10px;
+    color: #c9ccd0;
+    font-family: var(--font-body);
+    background-color: #292b2f;
+    background-image: var(--enclosure-grain);
     box-shadow:
-      0 16px 48px rgba(0,0,0,0.4),
-      0 4px 16px rgba(0,0,0,0.3),
-      inset 0 1px 0 rgba(255,255,255,0.08),
-      inset 1px 0 0 rgba(255,255,255,0.04),
-      inset -1px 0 0 rgba(255,255,255,0.04);
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      inset 0 0 0 1px #141619,
+      0 16px 36px rgba(0,0,0,0.6);
     /* closed state */
     opacity: 0;
     transform: translateY(-10px) scale(0.97);
     transform-origin: top right;
     pointer-events: none;
     transition: opacity 0.25s cubic-bezier(0.4,0,0.2,1),
-                transform 0.25s cubic-bezier(0.4,0,0.2,1),
-                background 0.5s, border-color 0.5s;
+                transform 0.25s cubic-bezier(0.4,0,0.2,1);
   }
   .dropdown.open {
     opacity: 1;
@@ -909,25 +512,23 @@
   /* Thin scrollbar */
   .dropdown::-webkit-scrollbar { width: 4px; }
   .dropdown::-webkit-scrollbar-track { background: transparent; }
-  .dropdown::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .dropdown::-webkit-scrollbar-thumb { background: #33373c; border-radius: 2px; }
 
+  /* Title printed like the SOUZU wordmark, over an engraved line */
   .dropdown-title {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--text);
+    font: 300 17px/1 var(--font-body);
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: #a9aeb5;
     padding-bottom: 16px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: -8px;
+    border-bottom: 1px solid #1c1e21;
+    box-shadow: var(--groove);
   }
   .dropdown-version {
     text-align: center;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--text-muted);
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
+    font: 500 9px var(--font-body);
+    letter-spacing: 3px;
+    color: #6b7078;
   }
 
   /* Click-outside backdrop (invisible) */
@@ -939,150 +540,129 @@
   }
   .dropdown-backdrop.open { display: block; }
 
-  /* Theme cards in drawer */
-  .theme-cards {
+  /* Language: a recessed two-way selector; the chosen side gets a blue ring */
+  .setting-lang { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .seg {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    gap: 3px;
+    padding: 3px;
+    border-radius: 8px;
+    background: #17191c;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.9), 0 1px 0 rgba(255,255,255,0.06);
   }
-  .theme-card {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 12px 14px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: var(--btn-bg);
+  .seg-btn {
+    min-width: 58px;
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    color: #7d8590;
+    font: 500 11px/1 var(--font-body);
+    letter-spacing: 1.5px;
     cursor: pointer;
-    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    transition: color 0.15s, border-color 0.15s, box-shadow 0.15s;
   }
-  .theme-card:hover { background: var(--btn-hover); border-color: var(--accent); transform: translateX(3px); }
-  .theme-card.active { border-color: var(--accent); background: var(--btn-hover); box-shadow: inset 3px 0 0 var(--accent); }
-  .card-swatch {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    position: relative;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  .seg-btn:hover { color: #c9ccd0; }
+  .seg-btn[aria-pressed="true"] {
+    color: #eef0f2;
+    background: var(--black-metal);
+    border-color: #4da3ff;
+    box-shadow: 0 0 8px rgba(77,163,255,0.45), inset 0 0 4px rgba(77,163,255,0.3);
   }
-  .card-swatch::after {
-    content: '';
-    position: absolute;
-    inset: 4px;
-    border-radius: 50%;
-    background: inherit;
-    filter: brightness(1.5);
-  }
-  .card-info { flex: 1; }
-  .card-name {
-    font-size: 12px;
-    letter-spacing: 2px;
-    color: var(--text);
-    font-weight: 500;
-  }
-  .card-desc {
-    font-size: 10px;
-    color: var(--text-muted);
-    margin-top: 2px;
-    letter-spacing: 0.5px;
-  }
+
   /* ── Accordion sections ── */
   .drawer-section { display: flex; flex-direction: column; }
-  .drawer-section .small-label { margin-bottom: 2px; }
 
   .section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 4px;
+    padding: 10px 2px;
     cursor: pointer;
     user-select: none;
-    border-bottom: 1px solid var(--border);
-    transition: border-color 0.3s;
+    border-bottom: 1px solid #1c1e21;
+    box-shadow: var(--groove);
   }
-  .section-header:hover .section-title { color: var(--accent); }
   .section-title {
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: var(--text-muted);
+    font: 500 10px/14px var(--font-body);
+    letter-spacing: 2px;
+    color: #a9aeb5;
     transition: color 0.2s;
   }
+  .section-header:hover .section-title,
+  .drawer-section.open .section-title { color: #eef0f2; }
+  /* Thin chevron drawn with borders (the ▼ text is hidden) */
   .section-chevron {
-    font-size: 10px;
-    color: var(--text-muted);
-    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), color 0.2s;
+    width: 7px; height: 7px;
+    margin-right: 4px;
+    font-size: 0;
+    border-right: 1.5px solid #7d8590;
+    border-bottom: 1.5px solid #7d8590;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), border-color 0.2s;
   }
-  .drawer-section.open .section-chevron {
-    transform: rotate(180deg);
-    color: var(--accent);
-  }
-  .drawer-section.open .section-title { color: var(--accent); }
+  .drawer-section.open .section-chevron { transform: translateY(2px) rotate(225deg); border-color: #4da3ff; }
 
   .section-body {
     overflow: hidden;
     max-height: 0;
     opacity: 0;
     transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s, padding 0.25s;
-    padding: 0 2px;
+    padding: 0;
   }
   .drawer-section.open .section-body {
     max-height: 800px;
     opacity: 1;
-    padding: 12px 2px 4px;
+    padding: 12px 0 2px;
     overflow: visible;
   }
-  .sound-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .sound-card {
+
+  /* Rows (sounds and toggles) sit in shallow recessed plates */
+  .sound-cards { display: flex; flex-direction: column; gap: 6px; }
+  .sound-card, .toggle-row {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 11px 14px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: var(--btn-bg);
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    border-radius: 6px;
+    background: #222428;
+    box-shadow: inset 0 0 0 1px #1a1c1f, inset 0 1px 0 rgba(255,255,255,0.03);
+    transition: background 0.2s;
   }
-  .sound-card:hover { background: var(--btn-hover); border-color: var(--accent); transform: translateX(3px); }
-  .sound-card.active { border-color: var(--accent); background: var(--btn-hover); box-shadow: inset 3px 0 0 var(--accent); }
-  .sound-icon {
-    font-size: 18px;
-    width: 28px;
-    text-align: center;
+  .sound-card { padding: 10px 12px; cursor: pointer; }
+  .sound-card:hover, .toggle-row:hover { background: #26282c; }
+  /* Selected sound: a small status ring that lights blue */
+  .sound-card::after {
+    content: '';
     flex-shrink: 0;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid #33373c;
+    background: #17191c;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
-
-  /* ── Toggle Switch ── */
-  .toggle-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: var(--btn-bg);
-    transition: background 0.3s, border-color 0.3s;
-  }
-  .toggle-row:hover { border-color: var(--accent); background: var(--btn-hover); }
-  .toggle-info { display: flex; flex-direction: column; gap: 3px; }
-  .toggle-label {
-    font-size: 12px;
+  .sound-card.active::after { border-color: #4da3ff; box-shadow: 0 0 8px 1px rgba(77,163,255,0.6), inset 0 0 3px rgba(77,163,255,0.4); }
+  .sound-card.active .card-name { color: #f4f6f8; }
+  .card-info { flex: 1; }
+  .card-name, .toggle-label {
+    font: 500 11px/14px var(--font-body);
     letter-spacing: 2px;
-    color: var(--text);
-    font-weight: 500;
+    color: #c9ccd0;
   }
-  .toggle-desc {
-    font-size: 10px;
-    color: var(--text-muted);
-    letter-spacing: 0.5px;
+  .card-desc, .toggle-desc {
+    font: 400 11px/14px var(--font-body);
+    color: #7d8590;
+    letter-spacing: 0.3px;
   }
+  .card-desc { margin-top: 2px; }
+
+  /* ── Toggle: a recessed slot with a metal thumb; the slot's ring lights
+     blue when it's on, like the pedal's switches ── */
+  .toggle-row { justify-content: space-between; padding: 12px; }
+  .toggle-info { display: flex; flex-direction: column; gap: 3px; }
   .toggle {
     position: relative;
-    width: 44px; height: 24px;
+    width: 46px; height: 24px;
     flex-shrink: 0;
     cursor: pointer;
   }
@@ -1091,40 +671,419 @@
     position: absolute;
     inset: 0;
     border-radius: 12px;
-    background: var(--border);
-    transition: background 0.3s;
+    background: #17191c;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.9), 0 1px 0 rgba(255,255,255,0.06);
   }
-  .toggle input:checked + .toggle-track { background: var(--accent); }
+  .toggle-track::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 10px;
+    border: 2px solid #33373c;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .toggle input:checked + .toggle-track::before {
+    border-color: #4da3ff;
+    box-shadow: 0 0 8px 1px rgba(77,163,255,0.55), inset 0 0 4px rgba(77,163,255,0.35);
+  }
+  .toggle input:focus-visible + .toggle-track { outline: 2px solid #e4e7ea; outline-offset: 2px; }
   .toggle-thumb {
     position: absolute;
-    top: 3px; left: 3px;
-    width: 18px; height: 18px;
+    top: 6px; left: 6px;
+    width: 12px; height: 12px;
     border-radius: 50%;
-    background: var(--text);
-    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), background 0.3s;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    background: radial-gradient(circle at 35% 30%, #7d8288 0%, #3a3c40 55%, #202124 100%);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.7);
+    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
   }
-  .toggle input:checked ~ .toggle-thumb { transform: translateX(20px); }
+  .toggle input:checked ~ .toggle-thumb { transform: translateX(22px); background: radial-gradient(circle at 35% 30%, #c9ccd0 0%, #7d8288 55%, #3a3c40 100%); }
+
+  /* ABOUT link at the foot of the settings panel */
+  .about-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 2px;
+    margin-top: -6px;
+    border: none;
+    border-bottom: 1px solid #1c1e21;
+    box-shadow: var(--groove);
+    background: none;
+    color: #a9aeb5;
+    font: 500 10px/14px var(--font-body);
+    letter-spacing: 2px;
+    text-align: left;
+    cursor: pointer;
+  }
+  .about-link:hover { color: #eef0f2; }
+  .about-link + .about-link { margin-top: -18px; } /* stack the links flush */
+  .about-link::after {
+    content: '';
+    width: 7px; height: 7px;
+    margin-right: 6px;
+    border-right: 1.5px solid #7d8590;
+    border-bottom: 1.5px solid #7d8590;
+    transform: rotate(-45deg);
+  }
+
+  /* ── About page: a card in the pedal's finish over a dimmed backdrop ── */
+  .about {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(0,0,0,0.6);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .about[hidden] { display: none; }
+  .about.open { opacity: 1; }
+  .about-card {
+    position: relative;
+    overflow: hidden;
+    width: 320px;
+    max-width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    padding: 40px 24px 26px;
+    border-radius: 10px;
+    text-align: center;
+    color: #c9ccd0;
+    font-family: var(--font-body);
+    background-color: #292b2f;
+    background-image: var(--enclosure-grain);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      inset 0 0 0 1px #141619,
+      0 16px 36px rgba(0,0,0,0.6);
+    transform: translateY(8px) scale(0.98);
+    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+  }
+  .about.open .about-card { transform: none; }
+  /* The pedal's bamboo artwork, faintly, along the bottom of the card */
+  .about-card::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 62%;
+    z-index: -1;
+    background: url("bamboo-moon.svg") center bottom / cover no-repeat;
+    opacity: 0.7;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
+    pointer-events: none;
+  }
+  .about-card { isolation: isolate; }
+  .about-close {
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 40px; height: 40px;
+    border: none;
+    border-radius: 8px;
+    background: none;
+    cursor: pointer;
+  }
+  .about-close::before, .about-close::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 16px; height: 1.5px;
+    background: #a9aeb5;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  .about-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
+  .about-close:hover::before, .about-close:hover::after { background: #eef0f2; }
+  .about-name {
+    font: 300 30px/1 var(--font-body);
+    letter-spacing: 0.42em;
+    padding-left: 0.42em; /* balances the trailing letter-spacing */
+    color: #c9ccd0;
+  }
+  .about-sub {
+    margin-top: 10px;
+    font: 500 10px/14px var(--font-body);
+    letter-spacing: 4px;
+    color: #7d8590;
+  }
+  .about-desc {
+    margin: 22px auto 0;
+    max-width: 240px;
+    font: 400 12px/1.7 var(--font-body);
+    color: #a9aeb5;
+  }
+  .about-meta { margin: 24px 0 0; text-align: left; }
+  .about-meta > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 11px 2px;
+    border-top: 1px solid #1c1e21;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+  .about-meta dt { font: 500 10px/14px var(--font-body); letter-spacing: 2px; color: #7d8590; }
+  .about-meta dd { margin: 0; font: 500 13px/16px var(--font-body); letter-spacing: 0.5px; color: #eef0f2; text-align: right; }
+  .about-copy {
+    margin-top: 72px;
+    font: 500 9px/14px var(--font-body);
+    letter-spacing: 2px;
+    color: #6b7078;
+  }
+
+  /* ── Toast notifications ── */
+  .toast-stack {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    pointer-events: none;
+    width: calc(100% - 32px);
+    max-width: 360px;
+  }
+  .toast {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.25s, transform 0.25s;
+    max-width: 100%;
+    text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { border-color: #e05555; }
+
+  /* ── First-run tutorial: a spotlight moves over each part of the pedal,
+     with an explanation card in the pedal's finish beside it ── */
+  .tour {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+  }
+  .tour[hidden] { display: none; }
+  /* Transparent layer that blocks the pedal while the tour is running */
+  .tour-block { position: absolute; inset: 0; }
+  .tour-spot {
+    position: fixed;
+    border-radius: 10px;
+    box-shadow: 0 0 0 9999px rgba(0,0,0,0.68), 0 0 0 1.5px #4da3ff, 0 0 14px 2px rgba(77,163,255,0.45);
+    transition: top 0.3s cubic-bezier(0.4,0,0.2,1), left 0.3s cubic-bezier(0.4,0,0.2,1),
+                width 0.3s cubic-bezier(0.4,0,0.2,1), height 0.3s cubic-bezier(0.4,0,0.2,1);
+    pointer-events: none;
+  }
+  .tour-card {
+    position: fixed;
+    width: 300px;
+    max-width: calc(100vw - 24px);
+    padding: 18px 18px 14px;
+    border-radius: 10px;
+    color: #c9ccd0;
+    font-family: var(--font-body);
+    background-color: #292b2f;
+    background-image: var(--enclosure-grain);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      inset 0 0 0 1px #141619,
+      0 16px 36px rgba(0,0,0,0.6);
+    transition: top 0.3s cubic-bezier(0.4,0,0.2,1), left 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .tour-step {
+    font: 500 9px/14px var(--font-body);
+    letter-spacing: 2px;
+    color: #7d8590;
+  }
+  .tour-title {
+    margin-top: 6px;
+    font: 500 13px/18px var(--font-body);
+    letter-spacing: 2.5px;
+    color: #eef0f2;
+  }
+  .tour-body {
+    margin-top: 8px;
+    font: 400 12px/1.65 var(--font-body);
+    color: #a9aeb5;
+  }
+  .tour-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #1c1e21;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+  .tour-dots { display: flex; gap: 4px; flex-wrap: nowrap; min-width: 0; }
+  .tour-dots span { width: 5px; height: 5px; border-radius: 50%; background: #3a3e43; transition: background 0.2s, box-shadow 0.2s; }
+  .tour-dots span.on { background: #4da3ff; box-shadow: 0 0 6px rgba(77,163,255,0.7); }
+  .tour-btns { display: flex; gap: 6px; flex-shrink: 0; }
+  .tour-btn {
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: none;
+    color: #7d8590;
+    font: 500 10px/1 var(--font-body);
+    letter-spacing: 1.5px;
+    cursor: pointer;
+  }
+  .tour-btn:hover { color: #eef0f2; }
+  .tour-btn[hidden] { display: none; }
+  .tour-btn.primary {
+    color: #eef0f2;
+    background: var(--black-metal);
+    border-color: #4da3ff;
+    box-shadow: 0 0 8px rgba(77,163,255,0.45), inset 0 0 4px rgba(77,163,255,0.3);
+  }
+
+  /* ── Accessible focus outline ── */
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, .sound-card:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Responsive overrides come last so they win over the base rules above */
+  /* ── Responsive / Mobile ── */
+  @media (max-width: 380px) {
+    body { justify-content: flex-start; padding-top: 16px; }
+    .app { width: 100%; gap: 14px; }
+    .stage { padding: 18px 14px 22px; gap: 14px; }
+    .bpm-number { font-size: 50px; }
+    .fsw { --size: 44px; }
+    .switch-row { column-gap: 12px; --tap-gap: 14px; }
+    .stomps { gap: 72px; }
+    .stomp { width: 60px; height: 60px; }
+    .stomp-dome { inset: 14px; }
+
+    /* Settings dropdown — full width on mobile */
+    .dropdown {
+      top: 68px;
+      right: 8px;
+      left: 8px;
+      width: auto;
+      border-radius: 10px;
+      padding: 18px 16px 16px;
+      gap: 16px;
+    }
+    .menu-btn { top: 14px; right: 14px; }
+    .sound-card { padding: 10px 12px; gap: 10px; }
+    .card-desc { font-size: 10px; }
+  }
+
+  /* ── Landscape phone: pedal splits into two columns ── */
+  @media (orientation: landscape) and (max-height: 500px) {
+    body { justify-content: flex-start; padding: 8px 60px 8px 12px; }
+    .app { width: 100%; max-width: 760px; gap: 8px; padding-top: 0; }
+    .stage {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        "screen  ts"
+        "fader   stomp"
+        "presets stomp";
+      column-gap: 22px;
+      row-gap: 10px;
+      padding: 16px 22px 18px;
+    }
+    .screen { grid-area: screen; }
+    .fader { grid-area: fader; }
+    .ts { grid-area: ts; }
+    .switch-row { grid-area: presets; }
+    /* The name shares the footswitch column: name at the top, stomps at the bottom */
+    .stomps { grid-area: stomp; align-self: end; align-items: center; margin-top: 0; gap: 64px; }
+    .brand { grid-area: stomp; align-self: start; margin-top: 6px; }
+    /* Artwork moves to the right-hand column (knobs and footswitches), full
+       height, fading in from its top and left edges */
+    .stage-art {
+      left: 50%;
+      top: 0;
+      height: auto;
+      border-radius: 0 10px 10px 0;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 24%), linear-gradient(to right, transparent 0%, #000 12%);
+      -webkit-mask-composite: source-in;
+      mask-image: linear-gradient(to bottom, transparent 0%, #000 24%), linear-gradient(to right, transparent 0%, #000 12%);
+      mask-composite: intersect;
+    }
+    .bpm-number { font-size: 44px; }
+    .screen-inner { padding: 10px 12px 8px; gap: 4px; }
+
+    .dropdown { top: 8px; right: 8px; max-height: calc(100vh - 16px); width: 260px; }
+    .menu-btn { top: 8px; right: 8px; }
+  }
 </style>
 </head>
 <body>
 
 <div class="flash" id="flash"></div>
 
-<!-- Menu Button -->
-<button class="menu-btn" id="menuBtn" aria-label="Open settings">
+<!-- Toast notifications -->
+<div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="false"></div>
+
+<!-- First-run tutorial -->
+<div class="tour" id="tour" role="dialog" aria-modal="true" aria-labelledby="tourTitle" aria-describedby="tourBody" hidden>
+  <div class="tour-block"></div>
+  <div class="tour-spot" id="tourSpot"></div>
+  <div class="tour-card" id="tourCard">
+    <div class="tour-step" id="tourStep"></div>
+    <div class="tour-title" id="tourTitle"></div>
+    <div class="tour-body" id="tourBody" aria-live="polite"></div>
+    <div class="tour-foot">
+      <div class="tour-dots" id="tourDots" aria-hidden="true"></div>
+      <div class="tour-btns">
+        <button class="tour-btn" id="tourSkip">SKIP</button>
+        <button class="tour-btn" id="tourBack">BACK</button>
+        <button class="tour-btn primary" id="tourNext">NEXT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings button (top right) -->
+<button class="menu-btn" id="menuBtn" aria-label="Open settings" aria-haspopup="true" aria-expanded="false">
   <span></span><span></span><span></span>
 </button>
-
-<!-- Invisible 440hz tuning button -->
-<button class="tune-btn" id="tuneBtn" aria-label="440hz"></button>
 
 <!-- Click-outside backdrop -->
 <div class="dropdown-backdrop" id="dropdownBackdrop"></div>
 
 <!-- Dropdown -->
-<div class="dropdown" id="dropdown">
+<div class="dropdown" id="dropdown" role="dialog" aria-label="Settings">
   <div class="dropdown-title">Settings</div>
+
+  <div class="setting-lang">
+    <span class="section-title" id="langLabel">LANGUAGE</span>
+    <div class="seg" role="group" aria-labelledby="langLabel">
+      <button class="seg-btn" data-lang="en" aria-pressed="true">EN</button>
+      <button class="seg-btn" data-lang="ja" aria-pressed="false" lang="ja">日本語</button>
+    </div>
+  </div>
 
   <div class="drawer-section">
     <div class="section-header">
@@ -1132,67 +1091,16 @@
       <span class="section-chevron">▼</span>
     </div>
     <div class="section-body">
-      <div class="sound-cards" id="soundCards">
-        <div class="sound-card active" data-sound="blip"><div class="card-info"><div class="card-name">BLIP</div><div class="card-desc">Retro 8-bit blip</div></div></div>
-        <div class="sound-card" data-sound="click"><div class="card-info"><div class="card-name">CLICK</div><div class="card-desc">Classic metronome click</div></div></div>
-        <div class="sound-card" data-sound="beep"><div class="card-info"><div class="card-name">BEEP</div><div class="card-desc">Electronic sine tone</div></div></div>
-        <div class="sound-card" data-sound="wood"><div class="card-info"><div class="card-name">WOOD</div><div class="card-desc">Warm woodblock thud</div></div></div>
-        <div class="sound-card" data-sound="hihat"><div class="card-info"><div class="card-name">HI-HAT</div><div class="card-desc">Crisp percussive tick</div></div></div>
-        <div class="sound-card" data-sound="rimshot"><div class="card-info"><div class="card-name">RIMSHOT</div><div class="card-desc">Sharp snare rim tap</div></div></div>
-        <div class="sound-card" data-sound="clave"><div class="card-info"><div class="card-name">CLAVE</div><div class="card-desc">Hollow wooden stick tap</div></div></div>
-        <div class="sound-card" data-sound="bell"><div class="card-info"><div class="card-name">BELL</div><div class="card-desc">Soft chime ring</div></div></div>
-        <div class="sound-card" data-sound="ping"><div class="card-info"><div class="card-name">PING</div><div class="card-desc">Pure digital ping</div></div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="drawer-section">
-    <div class="section-header">
-      <span class="section-title">COLOUR THEME</span>
-      <span class="section-chevron">▼</span>
-    </div>
-    <div class="section-body">
-      <div class="theme-cards" id="themeCards">
-        <div class="theme-card active" data-theme="">
-          <div class="card-swatch" style="background:#c0c0c0;"></div>
-          <div class="card-info"><div class="card-name">CLASSICAL</div><div class="card-desc">Silver on pure black</div></div>
-        </div>
-        <div class="theme-card" data-theme="neon">
-          <div class="card-swatch" style="background:#00ffcc;"></div>
-          <div class="card-info"><div class="card-name">NEON</div><div class="card-desc">Electric cyan on deep black</div></div>
-        </div>
-        <div class="theme-card" data-theme="sakura">
-          <div class="card-swatch" style="background:#d4607a;"></div>
-          <div class="card-info"><div class="card-name">SAKURA</div><div class="card-desc">Rose pink on soft cream</div></div>
-        </div>
-        <div class="theme-card" data-theme="slate">
-          <div class="card-swatch" style="background:#7cb9e8;"></div>
-          <div class="card-info"><div class="card-name">SLATE</div><div class="card-desc">Steel blue on dark navy</div></div>
-        </div>
-        <div class="theme-card" data-theme="ember">
-          <div class="card-swatch" style="background:#ff6b2b;"></div>
-          <div class="card-info"><div class="card-name">EMBER</div><div class="card-desc">Burning orange on charcoal</div></div>
-        </div>
-        <div class="theme-card" data-theme="forest">
-          <div class="card-swatch" style="background:#5ec860;"></div>
-          <div class="card-info"><div class="card-name">FOREST</div><div class="card-desc">Vivid green on dark earth</div></div>
-        </div>
-        <div class="theme-card" data-theme="kintsugi">
-          <div class="card-swatch" style="background:#c9a84c;"></div>
-          <div class="card-info"><div class="card-name">KINTSUGI</div><div class="card-desc">Gold veins on broken clay</div></div>
-        </div>
-        <div class="theme-card" data-theme="midnight">
-          <div class="card-swatch" style="background:#818cf8;"></div>
-          <div class="card-info"><div class="card-name">MIDNIGHT</div><div class="card-desc">Indigo violet on near-black</div></div>
-        </div>
-        <div class="theme-card" data-theme="rose">
-          <div class="card-swatch" style="background:#fb7185;"></div>
-          <div class="card-info"><div class="card-name">ROSE</div><div class="card-desc">Blush pink on deep crimson</div></div>
-        </div>
-        <div class="theme-card" data-theme="arctic">
-          <div class="card-swatch" style="background:#0ea5e9;"></div>
-          <div class="card-info"><div class="card-name">ARCTIC</div><div class="card-desc">Ice blue on crisp white</div></div>
-        </div>
+      <div class="sound-cards" id="soundCards" role="radiogroup" aria-label="Click sound">
+        <div class="sound-card active" data-sound="blip" role="radio" aria-checked="true" tabindex="0"><div class="card-info"><div class="card-name">BLIP</div><div class="card-desc">Retro 8-bit blip</div></div></div>
+        <div class="sound-card" data-sound="click" role="radio" aria-checked="false" tabindex="-1"><div class="card-info"><div class="card-name">CLICK</div><div class="card-desc">Classic metronome click</div></div></div>
+        <div class="sound-card" data-sound="beep" role="radio" aria-checked="false" tabindex="-1"><div class="card-info"><div class="card-name">BEEP</div><div class="card-desc">Electronic sine tone</div></div></div>
+        <div class="sound-card" data-sound="wood" role="radio" aria-checked="false" tabindex="-1"><div class="card-info"><div class="card-name">WOOD</div><div class="card-desc">Warm woodblock thud</div></div></div>
+        <div class="sound-card" data-sound="hihat" role="radio" aria-checked="false" tabindex="-1"><div class="card-info"><div class="card-name">HI-HAT</div><div class="card-desc">Crisp percussive tick</div></div></div>
+        <div class="sound-card" data-sound="rimshot" role="radio" aria-checked="false" tabindex="-1"><div class="card-info"><div class="card-name">RIMSHOT</div><div class="card-desc">Sharp snare rim tap</div></div></div>
+        <div class="sound-card" data-sound="clave" role="radio" aria-checked="false" tabindex="-1"><div class="card-info"><div class="card-name">CLAVE</div><div class="card-desc">Hollow wooden stick tap</div></div></div>
+        <div class="sound-card" data-sound="bell" role="radio" aria-checked="false" tabindex="-1"><div class="card-info"><div class="card-name">BELL</div><div class="card-desc">Soft chime ring</div></div></div>
+        <div class="sound-card" data-sound="ping" role="radio" aria-checked="false" tabindex="-1"><div class="card-info"><div class="card-name">PING</div><div class="card-desc">Pure digital ping</div></div></div>
       </div>
     </div>
   </div>
@@ -1205,11 +1113,22 @@
     <div class="section-body">
       <div class="toggle-row">
         <div class="toggle-info">
+          <div class="toggle-label" id="lightModeLabel">LIGHT MODE</div>
+          <div class="toggle-desc" id="lightModeDesc">Bright theme for daylight use</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="lightModeToggle" aria-label="Light mode">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <div class="toggle-row" style="margin-top:8px;">
+        <div class="toggle-info">
           <div class="toggle-label">FLASH</div>
           <div class="toggle-desc">Flashing background on beat</div>
         </div>
         <label class="toggle">
-          <input type="checkbox" id="flashToggle">
+          <input type="checkbox" id="flashToggle" aria-label="Flash background on beat">
           <div class="toggle-track"></div>
           <div class="toggle-thumb"></div>
         </label>
@@ -1220,7 +1139,7 @@
           <div class="toggle-desc" id="vibrateDesc">Vibrate phone on beat</div>
         </div>
         <label class="toggle">
-          <input type="checkbox" id="vibrateToggle">
+          <input type="checkbox" id="vibrateToggle" aria-label="Vibrate phone on beat">
           <div class="toggle-track"></div>
           <div class="toggle-thumb"></div>
         </label>
@@ -1231,7 +1150,7 @@
           <div class="toggle-desc" id="watchToggleDesc">Vibrate smart watch on beat</div>
         </div>
         <label class="toggle">
-          <input type="checkbox" id="watchVibrateToggle">
+          <input type="checkbox" id="watchVibrateToggle" aria-label="Vibrate smart watch on beat">
           <div class="toggle-track"></div>
           <div class="toggle-thumb"></div>
         </label>
@@ -1239,107 +1158,128 @@
     </div>
   </div>
 
-  <div class="dropdown-version" id="dropdownVersion">v0.1.0</div>
+  <button class="about-link" id="tourBtn" aria-haspopup="dialog">TUTORIAL</button>
+  <button class="about-link" id="aboutBtn" aria-haspopup="dialog">ABOUT</button>
+
+  <div class="dropdown-version" id="dropdownVersion">v0.2.0</div>
 
 </div>
 
-<div class="app">
-  <div class="header">
-    <div class="japanese-title" id="jaTitle">メトロノーム</div>
-    <div class="title" id="mainTitle">Metronome</div>
-    <button class="lang-btn" id="langBtn" title="Switch language">EN / 日本語</button>
+<!-- About page -->
+<div class="about" id="about" role="dialog" aria-modal="true" aria-labelledby="aboutTitle" hidden>
+  <div class="about-card">
+    <button class="about-close" id="aboutClose" aria-label="Close"></button>
+    <div class="about-name" id="aboutTitle">SOUZU</div>
+    <div class="about-sub" id="aboutSub">METRONOME</div>
+    <p class="about-desc" id="aboutDesc">A metronome built as a guitar pedal.</p>
+    <dl class="about-meta">
+      <div><dt id="aboutByLabel">DESIGN &amp; DEVELOPMENT</dt><dd>Teruki Sato</dd></div>
+      <div><dt id="aboutVersionLabel">VERSION</dt><dd id="aboutVersion"></dd></div>
+    </dl>
+    <div class="about-copy">© 2026 Teruki Sato</div>
   </div>
+</div>
 
-  <!-- Stage -->
+<div class="app">
+  <!-- Pedal -->
   <div class="stage">
-
-    <!-- Screen display -->
+    <div class="stage-art" aria-hidden="true"></div>
+    <!-- Screen -->
     <div class="screen">
       <div class="screen-inner">
-        <!-- Beat dots -->
-        <div class="beats" id="beats"></div>
-        <!-- BPM -->
+        <div class="beats" id="beats" role="group" aria-label="Accent pattern: press a beat to accent it"></div>
         <div class="bpm-display">
-          <div class="bpm-label">BPM</div>
           <div class="bpm-number" id="bpmNum">120</div>
-          <div class="tempo-name" id="tempoName">Allegro</div>
+          <div class="bpm-label" id="bpmLabelText">BPM</div>
+          <div class="ts-display" id="tsReadout">4/4</div>
+        </div>
+        <div class="screen-status">
+          <div class="status-group">
+            <span id="statusPreset" class="status-dim">P–</span>
+            <span id="statusSound">BLIP</span>
+          </div>
+          <div class="status-group">
+            <span><span class="status-label" id="statusBarLabel">BAR</span> <span id="statusBar">–</span></span>
+            <span id="statusTime">00:00</span>
+          </div>
         </div>
       </div>
     </div>
+    <div class="visually-hidden" id="bpmAnnounce" aria-live="polite" aria-atomic="true"></div>
 
-    <!-- Play + Tap row -->
-    <div class="play-tap-row">
-      <button class="btn play" id="playBtn"></button>
-      <button class="btn tap-btn" id="tapBtn">TAP</button>
+    <!-- Tempo fader -->
+    <div class="fader">
+      <div class="fader-scale engrave" aria-hidden="true"><span style="--p: 0.0000">20</span><span style="--p: 0.1818">60</span><span style="--p: 0.3636">100</span><span style="--p: 0.5455">140</span><span style="--p: 0.7273">180</span><span style="--p: 0.9091">220</span></div>
+      <div class="fader-ticks" aria-hidden="true"><span style="--p: 0.0000"></span><span style="--p: 0.0455"></span><span style="--p: 0.0909"></span><span style="--p: 0.1364"></span><span style="--p: 0.1818"></span><span style="--p: 0.2273"></span><span style="--p: 0.2727"></span><span style="--p: 0.3182"></span><span style="--p: 0.3636"></span><span style="--p: 0.4091"></span><span style="--p: 0.4545"></span><span style="--p: 0.5000"></span><span style="--p: 0.5455"></span><span style="--p: 0.5909"></span><span style="--p: 0.6364"></span><span style="--p: 0.6818"></span><span style="--p: 0.7273"></span><span style="--p: 0.7727"></span><span style="--p: 0.8182"></span><span style="--p: 0.8636"></span><span style="--p: 0.9091"></span><span style="--p: 0.9545"></span><span style="--p: 1.0000"></span></div>
+      <input type="range" id="bpmSlider" min="20" max="240" value="120" aria-label="Tempo in beats per minute">
     </div>
 
-    <!-- Slider -->
-    <div class="slider-wrap">
-      <input type="range" id="bpmSlider" min="20" max="240" value="120">
-    </div>
-
-    <!-- BPM nudge -->
-    <div class="row">
-      <button class="btn" id="minus10">−10</button>
-      <button class="btn" id="minus5">−5</button>
-      <button class="btn" id="minus1">−1</button>
-      <button class="btn" id="plus1">+1</button>
-      <button class="btn" id="plus5">+5</button>
-      <button class="btn" id="plus10">+10</button>
-      <button class="btn vol-btn" id="volumeBtn" title="Volume"></button>
-    </div>
-
-    <!-- Volume panel (hidden by default) -->
-    <div class="volume-panel" id="volumePanel">
-      <div class="volume-slider-row">
-        <input type="range" id="volumeSlider" min="0" max="100" value="80">
-        <span class="volume-value" id="volumeValue">80%</span>
+    <!-- Time signature encoders side by side, then the accent switch -->
+    <div class="ts">
+      <div class="visually-hidden" id="timeSigLabel">TIME SIGNATURE</div>
+      <div class="knob-wrap knob-wrap-beats">
+        <div class="knob" id="beatsKnob"></div>
+        <div class="fsw-label engrave" id="beatsKnobLabel">BEATS</div>
+      </div>
+      <div class="knob-wrap knob-wrap-note">
+        <div class="knob" id="noteKnob"></div>
+        <div class="fsw-label engrave" id="noteKnobLabel">NOTE</div>
+      </div>
+      <div class="fsw-unit">
+        <button class="fsw" id="accentToggle" role="switch" aria-checked="true" aria-label="Accents on/off">
+          <span class="fsw-ring"></span>
+          <span class="fsw-cap"></span>
+        </button>
+        <div class="fsw-label engrave" id="accentLabel">ACCENT</div>
       </div>
     </div>
 
-    <!-- Time sig -->
-    <div style="width:100%;">
-      <div class="small-label" id="timeSigLabel" style="text-align:center;margin-bottom:10px;">TIME SIGNATURE</div>
-      <div class="time-sig-wrap">
-        <select id="timeSigSelect" class="time-sig-select">
-          <optgroup data-en="Simple" data-ja="単純拍子" label="Simple">
-            <option value="2" data-en="2/4 — March" data-ja="2/4 — 行進曲">2/4 — March</option>
-            <option value="3" data-en="3/4 — Waltz" data-ja="3/4 — ワルツ">3/4 — Waltz</option>
-            <option value="4" selected data-en="4/4 — Common" data-ja="4/4 — コモン">4/4 — Common</option>
-          </optgroup>
-          <optgroup data-en="Compound" data-ja="複合拍子" label="Compound">
-            <option value="6" data-en="6/8 — Compound duple" data-ja="6/8 — 複合2拍子">6/8 — Compound duple</option>
-            <option value="9" data-en="9/8 — Compound triple" data-ja="9/8 — 複合3拍子">9/8 — Compound triple</option>
-            <option value="12" data-en="12/8 — Compound quadruple" data-ja="12/8 — 複合4拍子">12/8 — Compound quadruple</option>
-          </optgroup>
-          <optgroup data-en="Odd / Complex" data-ja="変拍子" label="Odd / Complex">
-            <option value="5" data-en="5/4 — Five" data-ja="5/4 — 五拍子">5/4 — Five</option>
-            <option value="7" data-en="7/8 — Seven" data-ja="7/8 — 七拍子">7/8 — Seven</option>
-            <option value="11" data-en="11/8 — Eleven" data-ja="11/8 — 十一拍子">11/8 — Eleven</option>
-            <option value="13" data-en="13/8 — Thirteen" data-ja="13/8 — 十三拍子">13/8 — Thirteen</option>
-          </optgroup>
-          <optgroup data-en="Asymmetric" data-ja="非対称拍子" label="Asymmetric">
-            <option value="5" data-en="5/8" data-ja="5/8">5/8</option>
-            <option value="8" data-en="8/8 — Eight" data-ja="8/8 — 八拍子">8/8 — Eight</option>
-            <option value="10" data-en="10/8 — Ten" data-ja="10/8 — 十拍子">10/8 — Ten</option>
-          </optgroup>
-        </select>
+    <!-- Presets (tap to load, hold to save) and TAP tempo -->
+    <div class="switch-row">
+      <button class="fsw preset-btn" data-preset="0">
+        <span class="fsw-ring"></span>
+        <span class="fsw-cap">1</span>
+      </button>
+      <button class="fsw preset-btn" data-preset="1">
+        <span class="fsw-ring"></span>
+        <span class="fsw-cap">2</span>
+      </button>
+      <button class="fsw preset-btn" data-preset="2">
+        <span class="fsw-ring"></span>
+        <span class="fsw-cap">3</span>
+      </button>
+      <button class="fsw" id="tapBtn" aria-label="Tap tempo">
+        <span class="fsw-ring" id="tapLamp"></span>
+        <span class="fsw-cap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" opacity="0.55"/></svg></span>
+      </button>
+      <div class="engrave fsw-label label-presets" id="presetsLabel">PRESETS</div>
+      <div class="engrave fsw-label label-tap" id="tapLabel">TAP</div>
+    </div>
+
+    <!-- Pedal name -->
+    <div class="brand">SOUZU</div>
+
+    <!-- Footswitches: A440 tuning tone + START -->
+    <div class="stomps">
+      <div class="stomp-area">
+        <button class="stomp" id="toneBtn" aria-label="A440 tuning tone" aria-pressed="false">
+          <span class="stomp-nut"></span>
+          <span class="stomp-dome"></span>
+        </button>
+        <div class="fsw-label engrave" id="toneLabel">A440</div>
+      </div>
+      <div class="stomp-area">
+        <button class="stomp" id="playBtn" aria-label="Start" aria-pressed="false">
+          <span class="stomp-nut"></span>
+          <span class="stomp-dome"></span>
+        </button>
+        <div class="fsw-label engrave" id="startLabel">START</div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  // ── Icons (inline SVG, currentColor so they follow theme/button colour) ──
-  const ICONS = {
-    play: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M6 4l14 8-14 8V4z"/></svg>',
-    stop: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>',
-    volMute: '<svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="16" y1="9" x2="21" y2="15"/><line x1="21" y1="9" x2="16" y2="15"/></g></svg>',
-    volLow: '<svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><path d="M16 9.5a4 4 0 0 1 0 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
-    volMid: '<svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><path d="M15.5 8a6 6 0 0 1 0 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
-    volHigh: '<svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><path d="M15.5 8a6 6 0 0 1 0 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18.5 5a10 10 0 0 1 0 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
-  };
-
   let bpm = 120;
   let beatsPerBar = 4;
   let playing = false;
@@ -1348,78 +1288,85 @@
   let audioCtx = null;
 
   const bpmNum = document.getElementById('bpmNum');
-  const tempoName = document.getElementById('tempoName');
+  const bpmAnnounce = document.getElementById('bpmAnnounce');
   const bpmSlider = document.getElementById('bpmSlider');
   const playBtn = document.getElementById('playBtn');
   const flash = document.getElementById('flash');
   const beatsEl = document.getElementById('beats');
 
-  function setPlayIcon(isPlaying) {
-    playBtn.innerHTML = isPlaying ? ICONS.stop : ICONS.play;
+  function setPlayingState(isPlaying) {
+    if (!isPlaying) stopPracticeTimer();
+    playBtn.setAttribute('aria-label', isPlaying ? 'Stop' : 'Start');
+    playBtn.setAttribute('aria-pressed', String(isPlaying));
   }
+
+  // ── Toast notifications ──
+  const toastStack = document.getElementById('toastStack');
+  function showToast(msg, type) {
+    const el = document.createElement('div');
+    el.className = 'toast' + (type === 'error' ? ' error' : '');
+    el.textContent = msg;
+    toastStack.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    setTimeout(() => {
+      el.classList.remove('show');
+      setTimeout(() => el.remove(), 300);
+    }, 3500);
+  }
+
+  // ── Persisted settings (localStorage) ──
+  const STORAGE_KEY = 'metronome-settings-v1';
+  function loadSettings() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+    catch { return {}; }
+  }
+  function saveSettings(patch) {
+    try {
+      const cur = loadSettings();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(Object.assign(cur, patch)));
+    } catch {}
+  }
+  const savedSettings = loadSettings();
 
   let currentLang = 'en';
 
-  const tempos = [
-    [20,  'Larghissimo'],
-    [40,  'Grave'],
-    [55,  'Largo'],
-    [65,  'Larghetto'],
-    [72,  'Adagio'],
-    [80,  'Andante'],
-    [96,  'Andante moderato'],
-    [108, 'Moderato'],
-    [120, 'Allegretto'],
-    [132, 'Allegro'],
-    [160, 'Vivace'],
-    [176, 'Presto'],
-    [200, 'Prestissimo'],
-    [241, '']
-  ];
-
-  const temposJa = [
-    [20,  'めんこいくらいのんびり'],
-    [40,  'なまらゆっくり'],
-    [55,  'ゆるゆるとね'],
-    [65,  'ちょっとゆっくりめだべ'],
-    [72,  'おだやかにやってみ'],
-    [80,  'ぼちぼち歩くくらい'],
-    [96,  'まあまあのペースだべさ'],
-    [108, 'ふつうくらいだっしょ'],
-    [120, 'すこし速めだべ'],
-    [132, 'なまら速いべや'],
-    [160, 'はきはきとやってみ'],
-    [176, 'かなり速いっしょや'],
-    [200, 'なまら全力だべ'],
-    [241, '']
-  ];
-
-  function getTempoName(b) {
-    const arr = currentLang === 'ja' ? temposJa : tempos;
-    for (let i = 0; i < arr.length - 1; i++) {
-      if (b < arr[i+1][0]) return arr[i][1];
-    }
-    return '';
-  }
-
-  function updateBPM(val) {
+  function updateBPM(val, announce) {
     bpm = Math.max(20, Math.min(240, val));
     bpmNum.textContent = bpm;
-    tempoName.textContent = getTempoName(bpm);
     bpmSlider.value = bpm;
-    const pct = ((bpm - 20) / 220 * 100).toFixed(1) + '%';
-    bpmSlider.style.setProperty('--pct', pct);
+    if (announce) bpmAnnounce.textContent = bpm + ' BPM';
+    saveSettings({ bpm });
+    markPresetModified();
     if (playing) restart();
   }
+
+  // Kept outside the translations table because buildBeats() runs during
+  // init, before that table is declared.
+  const BEAT_DOT_LABELS = { en: n => 'Beat ' + n, ja: n => n + '拍目' };
+  let beatFocus = 0; // roving tab stop within the beat dots
 
   function buildBeats() {
     beatsEl.innerHTML = '';
     beatsEl.classList.toggle('compact', beatsPerBar > 8);
+    if (beatFocus >= beatsPerBar) beatFocus = 0;
     for (let i = 0; i < beatsPerBar; i++) {
-      const d = document.createElement('div');
-      d.className = 'beat-dot' + (i === 0 ? ' accent-dot' : '');
+      const d = document.createElement('button');
+      d.type = 'button';
+      d.className = 'beat-dot';
+      d.dataset.beat = i;
+      d.tabIndex = i === beatFocus ? 0 : -1;
+      d.setAttribute('aria-label', BEAT_DOT_LABELS[currentLang](i + 1));
       beatsEl.appendChild(d);
     }
+    renderAccentDots();
+  }
+
+  function renderAccentDots() {
+    beatsEl.classList.toggle('accent-off', !accentOn);
+    beatsEl.querySelectorAll('.beat-dot').forEach((d, i) => {
+      d.classList.toggle('accent-dot', accentBeats.has(i));
+      d.setAttribute('aria-pressed', String(accentBeats.has(i)));
+    });
   }
 
   function highlightBeat(n) {
@@ -1429,7 +1376,12 @@
 
   function getAudioCtx() {
     if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) {
+        showToast('Audio is not supported in this browser', 'error');
+        throw new Error('Web Audio API unavailable');
+      }
+      audioCtx = new Ctx();
       // Master compressor/limiter to allow louder output without clipping
       const comp = audioCtx.createDynamicsCompressor();
       comp.threshold.value = -12;
@@ -1440,11 +1392,12 @@
       comp.connect(audioCtx.destination);
       audioCtx._out = comp;
     }
+    if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
     return audioCtx;
   }
 
   let currentSound = 'blip';
-  let volume = 0.8;
+  const volume = 0.8;
 
   function playTick(accent) {
     const ctx = getAudioCtx();
@@ -1578,9 +1531,20 @@
   }
 
   function doTick() {
-    const accent = currentBeat === 0;
-    playTick(accent);
+    const accent = accentOn && accentBeats.has(currentBeat);
+    try {
+      playTick(accent);
+    } catch (err) {
+      console.warn('[doTick] audio error:', err);
+      if (playing) { playing = false; stop(); setPlayingState(false); }
+    }
     highlightBeat(currentBeat);
+    if (currentBeat === 0) {
+      // A restart (tempo change while playing) re-enters on beat 1, but it
+      // isn't a new bar — don't count it, or dragging the fader would spin it up.
+      if (skipBarCount) skipBarCount = false;
+      else statusBar.textContent = ++barCount;
+    }
     // Flash
     if (document.getElementById('flashToggle').checked) {
       flash.classList.add('pop');
@@ -1610,30 +1574,241 @@
 
   function restart() {
     stop();
-    if (playing) start();
+    if (playing) {
+      skipBarCount = true;
+      start();
+    }
+  }
+
+  // ── Screen status: bar counter + practice timer (reset on START, frozen on stop) ──
+  const statusBar = document.getElementById('statusBar');
+  const statusTime = document.getElementById('statusTime');
+  let barCount = 0;
+  let skipBarCount = false;
+  let practiceStart = 0;
+  let practiceTimerId = null;
+
+  function formatElapsed(ms) {
+    const s = Math.floor(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, sec = s % 60;
+    const mmss = String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+    return h ? h + ':' + mmss : mmss;
+  }
+  function startPracticeCounters() {
+    barCount = 0;
+    skipBarCount = false;
+    statusBar.textContent = '–';
+    practiceStart = performance.now();
+    statusTime.textContent = '00:00';
+    clearInterval(practiceTimerId);
+    practiceTimerId = setInterval(() => {
+      statusTime.textContent = formatElapsed(performance.now() - practiceStart);
+    }, 250);
+  }
+  function stopPracticeTimer() {
+    if (!practiceTimerId) return;
+    clearInterval(practiceTimerId);
+    practiceTimerId = null;
+    statusTime.textContent = formatElapsed(performance.now() - practiceStart);
   }
 
   playBtn.addEventListener('click', () => {
     playing = !playing;
-    setPlayIcon(playing);
+    if (playing) startPracticeCounters();
+    setPlayingState(playing);
     if (playing) start(); else stop();
   });
 
   bpmSlider.addEventListener('input', () => updateBPM(+bpmSlider.value));
 
-  document.getElementById('minus10').addEventListener('click', () => updateBPM(bpm - 10));
-  document.getElementById('minus5').addEventListener('click',  () => updateBPM(bpm - 5));
-  document.getElementById('minus1').addEventListener('click',  () => updateBPM(bpm - 1));
-  document.getElementById('plus1').addEventListener('click',   () => updateBPM(bpm + 1));
-  document.getElementById('plus5').addEventListener('click',   () => updateBPM(bpm + 5));
-  document.getElementById('plus10').addEventListener('click',  () => updateBPM(bpm + 10));
+  // ── Rotary encoders ──
+  // A black-metal cap with a pointer line, over a printed scale of tick lines
+  // (end values labelled). A hidden range input carries keyboard and
+  // screen-reader support; the scale is drawn once and only the cap turns.
+  function createKnob(el, { values, value, ariaLabel, onChange }) {
+    const n = values.length, START = -135, STEP = 270 / (n - 1), C = 80;
+    const f = x => x.toFixed(1);
+    let ticks = '', labels = '';
+    values.forEach((v, i) => {
+      const a = (START + STEP * i) * Math.PI / 180, sx = Math.sin(a), cy = Math.cos(a);
+      ticks += `<line class="knob-tick" x1="${f(C + sx * 64)}" y1="${f(C - cy * 64)}" x2="${f(C + sx * 73)}" y2="${f(C - cy * 73)}"/>`;
+      if (i === 0 || i === n - 1) {
+        labels += `<text class="knob-label" text-anchor="middle" x="${f(C + sx * 70)}" y="${f(C - cy * 70 + 16)}">${v}</text>`;
+      }
+    });
+    el.innerHTML = `<svg viewBox="0 0 160 160" aria-hidden="true">${ticks}${labels}</svg>
+    <div class="encoder-cap" aria-hidden="true"></div>
+    <input type="range" min="0" max="${n - 1}" step="1" aria-label="${ariaLabel}">`;
 
-  // Time sig
-  document.getElementById('timeSigSelect').addEventListener('change', e => {
-    beatsPerBar = +e.target.value;
+    const input = el.querySelector('input');
+    const pointer = el.querySelector('.encoder-cap');
+    let index = Math.max(0, values.indexOf(value));
+
+    function render() {
+      pointer.style.transform = `rotate(${START + STEP * index}deg)`;
+      input.value = index;
+      input.setAttribute('aria-valuetext', String(values[index]));
+    }
+    function set(i, notify) {
+      i = Math.max(0, Math.min(n - 1, i));
+      if (i === index) return;
+      index = i;
+      render();
+      if (notify) onChange(values[index]);
+    }
+
+    input.addEventListener('input', () => set(+input.value, true));
+
+    // Drag around the rim to turn; grab the centre cap to drag up/down instead.
+    let drag = null;
+    function polar(e) {
+      const r = el.getBoundingClientRect();
+      const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+      return { angle: Math.atan2(dx, -dy) * 180 / Math.PI, dist: Math.hypot(dx, dy) / (r.width / 2) };
+    }
+    el.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      el.setPointerCapture(e.pointerId);
+      input.focus({ preventScroll: true });
+      const p = polar(e);
+      drag = { id: e.pointerId, rotate: p.dist > 0.35, angle: p.angle, y: e.clientY, start: index, steps: 0 };
+    });
+    el.addEventListener('pointermove', e => {
+      if (!drag || e.pointerId !== drag.id) return;
+      if (drag.rotate) {
+        const a = polar(e).angle;
+        let d = a - drag.angle;
+        if (d > 180) d -= 360;
+        if (d < -180) d += 360;
+        drag.angle = a;
+        drag.steps += d / STEP;
+      } else {
+        drag.steps += (drag.y - e.clientY) / 14;
+        drag.y = e.clientY;
+      }
+      drag.steps = Math.max(-drag.start, Math.min(n - 1 - drag.start, drag.steps));
+      set(drag.start + Math.round(drag.steps), true);
+    });
+    const endDrag = e => { if (drag && e.pointerId === drag.id) drag = null; };
+    el.addEventListener('pointerup', endDrag);
+    el.addEventListener('pointercancel', endDrag);
+    el.addEventListener('wheel', e => {
+      e.preventDefault();
+      set(index + (e.deltaY < 0 ? 1 : -1), true);
+    }, { passive: false });
+
+    render();
+    return {
+      setValue: v => set(values.indexOf(v), false),
+      setAriaLabel: label => input.setAttribute('aria-label', label),
+    };
+  }
+
+  // ── Time signature ──
+  const BEAT_VALUES = Array.from({ length: 15 }, (_, i) => i + 2);
+  const NOTE_VALUES = [2, 4, 8, 16];
+  let noteValue = 4;
+  const tsReadout = document.getElementById('tsReadout');
+  function updateTimeSigReadout() { tsReadout.textContent = beatsPerBar + '/' + noteValue; }
+
+  const beatsKnob = createKnob(document.getElementById('beatsKnob'), {
+    values: BEAT_VALUES,
+    value: beatsPerBar,
+    ariaLabel: 'Beats per bar',
+    onChange: v => {
+      beatsPerBar = v;
+      buildBeats();
+      currentBeat = 0;
+      updateTimeSigReadout();
+      saveSettings({ timeSig: v });
+      markPresetModified();
+    },
+  });
+  const noteKnob = createKnob(document.getElementById('noteKnob'), {
+    values: NOTE_VALUES,
+    value: noteValue,
+    ariaLabel: 'Note value',
+    onChange: v => {
+      noteValue = v;
+      updateTimeSigReadout();
+      saveSettings({ noteValue: v });
+      markPresetModified();
+    },
+  });
+
+  function setTimeSignature(beats, note) {
+    beatsPerBar = beats;
+    noteValue = note;
+    beatsKnob.setValue(beats);
+    noteKnob.setValue(note);
     buildBeats();
     currentBeat = 0;
+    updateTimeSigReadout();
+    saveSettings({ timeSig: beats, noteValue: note });
+  }
+
+  // ── Accents: ACCENT switch is the master on/off; the beat dots pick which beats ──
+  let accentOn = savedSettings.accent !== false;
+  let accentBeats = new Set(Array.isArray(savedSettings.accents) ? savedSettings.accents : [0]);
+  const accentToggle = document.getElementById('accentToggle');
+  function setAccent(on) {
+    accentOn = on;
+    accentToggle.setAttribute('aria-checked', String(on));
+    renderAccentDots();
+    saveSettings({ accent: on });
+  }
+  function setAccentBeats(list) {
+    accentBeats = new Set(list);
+    saveSettings({ accents: [...accentBeats].sort((a, b) => a - b) });
+    renderAccentDots();
+  }
+  function toggleAccentBeat(i) {
+    const next = new Set(accentBeats);
+    if (next.has(i)) next.delete(i); else next.add(i);
+    setAccentBeats(next);
+    // Accenting a beat while accents are switched off turns them back on
+    if (next.has(i) && !accentOn) setAccent(true);
+    markPresetModified();
+  }
+  function focusBeatDot(i) {
+    const dots = beatsEl.querySelectorAll('.beat-dot');
+    dots.forEach((d, j) => { d.tabIndex = j === i ? 0 : -1; });
+    beatFocus = i;
+    dots[i].focus();
+  }
+  accentToggle.setAttribute('aria-checked', String(accentOn));
+  accentToggle.addEventListener('click', () => {
+    setAccent(!accentOn);
+    markPresetModified();
   });
+  beatsEl.addEventListener('click', e => {
+    const dot = e.target.closest('.beat-dot');
+    if (!dot) return;
+    beatFocus = +dot.dataset.beat;
+    toggleAccentBeat(beatFocus);
+  });
+  beatsEl.addEventListener('keydown', e => {
+    const dot = e.target.closest('.beat-dot');
+    if (!dot) return;
+    const i = +dot.dataset.beat, last = beatsPerBar - 1;
+    const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: last }[e.key];
+    if (next === undefined) return;
+    e.preventDefault();
+    focusBeatDot(Math.max(0, Math.min(last, next)));
+  });
+
+  // Preset state lives up here because updateBPM() (called during init)
+  // clears the active preset; the buttons are wired up after translations.
+  const PRESET_COUNT = 3;
+  const PRESET_HOLD_MS = 600;
+  const presets = Array.from({ length: PRESET_COUNT }, (_, i) =>
+    Array.isArray(savedSettings.presets) && savedSettings.presets[i] ? savedSettings.presets[i] : null);
+  let activePreset = -1;
+  function markPresetModified() {
+    if (activePreset === -1) return;
+    activePreset = -1;
+    saveSettings({ activePreset });
+    renderPresets();
+  }
 
   // ── Menu / Dropdown ──
   const menuBtn = document.getElementById('menuBtn');
@@ -1644,18 +1819,47 @@
     dropdown.classList.add('open');
     backdrop.classList.add('open');
     menuBtn.classList.add('open');
+    menuBtn.setAttribute('aria-expanded', 'true');
   }
   function closeMenu() {
     dropdown.classList.remove('open');
     backdrop.classList.remove('open');
     menuBtn.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded', 'false');
   }
   menuBtn.addEventListener('click', e => {
     e.stopPropagation();
     dropdown.classList.contains('open') ? closeMenu() : openMenu();
   });
   backdrop.addEventListener('click', closeMenu);
-  document.addEventListener('keydown', e => { if (e.code === 'Escape') closeMenu(); });
+
+  // ── About page (opened from settings) ──
+  const about = document.getElementById('about');
+  const aboutClose = document.getElementById('aboutClose');
+  document.getElementById('aboutVersion').textContent = document.getElementById('dropdownVersion').textContent;
+  function openAbout() {
+    closeMenu();
+    about.hidden = false;
+    void about.offsetWidth; // apply the hidden state first so the fade-in runs
+    about.classList.add('open');
+    aboutClose.focus();
+  }
+  function closeAbout() {
+    if (about.hidden) return;
+    about.classList.remove('open');
+    setTimeout(() => { about.hidden = true; }, 250);
+    menuBtn.focus();
+  }
+  document.getElementById('aboutBtn').addEventListener('click', openAbout);
+  aboutClose.addEventListener('click', closeAbout);
+  about.addEventListener('click', e => { if (e.target === about) closeAbout(); });
+  // Keep keyboard focus inside the About page while it's open
+  about.addEventListener('keydown', e => { if (e.key === 'Tab') { e.preventDefault(); aboutClose.focus(); } });
+
+  document.addEventListener('keydown', e => {
+    if (e.code !== 'Escape' || !document.getElementById('tour').hidden) return;
+    if (!about.hidden) closeAbout(); else closeMenu();
+  });
 
   // ── Accordion sections ──
   document.getElementById('dropdown').addEventListener('click', e => {
@@ -1665,70 +1869,73 @@
     section.classList.toggle('open');
   });
 
-  // ── Themes (drawer cards) ──
-  document.getElementById('themeCards').addEventListener('click', e => {
-    const card = e.target.closest('.theme-card');
-    if (!card) return;
-    document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
-    card.classList.add('active');
-    const theme = card.dataset.theme;
-    document.body.classList.remove('theme-neon','theme-sakura','theme-slate','theme-ember','theme-forest','theme-kintsugi','theme-midnight','theme-rose','theme-arctic');
-    if (theme) document.body.classList.add('theme-' + theme);
+  // ── Light / dark mode ──
+  const lightModeToggle = document.getElementById('lightModeToggle');
+  function applyTheme(isLight) {
+    document.documentElement.dataset.theme = isLight ? 'light' : 'dark';
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', isLight ? '#ffffff' : '#0a0a0a');
+    lightModeToggle.checked = isLight;
+  }
+  lightModeToggle.addEventListener('change', e => {
+    applyTheme(e.target.checked);
+    saveSettings({ theme: e.target.checked ? 'light' : 'dark' });
   });
 
   // Init
   buildBeats();
-  updateBPM(120);
-  setPlayIcon(false);
+  updateBPM(savedSettings.bpm || 120);
+  setPlayingState(false);
+  applyTheme(document.documentElement.dataset.theme === 'light');
   document.getElementById('flashToggle').addEventListener('change', e => {
     if (!e.target.checked) flash.classList.remove('pop');
-  });
-
-  // ── Volume ──
-  const volumeSlider = document.getElementById('volumeSlider');
-  const volumePanel  = document.getElementById('volumePanel');
-  const volumeBtn    = document.getElementById('volumeBtn');
-  const volumeValue  = document.getElementById('volumeValue');
-
-  volumeSlider.style.setProperty('--pct', '80%');
-
-  function updateVolIcon() {
-    const val = +volumeSlider.value;
-    volumeBtn.innerHTML = val === 0 ? ICONS.volMute : val < 40 ? ICONS.volLow : val < 75 ? ICONS.volMid : ICONS.volHigh;
-    volumeValue.textContent = val + '%';
-  }
-  updateVolIcon();
-
-  volumeBtn.addEventListener('click', () => {
-    const open = volumePanel.classList.toggle('open');
-    volumeBtn.classList.toggle('active', open);
-  });
-
-  volumeSlider.addEventListener('input', () => {
-    volume = volumeSlider.value / 100;
-    const pct = (+volumeSlider.value).toFixed(1) + '%';
-    volumeSlider.style.setProperty('--pct', pct);
-    updateVolIcon();
+    saveSettings({ flash: e.target.checked });
   });
 
   // ── Sound selector ──
+  function selectSoundCard(card, preview) {
+    document.querySelectorAll('.sound-card').forEach(c => {
+      c.classList.remove('active');
+      c.setAttribute('aria-checked', 'false');
+      c.tabIndex = -1;
+    });
+    card.classList.add('active');
+    card.setAttribute('aria-checked', 'true');
+    card.tabIndex = 0;
+    currentSound = card.dataset.sound;
+    document.getElementById('statusSound').textContent = card.querySelector('.card-name').textContent;
+    saveSettings({ sound: currentSound });
+    if (preview) {
+      try { playTick(true); } catch (err) { console.warn('[sound preview] audio error:', err); }
+    }
+  }
   document.getElementById('soundCards').addEventListener('click', e => {
     const card = e.target.closest('.sound-card');
     if (!card) return;
-    document.querySelectorAll('.sound-card').forEach(c => c.classList.remove('active'));
-    card.classList.add('active');
-    currentSound = card.dataset.sound;
-    // Preview the sound
-    const accent = true;
-    playTick(accent);
+    selectSoundCard(card, true);
+    card.focus();
   });
-
+  document.getElementById('soundCards').addEventListener('keydown', e => {
+    const card = e.target.closest('.sound-card');
+    if (!card) return;
+    if (e.code === 'Enter' || e.code === 'Space') {
+      e.preventDefault();
+      e.stopPropagation();
+      selectSoundCard(card, true);
+    }
+  });
   // Tap tempo
   let taps = [];
+  const tapBtn = document.getElementById('tapBtn');
+  const tapLamp = document.getElementById('tapLamp');
 
   function doTap() {
     const now = Date.now();
+    // A long pause starts a new tempo instead of averaging it in
+    if (taps.length && now - taps[taps.length - 1] > 2000) taps = [];
     taps.push(now);
+    tapLamp.classList.remove('tap');
+    void tapLamp.offsetWidth; // restart the flash animation
+    tapLamp.classList.add('tap');
     if (taps.length > 8) taps.shift();
     if (taps.length >= 2) {
       const gaps = [];
@@ -1736,37 +1943,62 @@
       const avg = gaps.reduce((a, b) => a + b, 0) / gaps.length;
       updateBPM(Math.round(60000 / avg));
     }
-    // Visual flash on tap button
-    const tapBtn = document.getElementById('tapBtn');
-    tapBtn.classList.add('flash-tap');
-    setTimeout(() => tapBtn.classList.remove('flash-tap'), 120);
   }
 
-  document.getElementById('tapBtn').addEventListener('click', doTap);
-  document.getElementById('tapBtn').addEventListener('touchstart', e => { e.preventDefault(); doTap(); });
+  // Register on pointerdown so the tap lands when the foot/finger hits, not on release
+  tapBtn.addEventListener('pointerdown', e => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    doTap();
+  });
+  tapBtn.addEventListener('click', e => { if (e.detail === 0) doTap(); }); // keyboard activation
+
+  // Global shortcuts should not fire while a form control already owns the
+  // key (typing in a select, or a focused button that natively handles
+  // Space/Enter itself) — otherwise actions double-fire or fight each other.
+  // Pedal shortcuts are off while a form control has focus or the About page is open
+  function isFormField(el) {
+    if (!document.getElementById('about').hidden || !document.getElementById('tour').hidden) return true;
+    const tag = el && el.tagName;
+    return tag === 'SELECT' || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON';
+  }
 
   document.addEventListener('keydown', e => {
+    if (isFormField(e.target)) return;
     if (e.code === 'Space') { e.preventDefault(); doTap(); }
     if (e.code === 'Enter') { playBtn.click(); }
   });
 
   // Keyboard bpm
   document.addEventListener('keydown', e => {
-    if (e.code === 'ArrowUp') updateBPM(bpm + 1);
-    if (e.code === 'ArrowDown') updateBPM(bpm - 1);
+    if (isFormField(e.target)) return;
+    if (e.code === 'ArrowUp') { e.preventDefault(); updateBPM(bpm + 1, true); }
+    if (e.code === 'ArrowDown') { e.preventDefault(); updateBPM(bpm - 1, true); }
   });
 
   // ── Language toggle ──
   const translations = {
     en: {
-      mainTitle: 'Metronome',
-      jaTitle: 'メトロノーム',
       bpmLabel: 'BPM',
-      tap: 'TAP',
+      barLabel: 'BAR',
       timeSigLabel: 'TIME SIGNATURE',
+      beatsKnob: 'BEATS',
+      noteKnob: 'NOTE',
+      beatsKnobAria: 'Beats per bar',
+      noteKnobAria: 'Note value',
+      accentLabel: 'ACCENT',
+      accentAria: 'Accents on/off',
+      accentPatternAria: 'Accent pattern: press a beat to accent it',
+      tapLabel: 'TAP',
+      tapAria: 'Tap tempo',
+      startLabel: 'START',
+      presetsLabel: 'PRESETS',
+      presetSaved: 'Saved to preset {n}',
+      presetEmpty: 'Preset {n} is empty — hold to save',
+      presetAria: 'Preset {n}. Press to load; hold or Shift+Enter to save',
+      presetAriaEmpty: 'Preset {n}, empty. Hold or Shift+Enter to save',
       settingsTitle: 'Settings',
       secDisplay: 'OTHER',
-      secTheme: 'COLOUR THEME',
       secSound: 'CLICK SOUND',
       flashLabel: 'FLASH',
       flashDesc: 'Flashing background on beat',
@@ -1774,17 +2006,38 @@
       vibrateDesc: 'Vibrate phone on beat',
       watchVibrateLabel: 'WATCH VIBRATION',
       watchVibrateDesc: 'Vibrate smart watch on beat',
-      langBtn: 'EN / 日本語',
+      lightModeLabel: 'LIGHT MODE',
+      lightModeDesc: 'Bright theme for daylight use',
+      aboutLink: 'ABOUT',
+      tourLink: 'TUTORIAL',
+      aboutSub: 'METRONOME',
+      aboutDesc: 'A metronome built as a guitar pedal.',
+      aboutByLabel: 'DESIGN & DEVELOPMENT',
+      aboutVersionLabel: 'VERSION',
+      aboutClose: 'Close',
+      langLabel: 'LANGUAGE',
     },
     ja: {
-      mainTitle: 'メトロノーム',
-      jaTitle: 'Metronome',
       bpmLabel: 'BPM',
-      tap: 'タップ',
+      barLabel: '小節',
       timeSigLabel: '拍子',
+      beatsKnob: '拍数',
+      noteKnob: '音符',
+      beatsKnobAria: '1小節の拍数',
+      noteKnobAria: '音価',
+      accentLabel: 'アクセント',
+      accentAria: 'アクセントのオン/オフ',
+      accentPatternAria: 'アクセントパターン：拍を押すとアクセントを付けます',
+      tapLabel: 'タップ',
+      tapAria: 'タップテンポ',
+      startLabel: 'スタート',
+      presetsLabel: 'プリセット',
+      presetSaved: 'プリセット{n}に保存しました',
+      presetEmpty: 'プリセット{n}は空です（長押しで保存）',
+      presetAria: 'プリセット{n}。押して呼び出し、長押しまたはShift+Enterで保存',
+      presetAriaEmpty: 'プリセット{n}（空）。長押しまたはShift+Enterで保存',
       settingsTitle: '設定',
       secDisplay: 'その他',
-      secTheme: 'カラーテーマ',
       secSound: 'クリック音',
       flashLabel: 'フラッシュ',
       flashDesc: '拍ごとに背景を点滅',
@@ -1792,34 +2045,45 @@
       vibrateDesc: '拍ごとにスマホを振動',
       watchVibrateLabel: 'ウォッチ振動',
       watchVibrateDesc: '拍ごとにスマートウォッチを振動',
-      langBtn: '日本語 / EN',
+      lightModeLabel: 'ライトモード',
+      lightModeDesc: '昼間用の明るいテーマ',
+      aboutLink: 'このアプリについて',
+      tourLink: 'チュートリアル',
+      aboutSub: 'メトロノーム',
+      aboutDesc: 'ギターペダルの形をしたメトロノーム。',
+      aboutByLabel: 'デザイン・開発',
+      aboutVersionLabel: 'バージョン',
+      aboutClose: '閉じる',
+      langLabel: '言語',
     }
   };
 
   function applyLang(lang) {
     const t = translations[lang];
-    document.getElementById('mainTitle').textContent = t.mainTitle;
-    document.getElementById('jaTitle').textContent = t.jaTitle;
-        document.querySelector('.bpm-label').textContent = t.bpmLabel;
-    document.getElementById('tapBtn').textContent = t.tap;
+    document.querySelector('.bpm-label').textContent = t.bpmLabel;
+    document.getElementById('statusBarLabel').textContent = t.barLabel;
     document.getElementById('timeSigLabel').textContent = t.timeSigLabel;
+    document.getElementById('beatsKnobLabel').textContent = t.beatsKnob;
+    document.getElementById('noteKnobLabel').textContent = t.noteKnob;
+    beatsKnob.setAriaLabel(t.beatsKnobAria);
+    noteKnob.setAriaLabel(t.noteKnobAria);
+    document.getElementById('accentLabel').textContent = t.accentLabel;
+    accentToggle.setAttribute('aria-label', t.accentAria);
+    document.getElementById('tapLabel').textContent = t.tapLabel;
+    tapBtn.setAttribute('aria-label', t.tapAria);
+    document.getElementById('startLabel').textContent = t.startLabel;
+    document.getElementById('presetsLabel').textContent = t.presetsLabel;
+    renderPresets();
+    beatsEl.setAttribute('aria-label', t.accentPatternAria);
+    beatsEl.querySelectorAll('.beat-dot').forEach((d, i) => d.setAttribute('aria-label', BEAT_DOT_LABELS[lang](i + 1)));
     document.querySelector('.dropdown-title').textContent = t.settingsTitle;
-    document.getElementById('langBtn').textContent = t.langBtn;
-    
-    // Refresh tempo name in new language
-    tempoName.textContent = getTempoName(bpm);
-
-    // Time sig options
-    document.querySelectorAll('#timeSigSelect option').forEach(opt => {
-      if (opt.dataset[lang]) opt.textContent = opt.dataset[lang];
-    });
-    document.querySelectorAll('#timeSigSelect optgroup').forEach(grp => {
-      if (grp.dataset[lang]) grp.label = grp.dataset[lang];
-    });
+    document.getElementById('langLabel').textContent = t.langLabel;
+    document.querySelectorAll('.seg-btn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+    document.documentElement.lang = lang;
 
     // Section titles
-    const headers = document.querySelectorAll('.section-title');
-    const secs = [t.secSound, t.secTheme, t.secDisplay];
+    const headers = document.querySelectorAll('.section-header .section-title');
+    const secs = [t.secSound, t.secDisplay];
     headers.forEach((h, i) => { if (secs[i]) h.textContent = secs[i]; });
 
     // Toggle labels
@@ -1829,66 +2093,338 @@
     document.getElementById('vibrateDesc').textContent = t.vibrateDesc;
     document.getElementById('watchVibrateLabel').textContent = t.watchVibrateLabel;
     document.getElementById('watchToggleDesc').textContent = t.watchVibrateDesc;
+    document.getElementById('lightModeLabel').textContent = t.lightModeLabel;
+    document.getElementById('lightModeDesc').textContent = t.lightModeDesc;
+    document.getElementById('tourBtn').textContent = t.tourLink;
+    document.getElementById('aboutBtn').textContent = t.aboutLink;
+    document.getElementById('aboutSub').textContent = t.aboutSub;
+    document.getElementById('aboutDesc').textContent = t.aboutDesc;
+    document.getElementById('aboutByLabel').textContent = t.aboutByLabel;
+    document.getElementById('aboutVersionLabel').textContent = t.aboutVersionLabel;
+    document.getElementById('aboutClose').setAttribute('aria-label', t.aboutClose);
   }
 
-  document.getElementById('langBtn').addEventListener('click', () => {
-    currentLang = currentLang === 'en' ? 'ja' : 'en';
+  // Language selector in settings
+  document.querySelectorAll('.seg-btn').forEach(btn => btn.addEventListener('click', () => {
+    if (btn.dataset.lang === currentLang) return;
+    currentLang = btn.dataset.lang;
     applyLang(currentLang);
+    saveSettings({ lang: currentLang });
+  }));
+
+  // ── Vibrate toggle ──
+  document.getElementById('vibrateToggle').addEventListener('change', e => {
+    if (e.target.checked && !navigator.vibrate) {
+      showToast('Vibration is not supported on this device/browser', 'error');
+      e.target.checked = false;
+      return;
+    }
+    saveSettings({ vibrate: e.target.checked });
   });
 
-  // ── Invisible 440hz tuning button (hold to play) ──
+  // ── Presets: tap to load, hold (or Shift+Enter) to save ──
+  const presetBtns = [...document.querySelectorAll('.preset-btn')];
+  const presetText = (key, i) => translations[currentLang][key].replace('{n}', i + 1);
+
+  function renderPresets() {
+    presetBtns.forEach((btn, i) => {
+      btn.classList.toggle('saved', !!presets[i]);
+      btn.classList.toggle('active', i === activePreset);
+      btn.setAttribute('aria-pressed', String(i === activePreset));
+      btn.setAttribute('aria-label', presetText(presets[i] ? 'presetAria' : 'presetAriaEmpty', i));
+    });
+    const statusPreset = document.getElementById('statusPreset');
+    statusPreset.textContent = activePreset === -1 ? 'P–' : 'P' + (activePreset + 1);
+    statusPreset.classList.toggle('status-dim', activePreset === -1);
+  }
+
+  function savePreset(i) {
+    presets[i] = { bpm, beats: beatsPerBar, note: noteValue, accent: accentOn, accents: [...accentBeats].sort((a, b) => a - b) };
+    activePreset = i;
+    saveSettings({ presets, activePreset });
+    renderPresets();
+    showToast(presetText('presetSaved', i));
+  }
+
+  function loadPreset(i) {
+    const p = presets[i];
+    if (!p) { showToast(presetText('presetEmpty', i)); return; }
+    updateBPM(p.bpm);
+    setTimeSignature(p.beats, p.note);
+    setAccentBeats(Array.isArray(p.accents) ? p.accents : [0]); // presets saved before patterns existed accent beat 1
+    setAccent(p.accent);
+    // Set last: the setters above clear the active preset as they change things
+    activePreset = i;
+    saveSettings({ activePreset });
+    renderPresets();
+  }
+
+  presetBtns.forEach((btn, i) => {
+    btn.style.setProperty('--hold-ms', PRESET_HOLD_MS + 'ms');
+    let holdTimer = null;
+    let savedByHold = false;
+    const cancelHold = () => {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+      btn.classList.remove('holding');
+    };
+    btn.addEventListener('pointerdown', e => {
+      if (e.button !== 0) return;
+      savedByHold = false;
+      btn.classList.add('holding');
+      holdTimer = setTimeout(() => {
+        cancelHold();
+        savedByHold = true;
+        savePreset(i);
+      }, PRESET_HOLD_MS);
+    });
+    btn.addEventListener('pointerup', cancelHold);
+    btn.addEventListener('pointerleave', cancelHold);
+    btn.addEventListener('pointercancel', cancelHold);
+    btn.addEventListener('contextmenu', e => e.preventDefault()); // long-press menu on mobile
+    btn.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); savePreset(i); }
+    });
+    btn.addEventListener('click', () => {
+      if (savedByHold) { savedByHold = false; return; }
+      loadPreset(i);
+    });
+  });
+
+  // ── Restore saved settings on load ──
+  (function restoreSettings() {
+    const savedBeats = +savedSettings.timeSig;
+    if (BEAT_VALUES.includes(savedBeats)) {
+      beatsPerBar = savedBeats;
+      beatsKnob.setValue(savedBeats);
+      buildBeats();
+    }
+    if (NOTE_VALUES.includes(savedSettings.noteValue)) {
+      noteValue = savedSettings.noteValue;
+      noteKnob.setValue(noteValue);
+    }
+    updateTimeSigReadout();
+    buildBeats(); // reflects the restored accent pattern and language
+    if (presets[savedSettings.activePreset]) activePreset = savedSettings.activePreset;
+    renderPresets();
+    if (savedSettings.sound) {
+      const card = document.querySelector('.sound-card[data-sound="' + savedSettings.sound + '"]');
+      if (card) selectSoundCard(card, false);
+    }
+    if (typeof savedSettings.flash === 'boolean') {
+      document.getElementById('flashToggle').checked = savedSettings.flash;
+    }
+    if (typeof savedSettings.vibrate === 'boolean') {
+      document.getElementById('vibrateToggle').checked = savedSettings.vibrate && !!navigator.vibrate;
+    }
+    if (savedSettings.lang === 'ja') {
+      currentLang = 'ja';
+      applyLang(currentLang);
+    }
+  })();
+
+  // ── First-run tutorial ──
+  // A spotlight steps through each part of the pedal with a short explanation.
+  // Shown once (tracked in localStorage); Settings → TUTORIAL replays it.
+  (function tour() {
+    const TOUR_KEY = 'metronome-tour-v1';
+    const STEPS = [
+      { el: ['.screen'],
+        en: ['SCREEN', 'Shows the tempo, the time signature and a dot for each beat. Tap a dot to accent that beat. The bottom row shows the loaded preset, the click sound, the bar count and how long you\'ve been playing.'],
+        ja: ['画面', 'テンポ、拍子、各拍の点を表示します。点をタップするとその拍にアクセントが付きます。下の行には読み込んだプリセット、クリック音、小節数、練習時間が表示されます。'] },
+      { el: ['.fader'],
+        en: ['TEMPO', 'Slide the fader to set the tempo, from 20 to 240 BPM. On a keyboard, the ↑ and ↓ keys change it by 1.'],
+        ja: ['テンポ', 'フェーダーをスライドしてテンポを設定します（20〜240 BPM）。キーボードでは ↑ ↓ キーで1ずつ変更できます。'] },
+      { el: ['.knob-wrap-beats'],
+        en: ['BEATS', 'Turn to set how many beats are in a bar, from 2 to 16. Drag around the knob, scroll, or use the arrow keys.'],
+        ja: ['拍数', '回して1小節の拍数を設定します（2〜16）。つまみの周りをドラッグ、スクロール、または矢印キーで操作できます。'] },
+      { el: ['.knob-wrap-note'],
+        en: ['NOTE', 'Turn to choose the note value that gets the beat: 2, 4, 8 or 16. Together with BEATS this makes the time signature, like 6/8.'],
+        ja: ['音符', '1拍とする音符を選びます（2・4・8・16）。拍数と組み合わせて 6/8 などの拍子になります。'] },
+      { el: ['.ts .fsw-unit'],
+        en: ['ACCENT', 'Turns the accent pattern on or off. Accented beats play a stronger click; choose them by tapping the dots on the screen.'],
+        ja: ['アクセント', 'アクセントパターンのオン/オフを切り替えます。アクセントの拍は強いクリック音になります。画面の点をタップして選びます。'] },
+      { el: ['.preset-btn', '#presetsLabel'],
+        en: ['PRESETS', 'Three memory slots. Press to load one. Hold for half a second to save the current tempo, time signature and accents to it.'],
+        ja: ['プリセット', '3つのメモリーです。押すと呼び出し、0.5秒長押しすると現在のテンポ、拍子、アクセントを保存します。'] },
+      { el: ['#tapBtn', '#tapLabel'],
+        en: ['TAP', 'Tap in time with the music at least twice to set the tempo. Pause for more than 2 seconds to start a new count. The Space bar works too.'],
+        ja: ['タップ', '曲に合わせて2回以上タップするとテンポを設定できます。2秒以上空けると新しく数え直します。スペースキーでも操作できます。'] },
+      { el: ['.stomp-area:first-of-type'],
+        en: ['A440', 'Press to play a 440 Hz A tuning note. Press again to stop it.'],
+        ja: ['A440', '押すと440Hzのラ（A）のチューニング音が鳴ります。もう一度押すと止まります。'] },
+      { el: ['.stomp-area:last-of-type'],
+        en: ['START', 'Starts and stops the metronome. The Enter key does the same.'],
+        ja: ['スタート', 'メトロノームを開始・停止します。Enterキーでも操作できます。'] },
+      { el: ['#menuBtn'],
+        en: ['SETTINGS', 'Choose the language and click sound, turn on flash or vibration, and replay this tutorial any time.'],
+        ja: ['設定', '言語やクリック音の選択、フラッシュや振動の設定ができます。このチュートリアルもいつでも見直せます。'] },
+    ];
+    const UI = {
+      en: { step: (i, n) => `STEP ${i} / ${n}`, skip: 'SKIP', back: 'BACK', next: 'NEXT', done: 'DONE' },
+      ja: { step: (i, n) => `${i} / ${n}`, skip: 'スキップ', back: '戻る', next: '次へ', done: '完了' },
+    };
+    const root = document.getElementById('tour');
+    const spot = document.getElementById('tourSpot');
+    const card = document.getElementById('tourCard');
+    const stepEl = document.getElementById('tourStep');
+    const titleEl = document.getElementById('tourTitle');
+    const bodyEl = document.getElementById('tourBody');
+    const dots = document.getElementById('tourDots');
+    const skipBtn = document.getElementById('tourSkip');
+    const backBtn = document.getElementById('tourBack');
+    const nextBtn = document.getElementById('tourNext');
+    dots.innerHTML = STEPS.map(() => '<span></span>').join('');
+    let index = 0;
+
+    // Bounding box around all of a step's elements
+    function targetRect(step) {
+      const rects = step.el.flatMap(sel => [...document.querySelectorAll(sel)]).map(e => e.getBoundingClientRect());
+      return {
+        left: Math.min(...rects.map(r => r.left)), top: Math.min(...rects.map(r => r.top)),
+        right: Math.max(...rects.map(r => r.right)), bottom: Math.max(...rects.map(r => r.bottom)),
+      };
+    }
+
+    function place() {
+      if (root.hidden) return;
+      const PAD = 8, GAP = 12, M = 12;
+      const r = targetRect(STEPS[index]);
+      const vw = window.innerWidth, vh = window.innerHeight;
+      spot.style.left = `${r.left - PAD}px`;
+      spot.style.top = `${r.top - PAD}px`;
+      spot.style.width = `${r.right - r.left + PAD * 2}px`;
+      spot.style.height = `${r.bottom - r.top + PAD * 2}px`;
+      // Card goes below the spotlight if it fits, else above, else beside, else at the bottom
+      const cw = card.offsetWidth, ch = card.offsetHeight;
+      let top, left = (r.left + r.right) / 2 - cw / 2;
+      if (r.bottom + PAD + GAP + ch <= vh - M) top = r.bottom + PAD + GAP;
+      else if (r.top - PAD - GAP - ch >= M) top = r.top - PAD - GAP - ch;
+      else if (vw - r.right - PAD - GAP - M >= cw) { left = r.right + PAD + GAP; top = (r.top + r.bottom) / 2 - ch / 2; }
+      else if (r.left - PAD - GAP - M >= cw) { left = r.left - PAD - GAP - cw; top = (r.top + r.bottom) / 2 - ch / 2; }
+      else top = vh - M - ch;
+      card.style.left = `${Math.max(M, Math.min(vw - M - cw, left))}px`;
+      card.style.top = `${Math.max(M, Math.min(vh - M - ch, top))}px`;
+    }
+
+    function render() {
+      const lang = UI[currentLang] ? currentLang : 'en';
+      const step = STEPS[index], ui = UI[lang];
+      const [title, body] = step[lang];
+      stepEl.textContent = ui.step(index + 1, STEPS.length);
+      titleEl.textContent = title;
+      bodyEl.textContent = body;
+      skipBtn.textContent = ui.skip;
+      backBtn.textContent = ui.back;
+      backBtn.hidden = index === 0;
+      skipBtn.hidden = index === STEPS.length - 1;
+      nextBtn.textContent = index === STEPS.length - 1 ? ui.done : ui.next;
+      [...dots.children].forEach((d, i) => d.classList.toggle('on', i === index));
+      document.querySelector(step.el[0]).scrollIntoView({ block: 'nearest' });
+      place();
+    }
+
+    function go(i) {
+      index = Math.max(0, Math.min(STEPS.length - 1, i));
+      render();
+    }
+    function start() {
+      closeMenu();
+      root.hidden = false;
+      index = 0;
+      render();
+      nextBtn.focus();
+    }
+    function finish() {
+      root.hidden = true;
+      try { localStorage.setItem(TOUR_KEY, '1'); } catch {}
+      menuBtn.focus({ preventScroll: true });
+    }
+
+    nextBtn.addEventListener('click', () => (index === STEPS.length - 1 ? finish() : go(index + 1)));
+    backBtn.addEventListener('click', () => go(index - 1));
+    skipBtn.addEventListener('click', finish);
+    document.addEventListener('keydown', e => {
+      if (root.hidden) return;
+      if (e.key === 'Escape') { e.preventDefault(); finish(); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); nextBtn.click(); }
+      else if (e.key === 'ArrowLeft' && index > 0) { e.preventDefault(); go(index - 1); }
+      else if (e.key === 'Tab') {
+        // Keep focus on the card's buttons
+        const btns = [skipBtn, backBtn, nextBtn].filter(b => !b.hidden);
+        const k = btns.indexOf(document.activeElement);
+        e.preventDefault();
+        btns[(k + (e.shiftKey ? btns.length - 1 : 1)) % btns.length].focus();
+      }
+    });
+    root.querySelector('.tour-block').addEventListener('click', () => nextBtn.focus());
+    window.addEventListener('resize', place);
+    document.getElementById('tourBtn').addEventListener('click', start);
+
+    // First visit: start once the page (and its fonts) have settled
+    let seen = true;
+    try { seen = !!localStorage.getItem(TOUR_KEY); } catch {}
+    if (!seen) document.fonts.ready.then(() => setTimeout(start, 600));
+
+  })();
+
+  // ── A440 footswitch: press to start the 440Hz tuning tone, press again to stop ──
   (function() {
-    const tuneBtn = document.getElementById('tuneBtn');
+    const toneBtn = document.getElementById('toneBtn');
     let osc = null, gain = null;
 
-    function start440() {
-      const ctx = getAudioCtx();
+    function startTone() {
+      let ctx;
+      try { ctx = getAudioCtx(); } catch (err) { console.warn('[A440] audio error:', err); return; }
       osc = ctx.createOscillator();
       gain = ctx.createGain();
       osc.type = 'sine';
       osc.frequency.value = 440;
-      gain.gain.setValueAtTime(0.25, ctx.currentTime);
+      gain.gain.setValueAtTime(0.001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + 0.03); // soft start, no click
       osc.connect(gain);
       gain.connect(ctx._out || ctx.destination);
       osc.start();
+      toneBtn.setAttribute('aria-pressed', 'true');
     }
 
-    function stop440() {
+    function stopTone() {
       if (!osc) return;
       const ctx = getAudioCtx();
       gain.gain.setTargetAtTime(0.001, ctx.currentTime, 0.05);
       osc.stop(ctx.currentTime + 0.15);
       osc = null; gain = null;
+      toneBtn.setAttribute('aria-pressed', 'false');
     }
 
-    tuneBtn.addEventListener('mousedown', start440);
-    tuneBtn.addEventListener('touchstart', e => { e.preventDefault(); start440(); }, { passive: false });
-    tuneBtn.addEventListener('mouseup', stop440);
-    tuneBtn.addEventListener('mouseleave', stop440);
-    tuneBtn.addEventListener('touchend', stop440);
-    tuneBtn.addEventListener('touchcancel', stop440);
+    toneBtn.addEventListener('click', () => (osc ? stopTone() : startTone()));
   })();
 
   // via the Web Bluetooth API on every metronome beat.
   //
   // How it works:
-  //  1. User taps "WATCH VIBRATION" toggle → we scan for the watch
-  //     using Web Bluetooth (looks for a Generic Attribute service).
+  //  1. User taps "WATCH VIBRATION" toggle → we scan for any nearby
+  //     BLE device using Web Bluetooth (device chooser shows every
+  //     device in range, not just a specific brand/model).
   //  2. On each beat, doTick() calls WatchVibration.onBeat(accent).
   //  3. We write a short command byte to the watch's GATT
-  //     "Immediate Alert" characteristic (UUID 0x2A06), which the
-  //     Wear OS companion app (VibrateListenerService) intercepts
-  //     and converts into a VibrationEffect on the watch motor.
+  //     "Immediate Alert" characteristic (UUID 0x2A06). This is a
+  //     standard BLE profile — any watch (Wear OS, or one running a
+  //     companion app/firmware that implements this same service)
+  //     can intercept it and trigger a vibration on its motor.
   //
   // NOTE: Web Bluetooth requires HTTPS or localhost, and a browser
-  // that supports it (Chrome / Edge on Android / desktop).
-  // The Galaxy Watch 8 must have the companion watch app installed
-  // (the GalaxyVibrate wear APK from this project).
+  // that supports it (Chrome / Edge on Android / desktop). The watch
+  // must have companion software installed that exposes the
+  // "Immediate Alert" service and reacts to it with a vibration —
+  // this works with any watch running such software, not just one
+  // specific brand.
   // ─────────────────────────────────────────────────────────────
   const WatchVibration = (() => {
     // GATT service / characteristic UUIDs used by the watch app.
     // "Immediate Alert" service (0x1802) + "Alert Level" char (0x2A06)
-    // is a standard BLE profile supported out-of-the-box on Wear OS.
+    // is a standard BLE profile — any watch whose companion software
+    // implements it will work, regardless of manufacturer.
     const SERVICE_UUID   = 0x1802;   // Immediate Alert
     const CHAR_UUID      = 0x2A06;   // Alert Level
     // Alert level values (standard BLE spec):
@@ -1901,6 +2437,8 @@
     let alertChar  = null;   // BluetoothRemoteGATTCharacteristic
     let enabled    = false;
     let connecting = false;
+    let reconnectAttempts = 0;
+    const MAX_RECONNECT_ATTEMPTS = 5;
 
     const toggle      = document.getElementById('watchVibrateToggle');
     const descEl      = document.getElementById('watchToggleDesc');
@@ -1911,6 +2449,7 @@
     async function connect() {
       if (!navigator.bluetooth) {
         setDesc('Web Bluetooth not supported in this browser');
+        showToast('This browser does not support Web Bluetooth', 'error');
         toggle.checked = false;
         enabled = false;
         return;
@@ -1919,10 +2458,10 @@
       setDesc('Scanning… (select your watch)');
       try {
         device = await navigator.bluetooth.requestDevice({
-          filters: [
-            { services: [SERVICE_UUID] },           // watches exposing Immediate Alert
-            { namePrefix: 'Galaxy Watch' },         // friendly name filter
-          ],
+          // Show every nearby BLE device, not just a specific brand/model —
+          // any watch whose companion software exposes the Immediate Alert
+          // service will work once connected.
+          acceptAllDevices: true,
           optionalServices: [SERVICE_UUID],
         });
 
@@ -1934,13 +2473,18 @@
         alertChar = await svc.getCharacteristic(CHAR_UUID);
 
         enabled = true;
+        reconnectAttempts = 0;
         setDesc('⌚ ' + device.name + ' connected');
       } catch (err) {
         console.warn('[WatchVibration] connect error:', err);
         if (err.name === 'NotFoundError') {
           setDesc('No watch selected — toggle off & retry');
+        } else if (/Immediate Alert|GATT Service/i.test(err.message || '')) {
+          setDesc('Watch has no vibration service — needs companion software');
+          showToast('That watch doesn\'t expose the vibration service this app needs — it requires companion software on the watch.', 'error');
         } else {
           setDesc('Connection failed: ' + err.message);
+          showToast('Watch connection failed: ' + err.message, 'error');
         }
         toggle.checked = false;
         enabled = false;
@@ -1953,21 +2497,30 @@
     function disconnect() {
       enabled = false;
       alertChar = null;
+      reconnectAttempts = 0;
       if (server && server.connected) {
         server.disconnect();
       }
       server = null;
       device = null;
-      setDesc('Vibrate Galaxy Watch on beat');
+      setDesc('Vibrate smart watch on beat');
     }
 
-    // ── Auto-reconnect if the watch drops ──────────────────────
+    // ── Auto-reconnect if the watch drops (bounded attempts) ────
     function onDisconnected() {
       console.warn('[WatchVibration] watch disconnected');
       alertChar = null;
       server    = null;
       if (enabled) {
-        setDesc('Watch disconnected — reconnecting…');
+        if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+          setDesc('Watch disconnected — toggle off & retry');
+          showToast('Lost connection to the watch after several attempts. Toggle watch vibration off and on to retry.', 'error');
+          enabled = false;
+          toggle.checked = false;
+          return;
+        }
+        reconnectAttempts++;
+        setDesc('Watch disconnected — reconnecting (' + reconnectAttempts + '/' + MAX_RECONNECT_ATTEMPTS + ')…');
         // Try to reconnect after a short delay
         setTimeout(async () => {
           if (!enabled || !device) return;
@@ -1976,10 +2529,9 @@
             const svc = await server.getPrimaryService(SERVICE_UUID);
             alertChar = await svc.getCharacteristic(CHAR_UUID);
             setDesc('⌚ ' + device.name + ' reconnected');
+            reconnectAttempts = 0;
           } catch (e) {
-            setDesc('Reconnect failed — please toggle off and retry');
-            enabled = false;
-            toggle.checked = false;
+            onDisconnected();
           }
         }, 1500);
       }
