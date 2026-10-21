@@ -2,9 +2,9 @@
 
 A browser-based metronome built with HTML, CSS, and JavaScript. No frameworks, no external dependencies. Works offline and installs as a PWA on Android.
 
-The interface is a minimal floor pedal named **SOUZU** (printed above the footswitches in thin, widely spaced capitals, in the style of the Ibanez Pentatone wordmark) and inspired by the Neural DSP Quad Cortex: a matte powder-coated enclosure, a clean display (tempo, beat dots, time signature and a status row), a slim fader, and black brushed-metal controls. BEATS and NOTE are knobs with a printed tick scale and a pointer line; ACCENT, the presets and TAP are push switches whose thin ring lights blue with a soft glow when they're on; A440 and START are black metallic stomp switches. The bottom half of the enclosure is printed in white with a minimal Japanese-print scene: a clump of bamboo with brush-stroke leaves, soft leaf shadows and a few ink splashes, with a large grainy moon rising off the right-hand edge. Two alternative artworks are included (`bamboo-line.svg`, an outline-drawn bamboo forest, and `bamboo.svg`, a suisaiga watercolour forest); swap the file name in the `.stage-art` rule to use one.
+The interface is a minimal floor pedal named **SOUZU**, a matte powder-coated enclosure, a clean display (tempo, beat dots, time signature and a status row), a slim fader, and black brushed-metal controls. BEATS and NOTE are knobs with a printed tick scale and a pointer line; ACCENT, the presets and TAP are push switches whose thin ring lights blue with a soft glow when they're on; A440 and START are black metallic stomp switches. The bottom half of the enclosure is printed in white with a minimal Japanese-print scene: a clump of bamboo with brush-stroke leaves, soft leaf shadows and a few ink splashes, with a large grainy moon rising off the right-hand edge. Two alternative artworks are included (`bamboo-line.svg`, an outline-drawn bamboo forest, and `bamboo.svg`, a suisaiga watercolour forest); swap the file name in the `.stage-art` rule to use one.
 
-The pedal is horizontal by default: the screen, fader, presets and TAP on the left, and the knobs, the SOUZU name and the footswitches on the right. On a phone held upright, where there isn't room for two columns, it switches to a vertical pedal; turn the phone sideways to get the horizontal one.
+The pedal is horizontal by default: the screen, fader, presets and TAP on the left, and the knobs, the SOUZU name and the footswitches on the right. On a phone held upright, where there isn't room for two columns, it switches to a vertical pedal; turn the phone sideways to get the horizontal one. On any screen that's shorter than the pedal (small phones, or when the browser's address bar takes up room), the whole pedal shrinks evenly so it always fits without scrolling.
 
 ---
 
@@ -12,8 +12,8 @@ The pedal is horizontal by default: the screen, fader, presets and TAP on the le
 
 | Control | Description |
 |---------|-------------|
-| A440 stomp switch (left) | Press to play a 440Hz tuning tone (A), press again to stop |
-| START stomp switch (right) | Start / Stop (the beat dots on the screen show it's running) |
+| A440 stomp switch (left) | Press to play a 440Hz tuning tone (A), press again to stop. The LED above it lights blue while the tone plays |
+| START stomp switch (right) | Start / Stop. The LED above it lights blue while the metronome runs |
 | TAP (next to the presets) | Tap tempo — tap at least twice; pausing over 2 seconds starts a fresh count |
 | Fader | Adjust tempo smoothly (20–240 BPM) |
 | BEATS knob | Beats per bar (2–16) |
@@ -94,19 +94,23 @@ Use **NEXT** / **BACK** (or the ← → keys) to move through it, **SKIP** or Es
 
 ## Install on Android
 
-1. Deploy to GitHub Pages (see below)
-2. Open in Chrome → ⋮ → Add to Home Screen
+1. Open **Chrome** on your Android phone and go to **https://metronome-amber-tau.vercel.app/**
+2. Tap the **⋮** menu in the top-right corner.
+3. Tap **Install app**. On some phones it's called **Add to Home screen**. If Chrome shows an **Install** banner at the bottom of the screen, you can tap that instead.
+4. Confirm with **Install**. The app icon appears on your home screen and in your app drawer.
+
+Once installed, it opens full screen like a normal app, with no browser address bar. After the first launch it also works **offline**, so you can use it in a rehearsal room or on stage without a connection.
+
+**Updates** install themselves: when a new version is published, the app picks it up the next time you open it while online. If it still looks out of date, close the app fully and open it again.
+
+**Tips**
+- Turn your phone sideways to get the horizontal pedal.
+- **Vibrate** (in Settings) uses the phone's vibration motor and works in Chrome on Android.
+- **Watch Vibration** uses Bluetooth, so allow Chrome to use Bluetooth when asked.
+- To uninstall, long-press the app icon and choose **Uninstall** (or **Remove**).
 
 ---
 
-## Deploy to GitHub Pages
-
-1. Create a public GitHub repository
-2. Upload all files from the zip
-3. Go to **Settings → Pages** → source: `main` branch, root folder
-4. Live at: `https://YOUR-USERNAME.github.io/REPO-NAME/`
-
----
 
 ## Files
 

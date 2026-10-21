@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" type="image/x-icon" href="/icon-192.png">
-<title>Metronome</title>
+<title>SOUZU</title>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script>
   // Apply saved theme before first paint to avoid a flash of the wrong theme.
@@ -67,6 +67,7 @@
     color: var(--text);
     font-family: var(--font-body);
     min-height: 100vh;
+    min-height: 100dvh; /* the visible screen, excluding a mobile browser's address bar */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -367,7 +368,7 @@
     transform: translateX(-50%);
   }
   .knob input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; pointer-events: none; }
-  .knob:has(input:focus-visible) { outline: 2px solid #e4e7ea; outline-offset: 2px; }
+  html.kbd .knob:has(input:focus-visible) { outline: 2px solid #e4e7ea; outline-offset: 2px; }
 
   /* ── Presets row with TAP at the end ── */
   .switch-row {
@@ -386,7 +387,7 @@
   /* ── START: black metallic stomp switch — hex nut and flat-faced plunger ── */
   /* Footswitch row: A440 tuning tone on the left, START on the right.
      The top margin gives the footswitches their own section on the panel. */
-  .stomps { display: flex; justify-content: center; gap: 96px; margin-top: var(--stomp-gap, 14px); }
+  .stomps { display: flex; justify-content: center; gap: 136px; margin-top: var(--stomp-gap, 14px); }
 
   /* Pedal name, printed like the Ibanez Pentatone wordmark: thin, wide,
      widely spaced capitals. Centred between the presets and the stomps. */
@@ -401,6 +402,19 @@
   }
   .stomp-area { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .stomp { position: relative; width: 66px; height: 66px; padding: 0; border: none; background: transparent; cursor: pointer; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5)); }
+  /* Status LED above each footswitch: lit blue while A440 plays / while the
+     metronome runs */
+  .led {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #2a3542 0%, #141a21 70%);
+    box-shadow: 0 0 0 2px #17191c, 0 1px 0 2px rgba(255,255,255,0.05), inset 0 1px 2px rgba(0,0,0,0.8);
+    transition: background 0.12s, box-shadow 0.12s;
+  }
+  .stomp-area:has(.stomp[aria-pressed="true"]) .led {
+    background: radial-gradient(circle at 40% 35%, #d6ebff 0%, #4da3ff 45%, #2a6fc0 100%);
+    box-shadow: 0 0 0 2px #17191c, 0 0 8px 2px rgba(77,163,255,0.75), 0 0 16px 4px rgba(77,163,255,0.3);
+  }
   .stomp-nut {
     position: absolute;
     inset: 3px;
@@ -813,7 +827,7 @@
   }
   .about-desc {
     margin: 22px auto 0;
-    max-width: 240px;
+    max-width: 260px;
     font: 400 12px/1.7 var(--font-body);
     color: #a9aeb5;
   }
@@ -954,11 +968,18 @@
     box-shadow: 0 0 8px rgba(77,163,255,0.45), inset 0 0 4px rgba(77,163,255,0.3);
   }
 
+  /* ── Touch: no grey/blue tap-highlight box on phones ── */
+  * { -webkit-tap-highlight-color: transparent; }
+
   /* ── Accessible focus outline ── */
   a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, .sound-card:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
+  /* Focus rings are for keyboard navigation only: after a tap or click (the
+     knobs focus their hidden input when touched) they stay hidden */
+  html:not(.kbd) :focus-visible { outline: none !important; }
+  html:not(.kbd) .toggle input:focus-visible + .toggle-track { outline: none; }
   .visually-hidden {
     position: absolute;
     width: 1px; height: 1px;
@@ -978,7 +999,7 @@
     .bpm-number { font-size: 50px; }
     .fsw { --size: 44px; }
     .switch-row { column-gap: 12px; --tap-gap: 14px; }
-    .stomps { gap: 72px; }
+    .stomps { gap: 112px; }
     .stomp { width: 60px; height: 60px; }
     .stomp-dome { inset: 14px; }
 
@@ -1019,7 +1040,7 @@
     .ts { grid-area: ts; }
     .switch-row { grid-area: presets; }
     /* The name shares the footswitch column: name at the top, stomps at the bottom */
-    .stomps { grid-area: stomp; align-self: end; align-items: center; margin-top: 0; gap: 80px; }
+    .stomps { grid-area: stomp; align-self: end; align-items: center; margin-top: 0; gap: 124px; }
     .brand { grid-area: stomp; align-self: start; margin-top: 10px; }
     /* Artwork moves to the right-hand column (knobs and footswitches), full
        height, fading in from its top and left edges */
@@ -1041,7 +1062,7 @@
     body { justify-content: flex-start; padding: 8px 60px 8px 12px; }
     .app { gap: 8px; padding-top: 0; }
     .stage { column-gap: 22px; row-gap: 10px; padding: 16px 22px 18px; }
-    .stomps { gap: 64px; }
+    .stomps { gap: 104px; }
     .brand { margin-top: 6px; }
     .bpm-number { font-size: 44px; }
     .screen-inner { padding: 10px 12px 8px; gap: 4px; }
@@ -1173,7 +1194,7 @@
   <button class="about-link" id="tourBtn" aria-haspopup="dialog">TUTORIAL</button>
   <button class="about-link" id="aboutBtn" aria-haspopup="dialog">ABOUT</button>
 
-  <div class="dropdown-version" id="dropdownVersion">v0.2.0</div>
+  <div class="dropdown-version" id="dropdownVersion">v0.2.1</div>
 
 </div>
 
@@ -1183,7 +1204,7 @@
     <button class="about-close" id="aboutClose" aria-label="Close"></button>
     <div class="about-name" id="aboutTitle">SOUZU</div>
     <div class="about-sub" id="aboutSub">METRONOME</div>
-    <p class="about-desc" id="aboutDesc">A metronome built as a guitar pedal.</p>
+    <p class="about-desc" id="aboutDesc">Souzu is named after the shishiodoshi, the bamboo water rocker of Japanese gardens that strikes stone in a steady rhythm. A minimal metronome built like a guitar pedal: stomp to start, tap to set the tempo, and keep time like part of your rig.</p>
     <dl class="about-meta">
       <div><dt id="aboutByLabel">DESIGN &amp; DEVELOPMENT</dt><dd>Teruki Sato</dd></div>
       <div><dt id="aboutVersionLabel">VERSION</dt><dd id="aboutVersion"></dd></div>
@@ -1274,6 +1295,7 @@
     <!-- Footswitches: A440 tuning tone + START -->
     <div class="stomps">
       <div class="stomp-area">
+        <span class="led" id="toneLed" aria-hidden="true"></span>
         <button class="stomp" id="toneBtn" aria-label="A440 tuning tone" aria-pressed="false">
           <span class="stomp-nut"></span>
           <span class="stomp-dome"></span>
@@ -1281,6 +1303,7 @@
         <div class="fsw-label engrave" id="toneLabel">A440</div>
       </div>
       <div class="stomp-area">
+        <span class="led" id="playLed" aria-hidden="true"></span>
         <button class="stomp" id="playBtn" aria-label="Start" aria-pressed="false">
           <span class="stomp-nut"></span>
           <span class="stomp-dome"></span>
@@ -1845,6 +1868,39 @@
   });
   backdrop.addEventListener('click', closeMenu);
 
+  // ── Keyboard vs touch: show focus rings only while navigating by keyboard ──
+  document.addEventListener('keydown', e => {
+    if (['Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
+      document.documentElement.classList.add('kbd');
+    }
+  }, true);
+  document.addEventListener('pointerdown', () => document.documentElement.classList.remove('kbd'), true);
+
+  // ── Fit the pedal to the screen: if the screen is shorter than the pedal
+  // (small phones, a browser's address bar, a short window), shrink the
+  // whole pedal evenly so it fits without scrolling.
+  (function fitToScreen() {
+    const app = document.querySelector('.app');
+    function fit() {
+      app.style.zoom = '';
+      app.style.width = '';
+      app.style.maxWidth = '';
+      const cs = getComputedStyle(document.body);
+      const room = window.innerHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 1;
+      const scale = Math.min(1, room / app.offsetHeight);
+      if (scale < 1) {
+        // Keep the layout width fixed so the pedal scales evenly rather than
+        // reflowing wider (and taller) inside the zoom
+        app.style.width = `${app.offsetWidth}px`;
+        app.style.maxWidth = 'none';
+        app.style.zoom = scale.toFixed(4);
+      }
+    }
+    window.addEventListener('resize', fit);
+    document.fonts.ready.then(fit);
+    fit();
+  })();
+
   // ── About page (opened from settings) ──
   const about = document.getElementById('about');
   const aboutClose = document.getElementById('aboutClose');
@@ -2023,7 +2079,7 @@
       aboutLink: 'ABOUT',
       tourLink: 'TUTORIAL',
       aboutSub: 'METRONOME',
-      aboutDesc: 'A metronome built as a guitar pedal.',
+      aboutDesc: 'Souzu is named after the shishiodoshi, the bamboo water rocker of Japanese gardens that strikes stone in a steady rhythm. A minimal metronome built like a guitar pedal.',
       aboutByLabel: 'DESIGN & DEVELOPMENT',
       aboutVersionLabel: 'VERSION',
       aboutClose: 'Close',
@@ -2058,13 +2114,13 @@
       watchVibrateLabel: 'ウォッチ振動',
       watchVibrateDesc: '拍ごとにスマートウォッチを振動',
       lightModeLabel: 'ライトモード',
-      lightModeDesc: '昼間用の明るいテーマ',
+      lightModeDesc: '明るいテーマ',
       aboutLink: 'このアプリについて',
-      tourLink: 'チュートリアル',
-      aboutSub: 'メトロノーム',
-      aboutDesc: 'ギターペダルの形をしたメトロノーム。',
-      aboutByLabel: 'デザイン・開発',
-      aboutVersionLabel: 'バージョン',
+      tourLink: 'スタートガイド',
+      aboutSub: 'METRONOME',
+      aboutDesc: '「Souzu（添水）」は、日本庭園で一定のリズムを刻む鹿威しの別名です。ギターペダルのように作られたミニマルなメトロノーム。',
+      aboutByLabel: 'DESIGN & DEVELOPMENT',
+      aboutVersionLabel: 'VERSION',
       aboutClose: '閉じる',
       langLabel: '言語',
     }
