@@ -46,6 +46,22 @@
     --black-metal:
       radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(0,0,0,0.18) 100%),
       conic-gradient(from 20deg, #282a2e, #222428, #2b2d31, #212327, #282a2e, #232529, #2a2c30, #222428, #282a2e);
+    /* Status light colour: blue for the metronome. --led-rgb is the same
+       colour for glows; -hi / -lo are an LED's highlight and edge, -dim an
+       unlit ring. */
+    --led: #4da3ff;
+    --led-rgb: 77,163,255;
+    --led-hi: #d6ebff;
+    --led-lo: #2a6fc0;
+    --led-dim: #34465a;
+  }
+  /* SEQ mode lights everything green, so it's clear which mode is on */
+  :root.seq-mode {
+    --led: #34d399;
+    --led-rgb: 52,211,153;
+    --led-hi: #d5fbe9;
+    --led-lo: #1f9e6e;
+    --led-dim: #2c4a3f;
   }
 
   :root[data-theme="light"] {
@@ -179,13 +195,13 @@
   }
   .beats.compact .beat-dot::before { width: 10px; height: 10px; }
   .beat-dot:hover::before { background: #343941; }
-  .beat-dot.accent-dot::before { width: 14px; height: 14px; box-shadow: inset 0 0 0 2px #4da3ff; }
+  .beat-dot.accent-dot::before { width: 14px; height: 14px; box-shadow: inset 0 0 0 2px var(--led); }
   .beats.compact .beat-dot.accent-dot::before { width: 12px; height: 12px; }
-  .beats.accent-off .beat-dot.accent-dot::before { box-shadow: inset 0 0 0 2px #34465a; }
+  .beats.accent-off .beat-dot.accent-dot::before { box-shadow: inset 0 0 0 2px var(--led-dim); }
   .beat-dot.active::before { background: #eef2f6; }
-  .beat-dot.accent-dot.active::before { background: #4da3ff; box-shadow: none; }
+  .beat-dot.accent-dot.active::before { background: var(--led); box-shadow: none; }
   .beats.accent-off .beat-dot.accent-dot.active::before { background: #eef2f6; }
-  .beat-dot:focus-visible { outline: 2px solid #4da3ff; outline-offset: -2px; }
+  .beat-dot:focus-visible { outline: 2px solid var(--led); outline-offset: -2px; }
   .bpm-display { display: flex; flex-direction: column; align-items: center; text-align: center; }
   .bpm-number {
     font-family: var(--font-display);
@@ -203,11 +219,10 @@
     font-weight: 500;
     letter-spacing: 2px;
     line-height: 1;
-    margin-top: 5px;
     padding: 3px 12px;
     border-radius: 6px;
-    color: #4da3ff;
-    background: rgba(77,163,255,0.1);
+    color: var(--led);
+    background: rgba(var(--led-rgb),0.1);
   }
   /* Status row along the bottom of the screen: preset + sound | bar + timer */
   .screen-status {
@@ -223,6 +238,73 @@
   }
   .status-group { display: flex; gap: 14px; }
   .status-label, .status-dim { color: #7d8590; }
+  .ts-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; }
+
+  /* ── SEQ mode screen: a strip of steps on top (selected = blue ring, playing
+     = lit blue, next = blinking through the last bar before it starts), the
+     selected step's beat dots, tempo and time signature, its length in bars,
+     and what happens at the end of the sequence in the status row ── */
+  .seq-steps, .seq-bars, .seq-end { display: none; }
+  .screen.seq .seq-steps { display: flex; }
+  .screen.seq .seq-bars { display: flex; }
+  .screen.seq .seq-end { display: inline; }
+  .screen.seq #statusSound { display: none; }
+  .seq-steps { align-items: center; justify-content: center; gap: 4px; width: 100%; min-height: 22px; }
+  .seq-steps.compact { gap: 2px; }
+  .seq-step, .seq-tool {
+    flex: 0 1 26px;
+    min-width: 12px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: #1d2127;
+    color: #8a929c;
+    font: 500 11px/1 var(--font-body);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+  }
+  .seq-steps.compact .seq-step { font-size: 10px; letter-spacing: -0.5px; }
+  .seq-step:hover { background: #262b32; }
+  .seq-step.selected { color: #eef2f6; box-shadow: inset 0 0 0 2px var(--led); }
+  .seq-step.playing { background: var(--led); color: #0c0e10; }
+  .seq-step.cue { animation: seq-cue 0.5s steps(1, end) infinite; }
+  @keyframes seq-cue { 50% { background: var(--led); color: #0c0e10; } }
+  .seq-tool { flex: 0 0 22px; background: transparent; color: #8a929c; font-size: 16px; }
+  .seq-tool:hover:not(:disabled) { color: #eef2f6; }
+  .seq-tool:disabled { opacity: 0.3; cursor: default; }
+  #seqAdd { margin-left: 4px; }
+  .seq-steps.compact .seq-tool { flex-basis: 18px; }
+  .seq-steps.compact #seqAdd { margin-left: 2px; }
+  /* Room for the step strip: shorter beat dots, and the BPM label beside the
+     tempo instead of under it (the tempo stays centred). The screen is also
+     held to the metronome screen's height (see fitToScreen), with any spare
+     room spread between the rows. */
+  .screen.seq .screen-inner { justify-content: space-between; }
+  .screen.seq .beats { min-height: 16px; }
+  .screen.seq .beat-dot { height: 16px; }
+  .screen.seq .bpm-display { display: grid; grid-template-columns: 1fr auto 1fr; align-items: baseline; }
+  .screen.seq .bpm-number { grid-column: 2; }
+  .screen.seq .bpm-label { grid-column: 3; justify-self: start; margin-left: 8px; }
+  .screen.seq .ts-row { grid-column: 1 / -1; margin-top: 3px; }
+  .seq-bars { align-items: center; height: 26px; border-radius: 6px; background: rgba(255,255,255,0.05); }
+  .seq-nudge {
+    width: 26px; height: 26px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #c9ced4;
+    font: 400 18px/1 var(--font-display);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .seq-nudge:hover:not(:disabled) { background: rgba(255,255,255,0.06); }
+  .seq-nudge:disabled { opacity: 0.3; cursor: default; }
+  .seq-bars-num { min-width: 2ch; text-align: center; font: 500 20px/1 var(--font-display); color: #f4f6f8; font-variant-numeric: tabular-nums; }
+  .seq-bars-label { margin-left: 4px; font-size: 9px; letter-spacing: 2px; color: #7d8590; }
+  .seq-end { padding: 0 6px; border: 1px solid #2a2f36; border-radius: 4px; background: transparent; color: inherit; font: inherit; letter-spacing: inherit; line-height: 16px; cursor: pointer; }
+  .seq-end:hover { border-color: #3a414b; }
 
   /* ── Fader: EQ-pedal style (after the Ibanez Pentatone) ──
      A deep, square-cut black channel with an even ladder of short ticks
@@ -269,7 +351,7 @@
   .fsw-unit { display: flex; flex-direction: column; align-items: center; gap: 7px; }
   .fsw {
     --size: 46px;
-    --ring: #4da3ff; /* blue light for every switch */
+    --ring: var(--led); /* the same light for every switch */
     position: relative;
     width: var(--size);
     height: var(--size);
@@ -322,7 +404,7 @@
   /* Ring states: flat colour only */
   .fsw.saved .fsw-ring::before { border-color: color-mix(in srgb, var(--ring) 35%, #33373c); }
   /* A lit ring gets a small, soft glow */
-  .fsw { --ring-glow: 0 0 10px 1px rgba(77,163,255,0.7), inset 0 0 5px rgba(77,163,255,0.45); }
+  .fsw { --ring-glow: 0 0 10px 1px rgba(var(--led-rgb),0.7), inset 0 0 5px rgba(var(--led-rgb),0.45); }
   .fsw.active .fsw-ring::before,
   .fsw[aria-checked="true"] .fsw-ring::before { border-color: var(--ring); box-shadow: var(--ring-glow); }
   .fsw-ring.tap::before { animation: ring-flash 0.2s ease-out; }
@@ -387,7 +469,9 @@
   /* ── START: black metallic stomp switch — hex nut and flat-faced plunger ── */
   /* Footswitch row: A440 tuning tone on the left, START on the right.
      The top margin gives the footswitches their own section on the panel. */
-  .stomps { display: flex; justify-content: center; gap: 136px; margin-top: var(--stomp-gap, 14px); }
+  .stomps { display: flex; justify-content: center; gap: 45px; margin-top: var(--stomp-gap, 14px); }
+  /* SEQ switch between the footswitches, level with their centres */
+  .seq-unit { align-self: flex-start; margin-top: 26px; }
 
   /* Pedal name, printed like the Ibanez Pentatone wordmark: thin, wide,
      widely spaced capitals. Centred between the presets and the stomps. */
@@ -412,8 +496,8 @@
     transition: background 0.12s, box-shadow 0.12s;
   }
   .stomp-area:has(.stomp[aria-pressed="true"]) .led {
-    background: radial-gradient(circle at 40% 35%, #d6ebff 0%, #4da3ff 45%, #2a6fc0 100%);
-    box-shadow: 0 0 0 2px #17191c, 0 0 8px 2px rgba(77,163,255,0.75), 0 0 16px 4px rgba(77,163,255,0.3);
+    background: radial-gradient(circle at 40% 35%, var(--led-hi) 0%, var(--led) 45%, var(--led-lo) 100%);
+    box-shadow: 0 0 0 2px #17191c, 0 0 8px 2px rgba(var(--led-rgb),0.75), 0 0 16px 4px rgba(var(--led-rgb),0.3);
   }
   .stomp-nut {
     position: absolute;
@@ -452,7 +536,7 @@
   }
   .flash.pop { opacity: 0.06; }
 
-  .app { position: relative; z-index: 1; }
+  .app { position: relative; z-index: 1; transform-origin: 50% 0; } /* scaled to fit the window from the top centre */
 
   /* ── Settings button: just the burger icon, no background ── */
   .menu-btn {
@@ -538,12 +622,20 @@
     border-bottom: 1px solid #1c1e21;
     box-shadow: var(--groove);
   }
+  /* The version number opens the release notes */
   .dropdown-version {
+    align-self: center;
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    background: none;
     text-align: center;
     font: 500 9px var(--font-body);
     letter-spacing: 3px;
     color: #6b7078;
+    cursor: pointer;
   }
+  .dropdown-version:hover { color: #eef0f2; }
 
   /* Click-outside backdrop (invisible) */
   .dropdown-backdrop {
@@ -581,8 +673,8 @@
   .seg-btn[aria-pressed="true"] {
     color: #eef0f2;
     background: var(--black-metal);
-    border-color: #4da3ff;
-    box-shadow: 0 0 8px rgba(77,163,255,0.45), inset 0 0 4px rgba(77,163,255,0.3);
+    border-color: var(--led);
+    box-shadow: 0 0 8px rgba(var(--led-rgb),0.45), inset 0 0 4px rgba(var(--led-rgb),0.3);
   }
 
   /* ── Accordion sections ── */
@@ -616,7 +708,7 @@
     transform: translateY(-2px) rotate(45deg);
     transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), border-color 0.2s;
   }
-  .drawer-section.open .section-chevron { transform: translateY(2px) rotate(225deg); border-color: #4da3ff; }
+  .drawer-section.open .section-chevron { transform: translateY(2px) rotate(225deg); border-color: var(--led); }
 
   .section-body {
     overflow: hidden;
@@ -655,7 +747,7 @@
     background: #17191c;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
-  .sound-card.active::after { border-color: #4da3ff; box-shadow: 0 0 8px 1px rgba(77,163,255,0.6), inset 0 0 3px rgba(77,163,255,0.4); }
+  .sound-card.active::after { border-color: var(--led); box-shadow: 0 0 8px 1px rgba(var(--led-rgb),0.6), inset 0 0 3px rgba(var(--led-rgb),0.4); }
   .sound-card.active .card-name { color: #f4f6f8; }
   .card-info { flex: 1; }
   .card-name, .toggle-label {
@@ -697,8 +789,8 @@
     transition: border-color 0.15s, box-shadow 0.15s;
   }
   .toggle input:checked + .toggle-track::before {
-    border-color: #4da3ff;
-    box-shadow: 0 0 8px 1px rgba(77,163,255,0.55), inset 0 0 4px rgba(77,163,255,0.35);
+    border-color: var(--led);
+    box-shadow: 0 0 8px 1px rgba(var(--led-rgb),0.55), inset 0 0 4px rgba(var(--led-rgb),0.35);
   }
   .toggle input:focus-visible + .toggle-track { outline: 2px solid #e4e7ea; outline-offset: 2px; }
   .toggle-thumb {
@@ -732,14 +824,6 @@
   }
   .about-link:hover { color: #eef0f2; }
   .about-link + .about-link { margin-top: -18px; } /* stack the links flush */
-  .about-link::after {
-    content: '';
-    width: 7px; height: 7px;
-    margin-right: 6px;
-    border-right: 1.5px solid #7d8590;
-    border-bottom: 1.5px solid #7d8590;
-    transform: rotate(-45deg);
-  }
 
   /* ── About page: a card in the pedal's finish over a dimmed backdrop ── */
   .about {
@@ -843,6 +927,39 @@
   }
   .about-meta dt { font: 500 10px/14px var(--font-body); letter-spacing: 2px; color: #7d8590; }
   .about-meta dd { margin: 0; font: 500 13px/16px var(--font-body); letter-spacing: 0.5px; color: #eef0f2; text-align: right; }
+  .version-link {
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: #4a4f57;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .version-link:hover { text-decoration-color: currentColor; }
+
+  /* ── Release notes: the About card's finish, newest version first ── */
+  .notes-card { width: 400px; padding: 26px 24px 22px; text-align: left; }
+  .notes-card::before { content: none; } /* no artwork behind the text */
+  .notes-title {
+    padding: 0 40px 16px 0; /* clear of the close button */
+    font: 300 17px/1 var(--font-body);
+    letter-spacing: 0.42em;
+    color: #a9aeb5;
+    border-bottom: 1px solid #1c1e21;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.04);
+  }
+  .notes-release { padding: 16px 2px; border-bottom: 1px solid #1c1e21; box-shadow: 0 1px 0 rgba(255,255,255,0.04); }
+  .notes-release:last-child { border-bottom: none; box-shadow: none; padding-bottom: 0; }
+  .notes-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .notes-version { font: 500 15px/1 var(--font-display); letter-spacing: 1px; color: #eef0f2; }
+  .notes-date { font: 500 10px/1 var(--font-body); letter-spacing: 2px; color: #7d8590; }
+  .notes-release ul { margin-top: 10px; padding-left: 16px; }
+  .notes-release li { margin-top: 5px; font: 400 12px/1.6 var(--font-body); color: #a9aeb5; }
+
   .about-copy {
     margin-top: 72px;
     font: 500 9px/14px var(--font-body);
@@ -897,7 +1014,7 @@
   .tour-spot {
     position: fixed;
     border-radius: 10px;
-    box-shadow: 0 0 0 9999px rgba(0,0,0,0.68), 0 0 0 1.5px #4da3ff, 0 0 14px 2px rgba(77,163,255,0.45);
+    box-shadow: 0 0 0 9999px rgba(0,0,0,0.68), 0 0 0 1.5px var(--led), 0 0 14px 2px rgba(var(--led-rgb),0.45);
     transition: top 0.3s cubic-bezier(0.4,0,0.2,1), left 0.3s cubic-bezier(0.4,0,0.2,1),
                 width 0.3s cubic-bezier(0.4,0,0.2,1), height 0.3s cubic-bezier(0.4,0,0.2,1);
     pointer-events: none;
@@ -946,7 +1063,7 @@
   }
   .tour-dots { display: flex; gap: 4px; flex-wrap: nowrap; min-width: 0; }
   .tour-dots span { width: 5px; height: 5px; border-radius: 50%; background: #3a3e43; transition: background 0.2s, box-shadow 0.2s; }
-  .tour-dots span.on { background: #4da3ff; box-shadow: 0 0 6px rgba(77,163,255,0.7); }
+  .tour-dots span.on { background: var(--led); box-shadow: 0 0 6px rgba(var(--led-rgb),0.7); }
   .tour-btns { display: flex; gap: 6px; flex-shrink: 0; }
   .tour-btn {
     height: 30px;
@@ -964,8 +1081,8 @@
   .tour-btn.primary {
     color: #eef0f2;
     background: var(--black-metal);
-    border-color: #4da3ff;
-    box-shadow: 0 0 8px rgba(77,163,255,0.45), inset 0 0 4px rgba(77,163,255,0.3);
+    border-color: var(--led);
+    box-shadow: 0 0 8px rgba(var(--led-rgb),0.45), inset 0 0 4px rgba(var(--led-rgb),0.3);
   }
 
   /* ── Touch: no grey/blue tap-highlight box on phones ── */
@@ -999,7 +1116,8 @@
     .bpm-number { font-size: 50px; }
     .fsw { --size: 44px; }
     .switch-row { column-gap: 12px; --tap-gap: 14px; }
-    .stomps { gap: 112px; }
+    .stomps { gap: 34px; }
+    .seq-unit { margin-top: 24px; }
     .stomp { width: 60px; height: 60px; }
     .stomp-dome { inset: 14px; }
 
@@ -1040,7 +1158,7 @@
     .ts { grid-area: ts; }
     .switch-row { grid-area: presets; }
     /* The name shares the footswitch column: name at the top, stomps at the bottom */
-    .stomps { grid-area: stomp; align-self: end; align-items: center; margin-top: 0; gap: 124px; }
+    .stomps { grid-area: stomp; align-self: end; align-items: center; margin-top: 0; gap: 39px; }
     .brand { grid-area: stomp; align-self: start; margin-top: 10px; }
     /* Artwork moves to the right-hand column (knobs and footswitches), full
        height, fading in from its top and left edges */
@@ -1062,7 +1180,7 @@
     body { justify-content: flex-start; padding: 8px 60px 8px 12px; }
     .app { gap: 8px; padding-top: 0; }
     .stage { column-gap: 22px; row-gap: 10px; padding: 16px 22px 18px; }
-    .stomps { gap: 104px; }
+    .stomps { gap: 29px; }
     .brand { margin-top: 6px; }
     .bpm-number { font-size: 44px; }
     .screen-inner { padding: 10px 12px 8px; gap: 4px; }
@@ -1194,7 +1312,7 @@
   <button class="about-link" id="tourBtn" aria-haspopup="dialog">TUTORIAL</button>
   <button class="about-link" id="aboutBtn" aria-haspopup="dialog">ABOUT</button>
 
-  <div class="dropdown-version" id="dropdownVersion">v0.2.1</div>
+  <button type="button" class="dropdown-version" id="dropdownVersion" aria-haspopup="dialog">v0.3.0</button>
 
 </div>
 
@@ -1204,12 +1322,21 @@
     <button class="about-close" id="aboutClose" aria-label="Close"></button>
     <div class="about-name" id="aboutTitle">SOUZU</div>
     <div class="about-sub" id="aboutSub">METRONOME</div>
-    <p class="about-desc" id="aboutDesc">Souzu is named after the shishiodoshi, the bamboo water rocker of Japanese gardens that strikes stone in a steady rhythm. A minimal metronome built like a guitar pedal: stomp to start, tap to set the tempo, and keep time like part of your rig.</p>
+    <p class="about-desc" id="aboutDesc">Souzu is named after the shishiodoshi, the bamboo water rocker of Japanese gardens that strikes stone in a steady rhythm. A minimal metronome built like a guitar pedal.</p>
     <dl class="about-meta">
       <div><dt id="aboutByLabel">DESIGN &amp; DEVELOPMENT</dt><dd>Teruki Sato</dd></div>
-      <div><dt id="aboutVersionLabel">VERSION</dt><dd id="aboutVersion"></dd></div>
+      <div><dt id="aboutVersionLabel">VERSION</dt><dd><button type="button" class="version-link" id="aboutVersion" aria-haspopup="dialog"></button></dd></div>
     </dl>
     <div class="about-copy">© 2026 Teruki Sato</div>
+  </div>
+</div>
+
+<!-- Release notes (opened from the version number) -->
+<div class="about notes" id="notes" role="dialog" aria-modal="true" aria-labelledby="notesTitle" hidden>
+  <div class="about-card notes-card">
+    <button class="about-close" id="notesClose" aria-label="Close"></button>
+    <div class="notes-title" id="notesTitle">RELEASE NOTES</div>
+    <div id="notesList"></div>
   </div>
 </div>
 
@@ -1220,16 +1347,31 @@
     <!-- Screen -->
     <div class="screen">
       <div class="screen-inner">
+        <!-- SEQ mode: the sequence's steps, then add / delete -->
+        <div class="seq-steps" id="seqSteps" role="group" aria-label="Sequence steps: press a step to edit it">
+          <button type="button" class="seq-tool" id="seqAdd" aria-label="Add a step">+</button>
+          <button type="button" class="seq-tool" id="seqDel" aria-label="Delete the selected step">−</button>
+        </div>
         <div class="beats" id="beats" role="group" aria-label="Accent pattern: press a beat to accent it"></div>
         <div class="bpm-display">
           <div class="bpm-number" id="bpmNum">120</div>
           <div class="bpm-label" id="bpmLabelText">BPM</div>
-          <div class="ts-display" id="tsReadout">4/4</div>
+          <div class="ts-row">
+            <div class="ts-display" id="tsReadout">4/4</div>
+            <!-- SEQ mode: the selected step's length in bars -->
+            <div class="seq-bars">
+              <button type="button" class="seq-nudge" id="barsDown" aria-label="One bar fewer">−</button>
+              <span class="seq-bars-num" id="seqBarsNum"></span>
+              <span class="seq-bars-label" id="seqBarsLabel">BARS</span>
+              <button type="button" class="seq-nudge" id="barsUp" aria-label="One bar more">+</button>
+            </div>
+          </div>
         </div>
         <div class="screen-status">
           <div class="status-group">
             <span id="statusPreset" class="status-dim">P–</span>
             <span id="statusSound">BLIP</span>
+            <button type="button" class="seq-end" id="seqEnd"><span class="status-label" id="seqEndLabel">END</span> <span id="seqEndVal">LOOP</span></button>
           </div>
           <div class="status-group">
             <span><span class="status-label" id="statusBarLabel">BAR</span> <span id="statusBar">–</span></span>
@@ -1302,6 +1444,14 @@
         </button>
         <div class="fsw-label engrave" id="toneLabel">A440</div>
       </div>
+      <!-- SEQ: switches between the metronome and the sequencer -->
+      <div class="fsw-unit seq-unit">
+        <button class="fsw" id="seqBtn" role="switch" aria-checked="false" aria-label="Sequencer mode">
+          <span class="fsw-ring"></span>
+          <span class="fsw-cap"></span>
+        </button>
+        <div class="fsw-label engrave" id="seqLabel">SEQ</div>
+      </div>
       <div class="stomp-area">
         <span class="led" id="playLed" aria-hidden="true"></span>
         <button class="stomp" id="playBtn" aria-label="Start" aria-pressed="false">
@@ -1319,8 +1469,20 @@
   let beatsPerBar = 4;
   let playing = false;
   let currentBeat = 0;
-  let intervalId = null;
+  let schedulerId = null;
   let audioCtx = null;
+
+  // Sequencer: in SEQ mode the fader, knobs, ACCENT and beat dots edit the
+  // selected step, and START plays the steps in order
+  const SEQ_MAX_STEPS = 16;
+  const SEQ_MAX_BARS = 99;
+  let seqMode = false;
+  let seq = { steps: [], loop: true };
+  let seqSel = 0;             // selected step
+  let seqPlayingStep = -1;    // step on screen as playing
+  let seqCue = -1;            // step that blinks during the last bar before it starts
+  let metronomeValues = null; // the metronome's settings, kept while SEQ mode is on
+  let applyingValues = false; // the controls are being set from a step or preset, not by hand
 
   const bpmNum = document.getElementById('bpmNum');
   const bpmAnnounce = document.getElementById('bpmAnnounce');
@@ -1328,6 +1490,15 @@
   const playBtn = document.getElementById('playBtn');
   const flash = document.getElementById('flash');
   const beatsEl = document.getElementById('beats');
+  const screenEl = document.querySelector('.screen');
+  const seqBtn = document.getElementById('seqBtn');
+  const seqStepsEl = document.getElementById('seqSteps');
+  const seqAddBtn = document.getElementById('seqAdd');
+  const seqDelBtn = document.getElementById('seqDel');
+  const seqBarsNum = document.getElementById('seqBarsNum');
+  const barsDownBtn = document.getElementById('barsDown');
+  const barsUpBtn = document.getElementById('barsUp');
+  const seqEndBtn = document.getElementById('seqEnd');
 
   function setPlayingState(isPlaying) {
     if (!isPlaying) stopPracticeTimer();
@@ -1363,16 +1534,24 @@
   }
   const savedSettings = loadSettings();
 
+  // The tempo, time signature and accents belong to the metronome, or in SEQ
+  // mode to the selected step. Values being loaded into the controls (from a
+  // step, a preset, or on leaving SEQ mode) aren't saved back.
+  function saveMetronome(patch) {
+    if (applyingValues) return;
+    if (seqMode) storeSelectedStep(); else saveSettings(patch);
+  }
+
   let currentLang = 'en';
 
+  // While playing, the scheduler picks up the new tempo from the next beat
   function updateBPM(val, announce) {
     bpm = Math.max(20, Math.min(240, val));
     bpmNum.textContent = bpm;
     bpmSlider.value = bpm;
     if (announce) bpmAnnounce.textContent = bpm + ' BPM';
-    saveSettings({ bpm });
+    saveMetronome({ bpm });
     markPresetModified();
-    if (playing) restart();
   }
 
   // Kept outside the translations table because buildBeats() runs during
@@ -1434,9 +1613,10 @@
   let currentSound = 'blip';
   const volume = 0.8;
 
-  function playTick(accent) {
+  // when: the audio-clock time to play at (now if left out)
+  function playTick(accent, when) {
     const ctx = getAudioCtx();
-    const now = ctx.currentTime;
+    const now = Math.max(when ?? 0, ctx.currentTime);
     const gain = ctx.createGain();
     gain.connect(ctx._out);
     const v = volume * 8.0; // boosted master
@@ -1565,20 +1745,99 @@
     }
   }
 
-  function doTick() {
-    const accent = accentOn && accentBeats.has(currentBeat);
-    try {
-      playTick(accent);
-    } catch (err) {
-      console.warn('[doTick] audio error:', err);
-      if (playing) { playing = false; stop(); setPlayingState(false); }
+  // ── Timing: beats are scheduled a little ahead on the Web Audio clock, so
+  // they land exactly on time and a tempo or step change takes effect on the
+  // next beat without restarting the bar. A short timer tops up the schedule;
+  // the screen, flash and vibration follow each beat with a timeout set to
+  // the moment it plays.
+  const LOOKAHEAD = 0.12; // seconds of beats scheduled ahead
+  const SCHEDULE_MS = 25; // how often the schedule is topped up
+  let nextBeatTime = 0;
+  let seqPos = null;      // sequence position of the next beat to schedule
+  let seqEndTimer = null;
+  const pendingBeats = new Set();
+
+  function nextMetronomeBeat() {
+    if (currentBeat >= beatsPerBar) currentBeat = 0;
+    const beat = currentBeat;
+    currentBeat = (currentBeat + 1) % beatsPerBar;
+    return { beat, bpm, accent: accentOn && accentBeats.has(beat), newBar: beat === 0 };
+  }
+
+  function nextSeqBeat() {
+    if (seqPos.ended) { endSequence(); return null; }
+    const steps = seq.steps;
+    if (seqPos.beat === 0) {
+      // Each bar takes its step's settings as they are when it starts, so an
+      // edit made while a step plays takes effect from the next bar
+      if (seqPos.step >= steps.length) seqPos.step = 0;
+      seqPos.s = { ...steps[seqPos.step] };
     }
-    highlightBeat(currentBeat);
-    if (currentBeat === 0) {
-      // A restart (tempo change while playing) re-enters on beat 1, but it
-      // isn't a new bar — don't count it, or dragging the fader would spin it up.
-      if (skipBarCount) skipBarCount = false;
-      else statusBar.textContent = ++barCount;
+    const s = seqPos.s;
+    const live = steps[seqPos.step];
+    const bars = live ? live.bars : s.bars;
+    let next = seqPos.step + 1;
+    if (next >= steps.length) next = seq.loop ? 0 : -1;
+    const info = {
+      beat: seqPos.beat,
+      bpm: s.bpm,
+      accent: s.accent && s.accents.includes(seqPos.beat),
+      step: seqPos.step,
+      bar: seqPos.bar,
+      bars,
+      cue: seqPos.bar >= bars - 1 && next !== seqPos.step ? next : -1,
+    };
+    if (++seqPos.beat >= s.beats) {
+      seqPos.beat = 0;
+      if (++seqPos.bar >= bars) {
+        seqPos.bar = 0;
+        if (++seqPos.step >= steps.length) {
+          seqPos.step = 0;
+          if (!seq.loop) seqPos.ended = true;
+        }
+      }
+    }
+    return info;
+  }
+
+  // The sequence is set to stop at the end: stop when its last beat is over
+  function endSequence() {
+    if (seqEndTimer) return;
+    const ms = Math.max(0, (nextBeatTime - audioCtx.currentTime) * 1000);
+    seqEndTimer = setTimeout(() => { seqEndTimer = null; if (playing) togglePlay(); }, ms);
+  }
+
+  function scheduler() {
+    while (playing && nextBeatTime < audioCtx.currentTime + LOOKAHEAD) {
+      const info = seqMode ? nextSeqBeat() : nextMetronomeBeat();
+      if (!info) return;
+      try {
+        playTick(info.accent, nextBeatTime);
+      } catch (err) {
+        console.warn('[scheduler] audio error:', err);
+        togglePlay();
+        return;
+      }
+      const id = setTimeout(() => { pendingBeats.delete(id); showBeat(info); },
+        Math.max(0, (nextBeatTime - audioCtx.currentTime) * 1000));
+      pendingBeats.add(id);
+      nextBeatTime += 60 / info.bpm;
+    }
+  }
+
+  function showBeat(info) {
+    if (seqMode) {
+      if (info.step !== seqPlayingStep) {
+        seqPlayingStep = info.step;
+        if (seq.steps[info.step]) selectStep(info.step); // the selection follows the playing step
+      }
+      seqCue = info.cue;
+      renderSeqPlayback();
+      highlightBeat(seqSel === info.step ? info.beat : -1);
+      statusBar.textContent = (info.bar + 1) + '/' + info.bars;
+    } else {
+      highlightBeat(info.beat);
+      if (info.newBar) statusBar.textContent = ++barCount;
     }
     // Flash
     if (document.getElementById('flashToggle').checked) {
@@ -1587,39 +1846,47 @@
     }
     // Phone vibration
     if (document.getElementById('vibrateToggle').checked && navigator.vibrate) {
-      navigator.vibrate(accent ? 40 : 20);
+      navigator.vibrate(info.accent ? 40 : 20);
     }
     // Watch vibration
-    WatchVibration.onBeat(accent);
-    currentBeat = (currentBeat + 1) % beatsPerBar;
+    WatchVibration.onBeat(info.accent);
   }
 
   function start() {
+    let ctx;
+    try { ctx = getAudioCtx(); } catch (err) { console.warn('[start] audio error:', err); togglePlay(); return; }
     currentBeat = 0;
-    const ms = 60000 / bpm;
-    doTick();
-    intervalId = setInterval(doTick, ms);
+    seqPos = { step: 0, bar: 0, beat: 0 };
+    seqPlayingStep = -1;
+    nextBeatTime = ctx.currentTime + 0.05;
+    scheduler();
+    schedulerId = setInterval(scheduler, SCHEDULE_MS);
   }
 
   function stop() {
-    clearInterval(intervalId);
-    intervalId = null;
+    clearInterval(schedulerId);
+    schedulerId = null;
+    pendingBeats.forEach(clearTimeout);
+    pendingBeats.clear();
+    clearTimeout(seqEndTimer);
+    seqEndTimer = null;
+    seqPlayingStep = -1;
+    seqCue = -1;
+    renderSeqPlayback();
     highlightBeat(-1);
   }
 
-  function restart() {
-    stop();
-    if (playing) {
-      skipBarCount = true;
-      start();
-    }
+  function togglePlay() {
+    playing = !playing;
+    if (playing) startPracticeCounters();
+    setPlayingState(playing);
+    if (playing) start(); else stop();
   }
 
   // ── Screen status: bar counter + practice timer (reset on START, frozen on stop) ──
   const statusBar = document.getElementById('statusBar');
   const statusTime = document.getElementById('statusTime');
   let barCount = 0;
-  let skipBarCount = false;
   let practiceStart = 0;
   let practiceTimerId = null;
 
@@ -1630,7 +1897,6 @@
   }
   function startPracticeCounters() {
     barCount = 0;
-    skipBarCount = false;
     statusBar.textContent = '–';
     practiceStart = performance.now();
     statusTime.textContent = '00:00';
@@ -1646,12 +1912,7 @@
     statusTime.textContent = formatElapsed(performance.now() - practiceStart);
   }
 
-  playBtn.addEventListener('click', () => {
-    playing = !playing;
-    if (playing) startPracticeCounters();
-    setPlayingState(playing);
-    if (playing) start(); else stop();
-  });
+  playBtn.addEventListener('click', togglePlay);
 
   bpmSlider.addEventListener('input', () => updateBPM(+bpmSlider.value));
 
@@ -1754,7 +2015,7 @@
       buildBeats();
       currentBeat = 0;
       updateTimeSigReadout();
-      saveSettings({ timeSig: v });
+      saveMetronome({ timeSig: v });
       markPresetModified();
     },
   });
@@ -1765,7 +2026,7 @@
     onChange: v => {
       noteValue = v;
       updateTimeSigReadout();
-      saveSettings({ noteValue: v });
+      saveMetronome({ noteValue: v });
       markPresetModified();
     },
   });
@@ -1778,7 +2039,7 @@
     buildBeats();
     currentBeat = 0;
     updateTimeSigReadout();
-    saveSettings({ timeSig: beats, noteValue: note });
+    saveMetronome({ timeSig: beats, noteValue: note });
   }
 
   // ── Accents: ACCENT switch is the master on/off; the beat dots pick which beats ──
@@ -1789,11 +2050,11 @@
     accentOn = on;
     accentToggle.setAttribute('aria-checked', String(on));
     renderAccentDots();
-    saveSettings({ accent: on });
+    saveMetronome({ accent: on });
   }
   function setAccentBeats(list) {
     accentBeats = new Set(list);
-    saveSettings({ accents: [...accentBeats].sort((a, b) => a - b) });
+    saveMetronome({ accents: [...accentBeats].sort((a, b) => a - b) });
     renderAccentDots();
   }
   function toggleAccentBeat(i) {
@@ -1838,10 +2099,21 @@
   const presets = Array.from({ length: PRESET_COUNT }, (_, i) =>
     Array.isArray(savedSettings.presets) && savedSettings.presets[i] ? savedSettings.presets[i] : null);
   let activePreset = -1;
+  // In SEQ mode the same three switches hold whole sequences
+  const seqPresets = Array.from({ length: PRESET_COUNT }, (_, i) =>
+    cleanSeq(Array.isArray(savedSettings.seqPresets) ? savedSettings.seqPresets[i] : null));
+  let activeSeqPreset = -1;
   function markPresetModified() {
-    if (activePreset === -1) return;
-    activePreset = -1;
-    saveSettings({ activePreset });
+    if (applyingValues) return;
+    if (seqMode) {
+      if (activeSeqPreset === -1) return;
+      activeSeqPreset = -1;
+      saveSettings({ activeSeqPreset });
+    } else {
+      if (activePreset === -1) return;
+      activePreset = -1;
+      saveSettings({ activePreset });
+    }
     renderPresets();
   }
 
@@ -1876,29 +2148,46 @@
   }, true);
   document.addEventListener('pointerdown', () => document.documentElement.classList.remove('kbd'), true);
 
-  // ── Fit the pedal to the screen: if the screen is shorter than the pedal
-  // (small phones, a browser's address bar, a short window), shrink the
-  // whole pedal evenly so it fits without scrolling.
-  (function fitToScreen() {
+  // ── Fit the pedal to the window: scale the whole pedal evenly so it fills
+  // as much of the window as fits — larger on a big window, smaller on a
+  // short one (small phones, a browser's address bar) — without scrolling.
+  // It's scaled with a transform rather than CSS zoom: every browser then
+  // reports the scaled positions of the controls, which the tutorial's
+  // spotlight and the knobs rely on. A bottom margin makes the page take up
+  // the scaled height (the transform alone doesn't change the layout).
+  const fitPedal = (function fitToScreen() {
     const app = document.querySelector('.app');
+    const inner = document.querySelector('.screen-inner');
+
+    // The SEQ screen is held to the metronome screen's height, so the pedal
+    // stays the same size when switching modes
+    function matchScreenHeight() {
+      inner.style.minHeight = '';
+      const seqOn = screenEl.classList.contains('seq');
+      screenEl.classList.remove('seq');
+      const h = inner.getBoundingClientRect().height;
+      screenEl.classList.toggle('seq', seqOn);
+      inner.style.minHeight = `${h}px`;
+    }
+
     function fit() {
-      app.style.zoom = '';
-      app.style.width = '';
-      app.style.maxWidth = '';
+      app.style.transform = '';
+      app.style.marginBottom = '';
+      matchScreenHeight();
       const cs = getComputedStyle(document.body);
-      const room = window.innerHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 1;
-      const scale = Math.min(1, room / app.offsetHeight);
-      if (scale < 1) {
-        // Keep the layout width fixed so the pedal scales evenly rather than
-        // reflowing wider (and taller) inside the zoom
-        app.style.width = `${app.offsetWidth}px`;
-        app.style.maxWidth = 'none';
-        app.style.zoom = scale.toFixed(4);
+      const roomH = window.innerHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 1;
+      const roomW = document.body.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      const h = app.offsetHeight;
+      const scale = Math.min(roomH / h, roomW / app.offsetWidth);
+      if (Math.abs(scale - 1) > 0.01) {
+        app.style.transform = `scale(${scale.toFixed(4)})`;
+        app.style.marginBottom = `${(h * (scale - 1)).toFixed(1)}px`;
       }
     }
     window.addEventListener('resize', fit);
     document.fonts.ready.then(fit);
     fit();
+    return fit;
   })();
 
   // ── About page (opened from settings) ──
@@ -1924,9 +2213,78 @@
   // Keep keyboard focus inside the About page while it's open
   about.addEventListener('keydown', e => { if (e.key === 'Tab') { e.preventDefault(); aboutClose.focus(); } });
 
+  // ── Release notes (opened from the version number in settings or About):
+  // what's new in the current version only ──
+  const RELEASE_NOTES = [
+    { version: '0.3.0', date: '2026-10-22',
+      en: [
+        'Sequencer: the new SEQ switch turns the pedal into a sequencer that plays a list of steps, each with its own tempo, time signature, accents and number of bars.',
+        'Steps are set with the pedal\'s usual controls. The next step blinks through the last bar before it starts, and a sequence can loop or stop at the end.',
+        'In the sequencer the presets save whole sequences, and the lights turn green so it\'s clear which mode is on.',
+        'A tutorial for the sequencer, shown the first time SEQ is switched on.',
+        'More precise timing: beats are scheduled on the audio clock, and a tempo change while playing takes effect from the next beat without restarting the bar.',
+        'The pedal scales to fill the window.',
+      ],
+      ja: [
+        'シーケンサー：新しいシーケンススイッチで、テンポ・拍子・アクセント・小節数を持つステップを順に再生するシーケンサーになります。',
+        'ステップはいつもの操作で設定できます。次のステップは始まる前の最後の小節で点滅し、最後はループまたは停止を選べます。',
+        'シーケンサーではプリセットにシーケンス全体を保存でき、ライトが緑になってモードがひと目で分かります。',
+        'シーケンサーのチュートリアルを追加（初めてシーケンスに切り替えたときに表示）。',
+        'タイミングがより正確に：拍をオーディオクロックで刻み、再生中のテンポ変更は小節をやり直さずに次の拍から反映されます。',
+        'ペダルがウィンドウいっぱいに表示されるようになりました。',
+      ] },
+  ];
+  const notes = document.getElementById('notes');
+  const notesClose = document.getElementById('notesClose');
+  const versionBtns = [document.getElementById('dropdownVersion'), document.getElementById('aboutVersion')];
+  let notesOpener = null;
+
+  function renderNotes() {
+    const list = document.getElementById('notesList');
+    list.innerHTML = '';
+    RELEASE_NOTES.forEach(r => {
+      const sec = document.createElement('section');
+      sec.className = 'notes-release';
+      sec.innerHTML = `<div class="notes-head"><span class="notes-version">v${r.version}</span><span class="notes-date">${r.date}</span></div><ul></ul>`;
+      const ul = sec.querySelector('ul');
+      (r[currentLang] || r.en).forEach(text => {
+        const li = document.createElement('li');
+        li.textContent = text;
+        ul.appendChild(li);
+      });
+      list.appendChild(sec);
+    });
+  }
+  function openNotes(opener) {
+    notesOpener = opener;
+    if (opener.id === 'dropdownVersion') closeMenu();
+    renderNotes();
+    notes.hidden = false;
+    notes.querySelector('.notes-card').scrollTop = 0;
+    void notes.offsetWidth; // apply the hidden state first so the fade-in runs
+    notes.classList.add('open');
+    notesClose.focus();
+  }
+  function closeNotes() {
+    if (notes.hidden) return;
+    notes.classList.remove('open');
+    setTimeout(() => { notes.hidden = true; }, 250);
+    // Back to the About page's version, or to the settings button
+    (notesOpener && notesOpener.id === 'aboutVersion' ? notesOpener : menuBtn).focus();
+  }
+  versionBtns.forEach(btn => {
+    btn.setAttribute('aria-label', `Version ${btn.textContent.replace(/^v/, '')}: release notes`); // translated in applyLang
+    btn.addEventListener('click', () => openNotes(btn));
+  });
+  notesClose.addEventListener('click', closeNotes);
+  notes.addEventListener('click', e => { if (e.target === notes) closeNotes(); });
+  notes.addEventListener('keydown', e => { if (e.key === 'Tab') { e.preventDefault(); notesClose.focus(); } });
+
   document.addEventListener('keydown', e => {
     if (e.code !== 'Escape' || !document.getElementById('tour').hidden) return;
-    if (!about.hidden) closeAbout(); else closeMenu();
+    if (!notes.hidden) closeNotes();
+    else if (!about.hidden) closeAbout();
+    else closeMenu();
   });
 
   // ── Accordion sections ──
@@ -2026,7 +2384,7 @@
   // Space/Enter itself) — otherwise actions double-fire or fight each other.
   // Pedal shortcuts are off while a form control has focus or the About page is open
   function isFormField(el) {
-    if (!document.getElementById('about').hidden || !document.getElementById('tour').hidden) return true;
+    if (!document.getElementById('about').hidden || !document.getElementById('notes').hidden || !document.getElementById('tour').hidden) return true;
     const tag = el && el.tagName;
     return tag === 'SELECT' || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON';
   }
@@ -2065,6 +2423,23 @@
       presetEmpty: 'Preset {n} is empty — hold to save',
       presetAria: 'Preset {n}. Press to load; hold or Shift+Enter to save',
       presetAriaEmpty: 'Preset {n}, empty. Hold or Shift+Enter to save',
+      seqPresetSaved: 'Sequence saved to preset {n}',
+      seqPresetEmpty: 'Preset {n} has no sequence — hold to save',
+      seqPresetAria: 'Sequence preset {n}. Press to load; hold or Shift+Enter to save',
+      seqPresetAriaEmpty: 'Sequence preset {n}, empty. Hold or Shift+Enter to save',
+      seqLabel: 'SEQ',
+      seqAria: 'Sequencer mode',
+      stepsAria: 'Sequence steps: press a step to edit it',
+      stepAria: 'Step {n}',
+      addStep: 'Add a step',
+      deleteStep: 'Delete the selected step',
+      barsLabel: 'BARS',
+      barsDown: 'One bar fewer',
+      barsUp: 'One bar more',
+      endLabel: 'END',
+      endLoop: 'LOOP',
+      endStop: 'STOP',
+      endAria: 'At the end of the sequence: {v}. Press to change',
       settingsTitle: 'Settings',
       secDisplay: 'OTHER',
       secSound: 'CLICK SOUND',
@@ -2083,6 +2458,8 @@
       aboutByLabel: 'DESIGN & DEVELOPMENT',
       aboutVersionLabel: 'VERSION',
       aboutClose: 'Close',
+      notesTitle: 'RELEASE NOTES',
+      versionAria: 'Version {v}: release notes',
       langLabel: 'LANGUAGE',
     },
     ja: {
@@ -2104,6 +2481,23 @@
       presetEmpty: 'プリセット{n}は空です（長押しで保存）',
       presetAria: 'プリセット{n}。押して呼び出し、長押しまたはShift+Enterで保存',
       presetAriaEmpty: 'プリセット{n}（空）。長押しまたはShift+Enterで保存',
+      seqPresetSaved: 'シーケンスをプリセット{n}に保存しました',
+      seqPresetEmpty: 'プリセット{n}にシーケンスはありません（長押しで保存）',
+      seqPresetAria: 'シーケンスのプリセット{n}。押して呼び出し、長押しまたはShift+Enterで保存',
+      seqPresetAriaEmpty: 'シーケンスのプリセット{n}（空）。長押しまたはShift+Enterで保存',
+      seqLabel: 'シーケンサー',
+      seqAria: 'シーケンサーモード',
+      stepsAria: 'シーケンスのステップ：押すと編集します',
+      stepAria: 'ステップ{n}',
+      addStep: 'ステップを追加',
+      deleteStep: '選択中のステップを削除',
+      barsLabel: '小節',
+      barsDown: '1小節減らす',
+      barsUp: '1小節増やす',
+      endLabel: 'エンド',
+      endLoop: 'ループ',
+      endStop: '停止',
+      endAria: 'シーケンスの最後：{v}。押して切り替え',
       settingsTitle: '設定',
       secDisplay: 'その他',
       secSound: 'クリック音',
@@ -2122,6 +2516,8 @@
       aboutByLabel: 'DESIGN & DEVELOPMENT',
       aboutVersionLabel: 'VERSION',
       aboutClose: '閉じる',
+      notesTitle: 'リリースノート',
+      versionAria: 'バージョン{v}：リリースノート',
       langLabel: '言語',
     }
   };
@@ -2142,6 +2538,17 @@
     document.getElementById('startLabel').textContent = t.startLabel;
     document.getElementById('presetsLabel').textContent = t.presetsLabel;
     renderPresets();
+    document.getElementById('seqLabel').textContent = t.seqLabel;
+    seqBtn.setAttribute('aria-label', t.seqAria);
+    seqStepsEl.setAttribute('aria-label', t.stepsAria);
+    seqAddBtn.setAttribute('aria-label', t.addStep);
+    seqDelBtn.setAttribute('aria-label', t.deleteStep);
+    document.getElementById('seqBarsLabel').textContent = t.barsLabel;
+    barsDownBtn.setAttribute('aria-label', t.barsDown);
+    barsUpBtn.setAttribute('aria-label', t.barsUp);
+    document.getElementById('seqEndLabel').textContent = t.endLabel;
+    renderSeq();
+    fitPedal(); // the Japanese font's taller lines can change the pedal's height
     beatsEl.setAttribute('aria-label', t.accentPatternAria);
     beatsEl.querySelectorAll('.beat-dot').forEach((d, i) => d.setAttribute('aria-label', BEAT_DOT_LABELS[lang](i + 1)));
     document.querySelector('.dropdown-title').textContent = t.settingsTitle;
@@ -2170,6 +2577,9 @@
     document.getElementById('aboutByLabel').textContent = t.aboutByLabel;
     document.getElementById('aboutVersionLabel').textContent = t.aboutVersionLabel;
     document.getElementById('aboutClose').setAttribute('aria-label', t.aboutClose);
+    document.getElementById('notesTitle').textContent = t.notesTitle;
+    document.getElementById('notesClose').setAttribute('aria-label', t.aboutClose);
+    versionBtns.forEach(b => b.setAttribute('aria-label', t.versionAria.replace('{v}', b.textContent.replace(/^v/, ''))));
   }
 
   // Language selector in settings
@@ -2195,19 +2605,30 @@
   const presetText = (key, i) => translations[currentLang][key].replace('{n}', i + 1);
 
   function renderPresets() {
+    const slots = seqMode ? seqPresets : presets;
+    const active = seqMode ? activeSeqPreset : activePreset;
+    const aria = seqMode ? 'seqPresetAria' : 'presetAria';
     presetBtns.forEach((btn, i) => {
-      btn.classList.toggle('saved', !!presets[i]);
-      btn.classList.toggle('active', i === activePreset);
-      btn.setAttribute('aria-pressed', String(i === activePreset));
-      btn.setAttribute('aria-label', presetText(presets[i] ? 'presetAria' : 'presetAriaEmpty', i));
+      btn.classList.toggle('saved', !!slots[i]);
+      btn.classList.toggle('active', i === active);
+      btn.setAttribute('aria-pressed', String(i === active));
+      btn.setAttribute('aria-label', presetText(slots[i] ? aria : aria + 'Empty', i));
     });
     const statusPreset = document.getElementById('statusPreset');
-    statusPreset.textContent = activePreset === -1 ? 'P–' : 'P' + (activePreset + 1);
-    statusPreset.classList.toggle('status-dim', activePreset === -1);
+    statusPreset.textContent = active === -1 ? 'P–' : 'P' + (active + 1);
+    statusPreset.classList.toggle('status-dim', active === -1);
   }
 
   function savePreset(i) {
-    presets[i] = { bpm, beats: beatsPerBar, note: noteValue, accent: accentOn, accents: [...accentBeats].sort((a, b) => a - b) };
+    if (seqMode) {
+      seqPresets[i] = JSON.parse(JSON.stringify(seq));
+      activeSeqPreset = i;
+      saveSettings({ seqPresets, activeSeqPreset });
+      renderPresets();
+      showToast(presetText('seqPresetSaved', i));
+      return;
+    }
+    presets[i] = currentValues();
     activePreset = i;
     saveSettings({ presets, activePreset });
     renderPresets();
@@ -2215,6 +2636,18 @@
   }
 
   function loadPreset(i) {
+    if (seqMode) {
+      const q = seqPresets[i];
+      if (!q) { showToast(presetText('seqPresetEmpty', i)); return; }
+      seq = JSON.parse(JSON.stringify(q));
+      if (playing) seqPos = { step: 0, bar: 0, beat: 0 }; // the new sequence starts on the next beat
+      saveSeq();
+      selectStep(0);
+      activeSeqPreset = i;
+      saveSettings({ activeSeqPreset });
+      renderPresets();
+      return;
+    }
     const p = presets[i];
     if (!p) { showToast(presetText('presetEmpty', i)); return; }
     updateBPM(p.bpm);
@@ -2259,6 +2692,193 @@
     });
   });
 
+  // ── Sequencer (SEQ mode) ──
+  // A sequence is a list of steps, each a tempo, time signature and accent
+  // pattern played for a number of bars. The SEQ switch swaps the pedal into
+  // SEQ mode: the screen shows the steps, and the fader, knobs, ACCENT, beat
+  // dots and TAP edit the selected one. Pressing SEQ again brings back the
+  // metronome's own settings untouched.
+  function currentValues() {
+    return { bpm, beats: beatsPerBar, note: noteValue, accent: accentOn, accents: [...accentBeats].sort((a, b) => a - b) };
+  }
+
+  // Load values into the controls without saving them back or marking a preset changed
+  function applyValues(v) {
+    applyingValues = true;
+    updateBPM(v.bpm);
+    setTimeSignature(v.beats, v.note);
+    setAccentBeats(v.accents);
+    setAccent(v.accent);
+    applyingValues = false;
+  }
+
+  function cleanStep(s) {
+    if (!s || !BEAT_VALUES.includes(s.beats) || !NOTE_VALUES.includes(s.note)) return null;
+    return {
+      bpm: Math.max(20, Math.min(240, Math.round(+s.bpm) || 120)),
+      beats: s.beats,
+      note: s.note,
+      accent: s.accent !== false,
+      accents: Array.isArray(s.accents) ? s.accents.filter(Number.isInteger) : [0],
+      bars: Math.max(1, Math.min(SEQ_MAX_BARS, Math.round(+s.bars) || 4)),
+    };
+  }
+  function cleanSeq(q) {
+    const steps = q && Array.isArray(q.steps) ? q.steps.map(cleanStep).filter(Boolean).slice(0, SEQ_MAX_STEPS) : [];
+    return steps.length ? { steps, loop: q.loop !== false } : null;
+  }
+  seq = cleanSeq(savedSettings.seq) || seq;
+
+  function saveSeq() { saveSettings({ seq }); }
+
+  // A control was changed by hand in SEQ mode: write it into the selected step
+  function storeSelectedStep() {
+    Object.assign(seq.steps[seqSel], currentValues());
+    saveSeq();
+    renderSeq();
+  }
+
+  function selectStep(i) {
+    seqSel = i;
+    applyValues(seq.steps[i]);
+    renderSeq();
+  }
+
+  function renderSeq() {
+    const t = translations[currentLang];
+    const n = seq.steps.length;
+    const cells = [...seqStepsEl.querySelectorAll('.seq-step')];
+    for (let i = cells.length; i < n; i++) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'seq-step';
+      b.dataset.step = i;
+      b.textContent = i + 1;
+      seqStepsEl.insertBefore(b, seqAddBtn);
+    }
+    cells.slice(n).forEach(b => b.remove());
+    seqStepsEl.querySelectorAll('.seq-step').forEach((b, i) => {
+      const s = seq.steps[i];
+      b.setAttribute('aria-label', `${t.stepAria.replace('{n}', i + 1)}: ${s.bpm} BPM, ${s.beats}/${s.note}, ${s.bars} ${t.barsLabel}`);
+    });
+    seqStepsEl.classList.toggle('compact', n > 8);
+    seqAddBtn.disabled = n >= SEQ_MAX_STEPS;
+    const step = seq.steps[seqSel];
+    seqBarsNum.textContent = step ? step.bars : '';
+    barsDownBtn.disabled = !step || step.bars <= 1;
+    barsUpBtn.disabled = !step || step.bars >= SEQ_MAX_BARS;
+    const end = seq.loop ? t.endLoop : t.endStop;
+    document.getElementById('seqEndVal').textContent = end;
+    seqEndBtn.setAttribute('aria-label', t.endAria.replace('{v}', end));
+    renderSeqPlayback();
+  }
+
+  // Selected step: blue ring. Playing step: lit blue. The next step blinks
+  // through the last bar before it starts.
+  function renderSeqPlayback() {
+    seqStepsEl.querySelectorAll('.seq-step').forEach((b, i) => {
+      b.classList.toggle('selected', i === seqSel);
+      b.classList.toggle('playing', i === seqPlayingStep);
+      b.classList.toggle('cue', i === seqCue);
+      b.setAttribute('aria-pressed', String(i === seqSel));
+    });
+    // The step that's playing can't be deleted
+    seqDelBtn.disabled = seq.steps.length <= 1 || (playing && seqSel === seqPlayingStep);
+  }
+
+  function setSeqMode(on) {
+    if (on === seqMode) return;
+    if (playing) togglePlay();
+    if (on) {
+      metronomeValues = currentValues();
+      if (!seq.steps.length) {
+        seq.steps.push({ ...metronomeValues, bars: 4 });
+        saveSeq();
+      }
+      seqMode = true;
+      selectStep(Math.min(seqSel, seq.steps.length - 1));
+    } else {
+      seqMode = false;
+      applyValues(metronomeValues);
+    }
+    screenEl.classList.toggle('seq', on);
+    document.documentElement.classList.toggle('seq-mode', on);
+    seqBtn.setAttribute('aria-checked', String(on));
+    statusBar.textContent = '–';
+    renderPresets();
+    renderSeq();
+    saveSettings({ seqMode: on });
+    fitPedal();
+  }
+
+  function addStep() {
+    if (seq.steps.length >= SEQ_MAX_STEPS) return;
+    const s = seq.steps[seqSel];
+    seq.steps.push({ ...s, accents: [...s.accents] });
+    saveSeq();
+    markPresetModified();
+    selectStep(seq.steps.length - 1);
+  }
+
+  function deleteStep() {
+    const i = seqSel;
+    if (seq.steps.length <= 1 || (playing && i === seqPlayingStep)) return;
+    seq.steps.splice(i, 1);
+    if (playing) {
+      if (seqPos.step > i) seqPos.step--;
+      if (seqPlayingStep > i) seqPlayingStep--;
+      seqCue = seqCue > i ? seqCue - 1 : seqCue === i ? -1 : seqCue;
+    }
+    saveSeq();
+    markPresetModified();
+    selectStep(Math.max(0, i - 1));
+  }
+
+  function changeBars(d) {
+    const s = seq.steps[seqSel];
+    const bars = Math.max(1, Math.min(SEQ_MAX_BARS, s.bars + d));
+    if (bars === s.bars) return;
+    s.bars = bars;
+    saveSeq();
+    markPresetModified();
+    renderSeq();
+  }
+
+  // Press to step once; hold to keep stepping
+  function repeatButton(btn, fn) {
+    let timer = null;
+    const stopRepeat = () => { clearTimeout(timer); timer = null; };
+    const repeat = delay => { timer = setTimeout(() => { fn(); repeat(70); }, delay); };
+    btn.addEventListener('pointerdown', e => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      fn();
+      repeat(400);
+    });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => btn.addEventListener(ev, stopRepeat));
+    btn.addEventListener('click', e => { if (e.detail === 0) fn(); }); // keyboard activation
+  }
+
+  seqBtn.addEventListener('click', () => {
+    setSeqMode(!seqMode);
+    // The first time, walk through the sequencer once the screen has switched
+    if (seqMode && !tour.seen('seq')) setTimeout(() => tour.start('seq'), 300);
+  });
+  seqStepsEl.addEventListener('click', e => {
+    const cell = e.target.closest('.seq-step');
+    if (cell) selectStep(+cell.dataset.step);
+  });
+  seqAddBtn.addEventListener('click', addStep);
+  seqDelBtn.addEventListener('click', deleteStep);
+  repeatButton(barsDownBtn, () => changeBars(-1));
+  repeatButton(barsUpBtn, () => changeBars(1));
+  seqEndBtn.addEventListener('click', () => {
+    seq.loop = !seq.loop;
+    saveSeq();
+    markPresetModified();
+    renderSeq();
+  });
+
   // ── Restore saved settings on load ──
   (function restoreSettings() {
     const savedBeats = +savedSettings.timeSig;
@@ -2274,6 +2894,7 @@
     updateTimeSigReadout();
     buildBeats(); // reflects the restored accent pattern and language
     if (presets[savedSettings.activePreset]) activePreset = savedSettings.activePreset;
+    if (seqPresets[savedSettings.activeSeqPreset]) activeSeqPreset = savedSettings.activeSeqPreset;
     renderPresets();
     if (savedSettings.sound) {
       const card = document.querySelector('.sound-card[data-sound="' + savedSettings.sound + '"]');
@@ -2289,14 +2910,16 @@
       currentLang = 'ja';
       applyLang(currentLang);
     }
+    if (savedSettings.seqMode) setSeqMode(true);
   })();
 
-  // ── First-run tutorial ──
+  // ── Tutorials ──
   // A spotlight steps through each part of the pedal with a short explanation.
-  // Shown once (tracked in localStorage); Settings → TUTORIAL replays it.
-  (function tour() {
-    const TOUR_KEY = 'metronome-tour-v1';
-    const STEPS = [
+  // The main one is shown on the first visit, the sequencer's the first time
+  // SEQ mode is switched on (each tracked in localStorage). Settings →
+  // TUTORIAL replays the one for the mode the pedal is in.
+  const tour = (function tour() {
+    const MAIN_STEPS = [
       { el: ['.screen'],
         en: ['SCREEN', 'Shows the tempo, the time signature and a dot for each beat. Tap a dot to accent that beat. The bottom row shows the loaded preset, the click sound, the bar count and how long you\'ve been playing.'],
         ja: ['画面', 'テンポ、拍子、各拍の点を表示します。点をタップするとその拍にアクセントが付きます。下の行には読み込んだプリセット、クリック音、小節数、練習時間が表示されます。'] },
@@ -2324,10 +2947,45 @@
       { el: ['.stomp-area:last-of-type'],
         en: ['START', 'Starts and stops the metronome. The Enter key does the same.'],
         ja: ['スタート', 'メトロノームを開始・停止します。Enterキーでも操作できます。'] },
+      { el: ['.seq-unit'],
+        en: ['SEQ', 'Switches between the metronome and the sequencer, which changes the tempo and time signature after a set number of bars. The lights turn green in the sequencer. The first time you switch, a short tutorial shows how it works.'],
+        ja: ['シーケンス', 'メトロノームとシーケンサーを切り替えます。シーケンサーでは決めた小節数ごとにテンポや拍子が変わります。シーケンサーではライトが緑になります。初めて切り替えたときに使い方のチュートリアルが表示されます。'] },
       { el: ['#menuBtn'],
         en: ['SETTINGS', 'Choose the language and click sound, turn on flash or vibration, and replay this tutorial any time.'],
         ja: ['設定', '言語やクリック音の選択、フラッシュや振動の設定ができます。このチュートリアルもいつでも見直せます。'] },
     ];
+    const SEQ_STEPS = [
+      { el: ['.seq-steps'],
+        en: ['STEPS', 'A sequence is a row of steps. Each step is a tempo, time signature and accents played for a number of bars, then the next step starts. Tap a step to select it. + adds a copy of it at the end; − deletes it.'],
+        ja: ['ステップ', 'シーケンスはステップの並びです。各ステップは決めた小節数だけテンポ・拍子・アクセントを鳴らし、次のステップに進みます。タップで選択、+ で選択中のステップのコピーを最後に追加、− で削除します。'] },
+      { el: ['.fader'],
+        en: ['TEMPO', 'The fader sets the selected step\'s tempo. TAP and the ↑ ↓ keys work too.'],
+        ja: ['テンポ', 'フェーダーで選択中のステップのテンポを設定します。タップや ↑ ↓ キーも使えます。'] },
+      { el: ['.ts'],
+        en: ['TIME SIGNATURE', 'BEATS, NOTE and ACCENT set the selected step\'s time signature and accents. Tap the dots on the screen to choose which beats are accented.'],
+        ja: ['拍子', '拍数・音符・アクセントで選択中のステップの拍子とアクセントを設定します。画面の点をタップしてアクセントの拍を選びます。'] },
+      { el: ['.seq-bars'],
+        en: ['BARS', 'How many bars the selected step plays, from 1 to 99. Hold − or + to change it quickly.'],
+        ja: ['小節', '選択中のステップを何小節鳴らすかを設定します（1〜99）。− や + を長押しすると速く変わります。'] },
+      { el: ['#seqEnd'],
+        en: ['END', 'What happens after the last step. Tap to switch between LOOP (start again from step 1) and STOP.'],
+        ja: ['最後', '最後のステップのあとの動作です。タップでループ（ステップ1から繰り返し）と停止を切り替えます。'] },
+      { el: ['.preset-btn', '#presetsLabel'],
+        en: ['PRESETS', 'In the sequencer the presets hold whole sequences, separate from the metronome presets. Hold for half a second to save the sequence; press to load it.'],
+        ja: ['プリセット', 'シーケンサーではプリセットにシーケンス全体を保存します（メトロノームのプリセットとは別です）。0.5秒長押しで保存、押すと呼び出します。'] },
+      { el: ['.stomp-area:last-of-type'],
+        en: ['START', 'Plays the sequence from step 1. The playing step lights up and the screen follows it; the next step blinks through the last bar before it starts. BAR 3/8 on the screen is the bar within the step.'],
+        ja: ['スタート', 'ステップ1からシーケンスを再生します。再生中のステップが点灯して画面が切り替わり、次のステップは始まる前の最後の小節で点滅します。画面の「小節 3/8」はステップ内の小節です。'] },
+      { el: ['.seq-unit'],
+        en: ['SEQ', 'Press again to go back to the metronome, with its settings just as you left them. Settings → TUTORIAL replays this guide while you\'re in the sequencer.'],
+        ja: ['シーケンサー', 'もう一度押すとメトロノームに戻ります。メトロノームの設定はそのままです。シーケンサーで 設定 → スタートガイド を押すとこのガイドをもう一度見られます。'] },
+    ];
+    const TOURS = {
+      main: { key: 'metronome-tour-v1', steps: MAIN_STEPS },
+      seq: { key: 'metronome-seq-tour-v1', steps: SEQ_STEPS },
+    };
+    let STEPS = MAIN_STEPS;
+    let tourKey = TOURS.main.key;
     const UI = {
       en: { step: (i, n) => `STEP ${i} / ${n}`, skip: 'SKIP', back: 'BACK', next: 'NEXT', done: 'DONE' },
       ja: { step: (i, n) => `${i} / ${n}`, skip: 'スキップ', back: '戻る', next: '次へ', done: '完了' },
@@ -2342,7 +3000,6 @@
     const skipBtn = document.getElementById('tourSkip');
     const backBtn = document.getElementById('tourBack');
     const nextBtn = document.getElementById('tourNext');
-    dots.innerHTML = STEPS.map(() => '<span></span>').join('');
     let index = 0;
 
     // Bounding box around all of a step's elements
@@ -2396,7 +3053,9 @@
       index = Math.max(0, Math.min(STEPS.length - 1, i));
       render();
     }
-    function start() {
+    function start(kind) {
+      ({ steps: STEPS, key: tourKey } = TOURS[kind]);
+      dots.innerHTML = STEPS.map(() => '<span></span>').join('');
       closeMenu();
       root.hidden = false;
       index = 0;
@@ -2405,7 +3064,7 @@
     }
     function finish() {
       root.hidden = true;
-      try { localStorage.setItem(TOUR_KEY, '1'); } catch {}
+      try { localStorage.setItem(tourKey, '1'); } catch {}
       menuBtn.focus({ preventScroll: true });
     }
 
@@ -2427,13 +3086,17 @@
     });
     root.querySelector('.tour-block').addEventListener('click', () => nextBtn.focus());
     window.addEventListener('resize', place);
-    document.getElementById('tourBtn').addEventListener('click', start);
+    document.getElementById('tourBtn').addEventListener('click', () => start(seqMode ? 'seq' : 'main'));
+
+    // Has this tutorial been seen yet?
+    function seen(kind) {
+      try { return !!localStorage.getItem(TOURS[kind].key); } catch { return true; }
+    }
 
     // First visit: start once the page (and its fonts) have settled
-    let seen = true;
-    try { seen = !!localStorage.getItem(TOUR_KEY); } catch {}
-    if (!seen) document.fonts.ready.then(() => setTimeout(start, 600));
+    if (!seen('main')) document.fonts.ready.then(() => setTimeout(() => start('main'), 600));
 
+    return { start, seen };
   })();
 
   // ── A440 footswitch: press to start the 440Hz tuning tone, press again to stop ──
