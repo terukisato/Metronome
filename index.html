@@ -14,11 +14,13 @@
 <title>SOUZU</title>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script>
-  // Apply saved theme before first paint to avoid a flash of the wrong theme.
+  // Apply saved theme (and SEQ mode's green lights) before first paint to
+  // avoid a flash of the wrong colours.
   (function() {
     try {
       const saved = JSON.parse(localStorage.getItem('metronome-settings-v1') || '{}');
       if (saved.theme === 'light') document.documentElement.dataset.theme = 'light';
+      if (saved.seqMode) document.documentElement.classList.add('seq-mode');
     } catch {}
   })();
 </script>
@@ -276,17 +278,19 @@
   #seqAdd { margin-left: 4px; }
   .seq-steps.compact .seq-tool { flex-basis: 18px; }
   .seq-steps.compact #seqAdd { margin-left: 2px; }
-  /* Room for the step strip: shorter beat dots, and the BPM label beside the
-     tempo instead of under it (the tempo stays centred). The screen is also
-     held to the metronome screen's height (see fitToScreen), with any spare
-     room spread between the rows. */
+  /* Room for the step strip: shorter beat dots, and one line of time
+     signature, tempo and BPM label, with the bars control (or NEXT) under
+     it. The screen is also held to the metronome screen's height (see
+     fitToScreen), with any spare room spread between the rows. */
   .screen.seq .screen-inner { justify-content: space-between; }
   .screen.seq .beats { min-height: 16px; }
   .screen.seq .beat-dot { height: 16px; }
-  .screen.seq .bpm-display { display: grid; grid-template-columns: 1fr auto 1fr; align-items: baseline; }
-  .screen.seq .bpm-number { grid-column: 2; }
-  .screen.seq .bpm-label { grid-column: 3; justify-self: start; margin-left: 8px; }
-  .screen.seq .ts-row { grid-column: 1 / -1; margin-top: 3px; }
+  .screen.seq .bpm-display { display: grid; grid-template-columns: auto auto auto; justify-content: center; align-items: baseline; }
+  .screen.seq .ts-row { display: contents; } /* its items join the grid */
+  .screen.seq .ts-display { grid-row: 1; grid-column: 1; align-self: center; margin-right: 12px; }
+  .screen.seq .bpm-number { grid-row: 1; grid-column: 2; }
+  .screen.seq .bpm-label { grid-row: 1; grid-column: 3; justify-self: start; margin-left: 8px; }
+  .screen.seq .seq-bars, .screen.seq .seq-next { grid-row: 2; grid-column: 1 / -1; justify-self: center; margin-top: 3px; }
   .seq-bars { align-items: center; height: 26px; border-radius: 6px; background: rgba(255,255,255,0.05); }
   .seq-nudge {
     width: 26px; height: 26px;
@@ -303,6 +307,30 @@
   .seq-nudge:disabled { opacity: 0.3; cursor: default; }
   .seq-bars-num { min-width: 2ch; text-align: center; font: 500 20px/1 var(--font-display); color: #f4f6f8; font-variant-numeric: tabular-nums; }
   .seq-bars-label { margin-left: 4px; font-size: 9px; letter-spacing: 2px; color: #7d8590; }
+  /* NEXT: while a sequence plays, the next step's time signature (and tempo,
+     if it changes) takes the bars control's place. Through the last bar
+     before the change it lights up and counts down the beats left. */
+  .seq-next {
+    display: none;
+    align-items: center;
+    gap: 7px;
+    height: 26px;
+    padding: 0 10px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.05);
+    color: #7d8590;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .screen.seq.playing .seq-bars { display: none; }
+  .screen.seq.playing .seq-next { display: flex; }
+  .seq-next-label { font-size: 9px; letter-spacing: 2px; }
+  .seq-next-arrow { border-left: 5px solid currentColor; border-top: 4px solid transparent; border-bottom: 4px solid transparent; }
+  .seq-next-val { font: 500 18px/1 var(--font-display); letter-spacing: 1px; color: #c9ced4; }
+  .seq-next-count { padding-left: 8px; border-left: 1px solid rgba(var(--led-rgb),0.45); font: 500 18px/1 var(--font-display); }
+  .seq-next-count:empty { display: none; }
+  .seq-next.cue { color: var(--led); background: rgba(var(--led-rgb),0.14); box-shadow: inset 0 0 0 1px rgba(var(--led-rgb),0.5); }
+  .seq-next.cue .seq-next-val { color: var(--led); }
   .seq-end { padding: 0 6px; border: 1px solid #2a2f36; border-radius: 4px; background: transparent; color: inherit; font: inherit; letter-spacing: inherit; line-height: 16px; cursor: pointer; }
   .seq-end:hover { border-color: #3a414b; }
 
@@ -470,8 +498,9 @@
   /* Footswitch row: A440 tuning tone on the left, START on the right.
      The top margin gives the footswitches their own section on the panel. */
   .stomps { display: flex; justify-content: center; gap: 45px; margin-top: var(--stomp-gap, 14px); }
-  /* SEQ switch between the footswitches, level with their centres */
-  .seq-unit { align-self: flex-start; margin-top: 26px; }
+  /* SEQ switch between the footswitches, level with their centres, with its
+     label pushed down level with theirs */
+  .seq-unit { align-self: stretch; justify-content: space-between; margin-top: 26px; }
 
   /* Pedal name, printed like the Ibanez Pentatone wordmark: thin, wide,
      widely spaced capitals. Centred between the presets and the stomps. */
@@ -1118,6 +1147,13 @@
     .switch-row { column-gap: 12px; --tap-gap: 14px; }
     .stomps { gap: 34px; }
     .seq-unit { margin-top: 24px; }
+    /* Room for the longest SEQ lines (e.g. 16/16 240 BPM, and NEXT 16/16 · 240 counting down from 16) */
+    .ts-row { gap: 4px; }
+    .screen.seq .ts-display { padding: 3px 7px; font-size: 18px; letter-spacing: 1px; }
+    .seq-next { gap: 5px; padding: 0 6px; }
+    .seq-next-label { letter-spacing: 1px; }
+    .seq-next-val, .seq-next-count { font-size: 16px; }
+    .seq-next-count { padding-left: 6px; }
     .stomp { width: 60px; height: 60px; }
     .stomp-dome { inset: 14px; }
 
@@ -1312,7 +1348,7 @@
   <button class="about-link" id="tourBtn" aria-haspopup="dialog">TUTORIAL</button>
   <button class="about-link" id="aboutBtn" aria-haspopup="dialog">ABOUT</button>
 
-  <button type="button" class="dropdown-version" id="dropdownVersion" aria-haspopup="dialog">v0.3.0</button>
+  <button type="button" class="dropdown-version" id="dropdownVersion" aria-haspopup="dialog">v0.3.1</button>
 
 </div>
 
@@ -1364,6 +1400,13 @@
               <span class="seq-bars-num" id="seqBarsNum"></span>
               <span class="seq-bars-label" id="seqBarsLabel">BARS</span>
               <button type="button" class="seq-nudge" id="barsUp" aria-label="One bar more">+</button>
+            </div>
+            <!-- SEQ mode while playing: what the next step changes to, in place of the bars -->
+            <div class="seq-next" id="seqNext">
+              <span class="seq-next-label" id="seqNextLabel">NEXT</span>
+              <span class="seq-next-arrow" aria-hidden="true"></span>
+              <span class="seq-next-val" id="seqNextVal"></span>
+              <span class="seq-next-count" id="seqNextCount"></span>
             </div>
           </div>
         </div>
@@ -1502,6 +1545,7 @@
 
   function setPlayingState(isPlaying) {
     if (!isPlaying) stopPracticeTimer();
+    screenEl.classList.toggle('playing', isPlaying); // SEQ mode shows NEXT in place of the bars
     playBtn.setAttribute('aria-label', isPlaying ? 'Stop' : 'Start');
     playBtn.setAttribute('aria-pressed', String(isPlaying));
   }
@@ -1778,6 +1822,7 @@
     const bars = live ? live.bars : s.bars;
     let next = seqPos.step + 1;
     if (next >= steps.length) next = seq.loop ? 0 : -1;
+    const lastBar = seqPos.bar >= bars - 1;
     const info = {
       beat: seqPos.beat,
       bpm: s.bpm,
@@ -1785,7 +1830,10 @@
       step: seqPos.step,
       bar: seqPos.bar,
       bars,
-      cue: seqPos.bar >= bars - 1 && next !== seqPos.step ? next : -1,
+      next,                             // -1: the sequence stops after this step
+      lastBar,
+      beatsLeft: s.beats - seqPos.beat, // in this bar, counting this beat
+      cue: lastBar && next !== seqPos.step ? next : -1,
     };
     if (++seqPos.beat >= s.beats) {
       seqPos.beat = 0;
@@ -1833,6 +1881,7 @@
       }
       seqCue = info.cue;
       renderSeqPlayback();
+      renderSeqNext(info);
       highlightBeat(seqSel === info.step ? info.beat : -1);
       statusBar.textContent = (info.bar + 1) + '/' + info.bars;
     } else {
@@ -2216,20 +2265,22 @@
   // ── Release notes (opened from the version number in settings or About):
   // what's new in the current version only ──
   const RELEASE_NOTES = [
-    { version: '0.3.0', date: '2026-10-22',
+    { version: '0.3.1', date: '2026-10-23',
       en: [
         'Sequencer: the new SEQ switch turns the pedal into a sequencer that plays a list of steps, each with its own tempo, time signature, accents and number of bars.',
-        'Steps are set with the pedal\'s usual controls. The next step blinks through the last bar before it starts, and a sequence can loop or stop at the end.',
+        'Steps are set with the pedal\'s usual controls, and a sequence can loop or stop at the end.',
+        'While a sequence plays, NEXT on the screen shows what the next step changes to, then lights up and counts down the beats through the last bar before the change.',
         'In the sequencer the presets save whole sequences, and the lights turn green so it\'s clear which mode is on.',
         'A tutorial for the sequencer, shown the first time SEQ is switched on.',
         'More precise timing: beats are scheduled on the audio clock, and a tempo change while playing takes effect from the next beat without restarting the bar.',
         'The pedal scales to fill the window.',
       ],
       ja: [
-        'シーケンサー：新しいシーケンススイッチで、テンポ・拍子・アクセント・小節数を持つステップを順に再生するシーケンサーになります。',
-        'ステップはいつもの操作で設定できます。次のステップは始まる前の最後の小節で点滅し、最後はループまたは停止を選べます。',
+        'シーケンサー：新しいシーケンサースイッチで、テンポ・拍子・アクセント・小節数を持つステップを順に再生するシーケンサーになります。',
+        'ステップはいつもの操作で設定でき、最後はループまたは停止を選べます。',
+        '再生中は画面の「次」に次のステップの拍子とテンポを表示し、切り替わる前の最後の小節では点灯して拍をカウントダウンします。',
         'シーケンサーではプリセットにシーケンス全体を保存でき、ライトが緑になってモードがひと目で分かります。',
-        'シーケンサーのチュートリアルを追加（初めてシーケンスに切り替えたときに表示）。',
+        'シーケンサーのチュートリアルを追加（初めてシーケンサーに切り替えたときに表示）。',
         'タイミングがより正確に：拍をオーディオクロックで刻み、再生中のテンポ変更は小節をやり直さずに次の拍から反映されます。',
         'ペダルがウィンドウいっぱいに表示されるようになりました。',
       ] },
@@ -2440,6 +2491,8 @@
       endLoop: 'LOOP',
       endStop: 'STOP',
       endAria: 'At the end of the sequence: {v}. Press to change',
+      seqNextLabel: 'NEXT',
+      seqNextEnd: 'END',
       settingsTitle: 'Settings',
       secDisplay: 'OTHER',
       secSound: 'CLICK SOUND',
@@ -2498,6 +2551,8 @@
       endLoop: 'ループ',
       endStop: '停止',
       endAria: 'シーケンスの最後：{v}。押して切り替え',
+      seqNextLabel: '次',
+      seqNextEnd: '終了',
       settingsTitle: '設定',
       secDisplay: 'その他',
       secSound: 'クリック音',
@@ -2547,6 +2602,7 @@
     barsDownBtn.setAttribute('aria-label', t.barsDown);
     barsUpBtn.setAttribute('aria-label', t.barsUp);
     document.getElementById('seqEndLabel').textContent = t.endLabel;
+    document.getElementById('seqNextLabel').textContent = t.seqNextLabel;
     renderSeq();
     fitPedal(); // the Japanese font's taller lines can change the pedal's height
     beatsEl.setAttribute('aria-label', t.accentPatternAria);
@@ -2773,7 +2829,20 @@
     renderSeqPlayback();
   }
 
-  // Selected step: blue ring. Playing step: lit blue. The next step blinks
+  // NEXT: the next step's time signature, plus its tempo if that changes
+  // (or END when the sequence stops after this step). It lights up and counts
+  // down the beats through the last bar before a change.
+  function renderSeqNext(info) {
+    const n = info.next === -1 ? null : seq.steps[info.next];
+    document.getElementById('seqNextVal').textContent = !n
+      ? translations[currentLang].seqNextEnd
+      : n.beats + '/' + n.note + (n.bpm !== info.bpm ? ' · ' + n.bpm : '');
+    const changing = info.lastBar && info.next !== info.step;
+    document.getElementById('seqNext').classList.toggle('cue', changing);
+    document.getElementById('seqNextCount').textContent = changing ? info.beatsLeft : '';
+  }
+
+  // Selected step: ring. Playing step: lit. The next step blinks
   // through the last bar before it starts.
   function renderSeqPlayback() {
     seqStepsEl.querySelectorAll('.seq-step').forEach((b, i) => {
@@ -2949,7 +3018,7 @@
         ja: ['スタート', 'メトロノームを開始・停止します。Enterキーでも操作できます。'] },
       { el: ['.seq-unit'],
         en: ['SEQ', 'Switches between the metronome and the sequencer, which changes the tempo and time signature after a set number of bars. The lights turn green in the sequencer. The first time you switch, a short tutorial shows how it works.'],
-        ja: ['シーケンス', 'メトロノームとシーケンサーを切り替えます。シーケンサーでは決めた小節数ごとにテンポや拍子が変わります。シーケンサーではライトが緑になります。初めて切り替えたときに使い方のチュートリアルが表示されます。'] },
+        ja: ['シーケンサー', 'メトロノームとシーケンサーを切り替えます。シーケンサーでは決めた小節数ごとにテンポや拍子が変わります。シーケンサーではライトが緑になります。初めて切り替えたときに使い方のチュートリアルが表示されます。'] },
       { el: ['#menuBtn'],
         en: ['SETTINGS', 'Choose the language and click sound, turn on flash or vibration, and replay this tutorial any time.'],
         ja: ['設定', '言語やクリック音の選択、フラッシュや振動の設定ができます。このチュートリアルもいつでも見直せます。'] },
@@ -2965,17 +3034,17 @@
         en: ['TIME SIGNATURE', 'BEATS, NOTE and ACCENT set the selected step\'s time signature and accents. Tap the dots on the screen to choose which beats are accented.'],
         ja: ['拍子', '拍数・音符・アクセントで選択中のステップの拍子とアクセントを設定します。画面の点をタップしてアクセントの拍を選びます。'] },
       { el: ['.seq-bars'],
-        en: ['BARS', 'How many bars the selected step plays, from 1 to 99. Hold − or + to change it quickly.'],
-        ja: ['小節', '選択中のステップを何小節鳴らすかを設定します（1〜99）。− や + を長押しすると速く変わります。'] },
+        en: ['BARS', 'How many bars the selected step plays, from 1 to 99. Hold − or + to change it quickly. While the sequence plays, NEXT appears here instead.'],
+        ja: ['小節', '選択中のステップを何小節鳴らすかを設定します（1〜99）。− や + を長押しすると速く変わります。再生中はここに「次」が表示されます。'] },
       { el: ['#seqEnd'],
         en: ['END', 'What happens after the last step. Tap to switch between LOOP (start again from step 1) and STOP.'],
-        ja: ['最後', '最後のステップのあとの動作です。タップでループ（ステップ1から繰り返し）と停止を切り替えます。'] },
+        ja: ['エンド', '最後のステップのあとの動作です。タップでループ（ステップ1から繰り返し）と停止を切り替えます。'] },
       { el: ['.preset-btn', '#presetsLabel'],
         en: ['PRESETS', 'In the sequencer the presets hold whole sequences, separate from the metronome presets. Hold for half a second to save the sequence; press to load it.'],
         ja: ['プリセット', 'シーケンサーではプリセットにシーケンス全体を保存します（メトロノームのプリセットとは別です）。0.5秒長押しで保存、押すと呼び出します。'] },
       { el: ['.stomp-area:last-of-type'],
-        en: ['START', 'Plays the sequence from step 1. The playing step lights up and the screen follows it; the next step blinks through the last bar before it starts. BAR 3/8 on the screen is the bar within the step.'],
-        ja: ['スタート', 'ステップ1からシーケンスを再生します。再生中のステップが点灯して画面が切り替わり、次のステップは始まる前の最後の小節で点滅します。画面の「小節 3/8」はステップ内の小節です。'] },
+        en: ['START', 'Plays the sequence from step 1. The playing step lights up and the screen follows it. NEXT shows the next step\'s time signature, and its tempo if that changes; through the last bar before the change it lights up and counts down the beats left. BAR 3/8 is the bar within the step.'],
+        ja: ['スタート', 'ステップ1からシーケンスを再生します。再生中のステップが点灯して画面が切り替わります。「次」には次のステップの拍子（テンポが変わるときはテンポも）が表示され、切り替わる前の最後の小節では点灯して残りの拍をカウントダウンします。「小節 3/8」はステップ内の小節です。'] },
       { el: ['.seq-unit'],
         en: ['SEQ', 'Press again to go back to the metronome, with its settings just as you left them. Settings → TUTORIAL replays this guide while you\'re in the sequencer.'],
         ja: ['シーケンサー', 'もう一度押すとメトロノームに戻ります。メトロノームの設定はそのままです。シーケンサーで 設定 → スタートガイド を押すとこのガイドをもう一度見られます。'] },
@@ -3056,6 +3125,7 @@
     function start(kind) {
       ({ steps: STEPS, key: tourKey } = TOURS[kind]);
       dots.innerHTML = STEPS.map(() => '<span></span>').join('');
+      if (kind === 'seq' && playing) togglePlay(); // the bars control it points to is hidden while playing
       closeMenu();
       root.hidden = false;
       index = 0;

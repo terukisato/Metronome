@@ -1,4 +1,4 @@
-# メトロノーム / Metronome
+# Souzu Metronome
 
 A browser-based metronome built with HTML, CSS, and JavaScript. No frameworks, no external dependencies. Works offline and installs as a PWA on Android.
 
@@ -49,7 +49,7 @@ Press **SEQ** to switch to the sequencer; press it again to go back to the metro
 - **− BARS +**: how many bars the selected step lasts (1–99); hold to change quickly.
 - **Status row**: `END LOOP` / `END STOP` (tap to switch) sets whether the sequence starts again from step 1 or stops after the last step. On the right, `BAR 3/8` is the bar within the playing step.
 
-START plays from step 1. The playing step is lit green and the selection follows it; the next step blinks through the last bar before it starts. Edits made while playing take effect from the next bar, and the playing step can't be deleted.
+START plays from step 1. The playing step is lit green and the selection follows it; the next step blinks through the last bar before it starts. While playing, **NEXT** takes the bars control's place on the screen and shows what the next step changes to: its time signature, plus its tempo if that changes (`NEXT ▸ 7/4 · 140`), or `END` when the sequence stops after this step. Through the last bar before a change it lights up and counts down the beats left (`4`, `3`, `2`, `1`). Edits made while playing take effect from the next bar, and the playing step can't be deleted.
 
 In SEQ mode the three **presets** save and load whole sequences (separately from the metronome presets): hold a preset for ~½ s (or Shift+Enter) to save the current sequence, press it to load. Its ring lights green while that sequence is loaded. The sequence, its presets and whether SEQ mode was on are remembered between visits.
 
