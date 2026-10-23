@@ -2198,8 +2198,9 @@
   document.addEventListener('pointerdown', () => document.documentElement.classList.remove('kbd'), true);
 
   // ── Fit the pedal to the window: scale the whole pedal evenly so it fills
-  // as much of the window as fits — larger on a big window, smaller on a
-  // short one (small phones, a browser's address bar) — without scrolling.
+  // the window (85% of it on a PC or tablet) — larger on a big window,
+  // smaller on a short one (small phones, a browser's address bar) — without
+  // scrolling.
   // It's scaled with a transform rather than CSS zoom: every browser then
   // reports the scaled positions of the controls, which the tutorial's
   // spotlight and the knobs rely on. A bottom margin makes the page take up
@@ -2207,6 +2208,8 @@
   const fitPedal = (function fitToScreen() {
     const app = document.querySelector('.app');
     const inner = document.querySelector('.screen-inner');
+    const LARGE_SCREEN_FILL = 0.85; // share of the window the pedal fills on a PC or tablet
+    const largeScreen = window.matchMedia('(min-width: 720px) and (min-height: 501px)');
 
     // The SEQ screen is held to the metronome screen's height, so the pedal
     // stays the same size when switching modes
@@ -2227,7 +2230,10 @@
       const roomH = window.innerHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 1;
       const roomW = document.body.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
       const h = app.offsetHeight;
-      const scale = Math.min(roomH / h, roomW / app.offsetWidth);
+      // On PCs and tablets the pedal leaves some space around it; phones
+      // (including a phone on its side) use all the room they have
+      const fill = largeScreen.matches ? LARGE_SCREEN_FILL : 1;
+      const scale = Math.min(roomH / h, roomW / app.offsetWidth) * fill;
       if (Math.abs(scale - 1) > 0.01) {
         app.style.transform = `scale(${scale.toFixed(4)})`;
         app.style.marginBottom = `${(h * (scale - 1)).toFixed(1)}px`;
